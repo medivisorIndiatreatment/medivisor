@@ -1,80 +1,37 @@
-import { type NextRequest, NextResponse } from "next/server"
-import { wixServerClient } from "@/lib/wixServer"
+import type { NextApiRequest, NextApiResponse } from 'next'
+import { wixClient } from '@/lib/wixClient'
 
-export async function GET(
-  request: NextRequest,
-  { params }: { params: { slug: string } }
-) {
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  const { slug } = req.query
+
+  if (!slug || typeof slug !== 'string') {
+    return res.status(400).json({ error: 'Invalid slug' })
+  }
+
   try {
-    const { slug } = params
+    let post = null
 
-    console.log("[v0] Fetching post with slug:", slug)
+    // Try getPostBySlug
+    if (typeof wixClient.posts.getPostBySlug === 'function') {
+      const response = await wixClient.posts.getPostBySlug(slug, {
+        fieldsets: ['CONTENT_TEXT', 'URL', 'RICH_CONTENT'],
+      })
+      post = response.post
+    }
 
-    let post: any = null
-
-    // First try getPostBySlug
-    try {
-      if (typeof wixServerClient.posts.getPostBySlug === "function") {
-        const response = await wixServerClient.posts.getPostBySlug(slug)
-        post = response.post
-        console.log("[v0] Post found using getPostBySlug")
-      }
-    } catch (error) {
-      console.log("[v0] getPostBySlug failed, trying queryPosts...")
-      try {
-        if (typeof wixServerClient.posts.queryPosts === "function") {
-          const response = await wixServerClient.posts.queryPosts().eq("slug", slug).find()
-          post = response.items?.[0]
-          console.log("[v0] Post found using queryPosts")
-        }
-      } catch (fallbackError) {
-        console.error("[v0] Both methods failed:", fallbackError)
-        return withCors(
-          NextResponse.json({ error: "Post not found" }, { status: 404 })
-        )
-      }
+    // Fallback query
+    if (!post && typeof wixClient.posts.queryPosts === 'function') {
+      const response = await wixClient.posts.queryPosts().eq('slug', slug).find()
+      if (response.items.length > 0) post = response.items[0]
     }
 
     if (!post) {
-      return withCors(
-        NextResponse.json({ error: "Post not found" }, { status: 404 })
-      )
+      return res.status(404).json({ error: 'Post not found' })
     }
 
-    const processedPost = {
-      ...post,
-      excerpt: post.excerpt || "No description available.",
-      content: post.content || "",
-      publishedDate: post.publishedDate || post.firstPublishedDate,
-      author: post.author || { name: "Anonymous" },
-      tags: post.tags || [],
-      categories: post.categories || [],
-    }
-
-    console.log("[v0] Post processed successfully:", processedPost.title)
-
-    return withCors(NextResponse.json({ post: processedPost }))
-  } catch (error) {
-    console.error("[v0] Failed to fetch post:", error)
-    return withCors(
-      NextResponse.json(
-        {
-          error: "Failed to fetch blog post",
-          details: error instanceof Error ? error.message : "Unknown error",
-        },
-        { status: 500 }
-      )
-    )
+    res.status(200).json(post)
+  } catch (error: any) {
+    console.error('Error fetching post:', error)
+    res.status(500).json({ error: error.message || 'Failed to fetch post' })
   }
-}
-
-export async function OPTIONS() {
-  return withCors(new NextResponse(null, { status: 200 }))
-}
-
-function withCors(response: NextResponse) {
-  response.headers.set("Access-Control-Allow-Origin", "*")
-  response.headers.set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
-  response.headers.set("Access-Control-Allow-Headers", "Content-Type, Authorization")
-  return response
 }
