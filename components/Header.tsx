@@ -81,14 +81,14 @@ export default function Header() {
     <>
       <div className={`h-[80px] ${isSticky ? 'block' : 'hidden'}`} />
       <header
-        className={`bg-white transition-all duration-300 ${
+        className={`bg-white transition-all duration-300  container mx-auto ${
           isSticky
             ? 'fixed top-0 left-0 w-full z-50 shadow-lg'
             : 'relative z-50 shadow-sm'
         }`}
       >
         <nav
-          className={`flex justify-between items-center container mx-auto px-4 lg:px-0  transition-all duration-300 ${
+          className={`flex justify-between items-center px-4 lg:px-0  transition-all duration-300 ${
             isSticky ? 'py-3' : 'md:py-4 py-1'
           }`}
         >

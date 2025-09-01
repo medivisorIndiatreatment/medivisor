@@ -40,7 +40,7 @@ export default function PartnerSection() {
 
   return (
     <>
-      <section className="md:bg-white bg-gray-50 px-4 sm:px-6 pt-10 lg:px-8">
+      <section className="md:bg-white bg-gray-50 px-4 sm:px-6 pt-10 lg:px-0">
         <div className="container mx-auto grid grid-cols-1 md:grid-cols-12 md:gap-10 items-center">
           {/* Carousel Section - Left Side */}
           <div className="order-1 md:order-2 md:mb-0 mb-8 col-span-12 md:col-span-7">

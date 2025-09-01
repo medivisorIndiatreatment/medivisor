@@ -79,6 +79,7 @@ body {
     background-size: cover;
     background-repeat: no-repeat;
   }
+ 
 
   /* app/globals.css or styles/globals.css */
 
@@ -240,7 +241,9 @@ body {
     align-items: center;
     gap: 0.25rem;
   }
-
+ .container {
+    padding: 0px 80px;
+    }
   /* Responsive design helpers */
   @media (max-width: 768px) {
     .tab-wrapper {
@@ -252,7 +255,10 @@ body {
       padding-bottom: 0.5rem;
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
     }
-
+    
+ .container {
+    padding: 0px 10px;
+    }
     .step-buttons-container {
       position: sticky;
       top: 0;

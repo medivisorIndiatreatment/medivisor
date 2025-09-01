@@ -16,9 +16,9 @@ const ModernHelpSection = () => {
 
   return (
     <>
-      <section className="relative py-0 md:py-10 px-0 md:px-6 lg:px-8 overflow-hidden">
-        <div className="container bg-[#e32128] py-12 px-6 md:px-10 mx-auto rounded-xs shadow-xs relative z-10">
-          <div className="max-w-4xl mx-auto text-center">
+      <section className="container mx-auto my-4 md:my-10">
+        <div className=" relative  bg-[#e32128] px-6 md:px-10  rounded-xs shadow-xs relative z-10">
+          <div className="max-w-4xl py-12  mx-auto text-center">
             {/* Main CTA Content */}
             <div className="mb-10">
               <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white leading-snug mb-4">

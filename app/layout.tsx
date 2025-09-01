@@ -10,7 +10,7 @@ import Script from 'next/script';
 import { WixAuthProvider } from "@/components/wix-auth-provider"
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import WhatsAppButton from '@/components/WhatsAppButton';
+// import WhatsAppButton from '@/components/WhatsAppButton';
 
 
 
@@ -45,9 +45,11 @@ export default function RootLayout({
           />
         </noscript>
         <Header />
-        {children}
+      
+         {children}
+  
         <Footer />
-        <WhatsAppButton />
+        {/* <WhatsAppButton /> */}
       </body>
       </WixAuthProvider>
     </html>
