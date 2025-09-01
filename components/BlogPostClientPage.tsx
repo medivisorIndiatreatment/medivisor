@@ -2,7 +2,7 @@
 
 
 import React, { useEffect, useState } from 'react'
-import { wixClient } from '../lib/wixClient'
+import { wixClient } from '@/lib/wixClient'
 import { media } from '@wix/sdk'
 import {
   ChevronLeft,
@@ -18,8 +18,8 @@ import {
   Share2,
   Bookmark,
 } from 'lucide-react'
-import { RicosRenderer } from './RichContentViewer'
-import { extractTextFromRicos, type RicosContent } from '../lib/ricos-parser'
+import { RicosRenderer } from '@/components/RichContentViewer'
+import { extractTextFromRicos, type RicosContent } from '@/lib/ricos-parser'
 
 interface Post {
   _id: string
