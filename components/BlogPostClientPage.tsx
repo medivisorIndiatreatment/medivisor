@@ -517,45 +517,7 @@ export default function BlogPost({ slug }: BlogPostProps) {
                       )}
 
                       {/* Social Sharing */}
-                      <div className="bg-gradient-to-r from-gray-50 to-gray-100 rounded-xl p-6">
-                        <h3 className="text-lg font-semibold text-gray-900 mb-4">Share this article</h3>
-                        <div className="flex flex-wrap gap-3">
-                          <a
-                            href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="inline-flex items-center gap-2 px-4 py-2 bg-white border border-blue-200 rounded-lg hover:bg-blue-50 transition-colors duration-200"
-                          >
-                            <Facebook className="w-4 h-4 text-blue-600" />
-                            <span className="text-sm font-medium">Facebook</span>
-                          </a>
-                          <a
-                            href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(window.location.href)}&text=${encodeURIComponent(post.title)}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="inline-flex items-center gap-2 px-4 py-2 bg-white border border-blue-200 rounded-lg hover:bg-blue-50 transition-colors duration-200"
-                          >
-                            <Twitter className="w-4 h-4 text-blue-500" />
-                            <span className="text-sm font-medium">Twitter</span>
-                          </a>
-                          <a
-                            href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(window.location.href)}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="inline-flex items-center gap-2 px-4 py-2 bg-white border border-blue-200 rounded-lg hover:bg-blue-50 transition-colors duration-200"
-                          >
-                            <Linkedin className="w-4 h-4 text-blue-700" />
-                            <span className="text-sm font-medium">LinkedIn</span>
-                          </a>
-                          <button
-                            onClick={handleCopyLink}
-                            className="inline-flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors duration-200"
-                          >
-                            <Copy className="w-4 h-4 text-gray-600" />
-                            <span className="text-sm font-medium">Copy Link</span>
-                          </button>
-                        </div>
-                      </div>
+                    
                     </div>
                   </div>
                 </article>
