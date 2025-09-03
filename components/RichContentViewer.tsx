@@ -34,7 +34,7 @@ export function RicosRenderer({ content, className = "" }: RicosRendererProps) {
 
         switch (decoration.type) {
           case "BOLD":
-            element = <span className="font-semibold text-gray-800">{element}</span>;
+            element = <span className="font-medium text-gray-700">{element}</span>;
             break;
           case "ITALIC":
             element = <em className="italic">{element}</em>;
@@ -210,7 +210,7 @@ export function RicosRenderer({ content, className = "" }: RicosRendererProps) {
         return (
           <p
             key={index}
-            className={`mb-2 text-base text-gray-700 leading-relaxed ${getTextAlignment(node.textStyle?.textAlignment)}`}
+            className={`mb-5 text-base text-gray-700 leading-relaxed ${getTextAlignment(node.textStyle?.textAlignment)}`}
           >
             {node.nodes?.map((childNode, childIndex) => renderNode(childNode, childIndex))}
           </p>
@@ -280,7 +280,7 @@ export function RicosRenderer({ content, className = "" }: RicosRendererProps) {
 
       case "BULLETED_LIST":
         return (
-          <ul key={index} className="list-none mb-8 space-y-3 text-base text-gray-700 border border-gray-100 rounded-xs p-4 bg-white shadow-xs">
+          <ul key={index} className="list-none mb-5 space-y-0 text-base text-gray-700 ">
             {node.nodes?.map((childNode, childIndex) => (
               <li key={childIndex} className="flex items-start gap-3">
                 <FaCheckCircle className="text-[#74BF44] mt-1 flex-shrink-0 w-5 h-5" />

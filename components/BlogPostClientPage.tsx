@@ -1,6 +1,5 @@
 "use client"
 
-
 import React, { useEffect, useState } from 'react'
 import { wixClient } from '../lib/wixClient'
 import { media } from '@wix/sdk'
@@ -18,7 +17,6 @@ import {
   Share2,
   Bookmark,
 } from 'lucide-react'
-import Blogside from '@/components/blogAside'
 import { RicosRenderer } from './RichContentViewer'
 import { extractTextFromRicos, type RicosContent } from '../lib/ricos-parser'
 
@@ -166,7 +164,7 @@ export default function BlogPost({ slug }: BlogPostProps) {
           if (typeof wixClient.posts.getPostBySlug === 'function') {
             console.log('Trying getPostBySlug...')
             const response = await wixClient.posts.getPostBySlug(slug, {
-              fieldsets: ['CONTENT_TEXT', 'URL', 'RICH_CONTENT'], // Include rich content
+              fieldsets: ['CONTENT_TEXT', 'URL', 'RICH_CONTENT'],
             })
 
             if (response.post) {
@@ -223,13 +221,13 @@ export default function BlogPost({ slug }: BlogPostProps) {
 
             if (typeof wixClient.posts.listPosts === 'function') {
               const relatedResponse = await wixClient.posts.listPosts({
-                paging: { limit: 4 },
+                paging: { limit: 6 },
               })
               relatedPostsData = (relatedResponse.posts || [])
                 .filter((p: any) => p._id !== fetchedPost._id)
-                .slice(0, 3) as Post[]
+                .slice(0, 6) as Post[]
             } else if (typeof wixClient.posts.queryPosts === 'function') {
-              const relatedResponse = await wixClient.posts.queryPosts().ne('_id', fetchedPost._id).limit(3).find()
+              const relatedResponse = await wixClient.posts.queryPosts().ne('_id', fetchedPost._id).limit(6).find()
               relatedPostsData = relatedResponse.items as Post[]
             }
 
@@ -278,7 +276,7 @@ export default function BlogPost({ slug }: BlogPostProps) {
     return (
       <div className="min-h-screen bg-gradient-to-br md:py-10 py-4 from-gray-50 to-white">
         <main className="container mx-auto px-4 py-12">
-          <div className=" mx-auto">
+          <div className="mx-auto">
             <div className="animate-pulse">
               <div className="h-8 bg-gray-200 rounded w-1/4 mb-8"></div>
               <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
@@ -359,38 +357,30 @@ export default function BlogPost({ slug }: BlogPostProps) {
   const readTime = calculateReadTime(post.richContent || post.contentText || post.content, post.minutesToRead)
 
   return (
-    <div className="min-h-screen bg-gradient-to-br py-8 md:py-10 from-gray-50 to-white">
-      <main className="container mx-auto px-4 ">
-        <div className=" mx-auto">
+    <div className="min-h-screen bg-gradient-to-br px-4 md:px-0 py-4 md:py-10 from-gray-50 to-white">
+      <main className="container mx-auto">
+        <div className="mx-auto">
           {/* Breadcrumb */}
-          <nav className="my-3">
-           <a href='/blog'>
-             <button
-              className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border bg-background hover:text-accent-foreground h-10 px-4 py-2 border-gray-200 text-gray-600 hover:bg-gray-50"
-            >
-              <ChevronLeft className="w-4 h-4 mr-2" />
-              Back to Blog
-            </button>
-           </a>
+          <nav className="md:my-3">
+            <a href='/blog'>
+              <button
+                className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border bg-background hover:text-accent-foreground h-10 px-4 py-2 border-gray-200 text-gray-600 hover:bg-gray-50"
+              >
+                <ChevronLeft className="w-4 h-4 mr-2" />
+                Back to Blog
+              </button>
+            </a>
           </nav>
-          <div className="space-y-12">
-            <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
+          <div className="md:space-y-12">
+            <div className='grid grid-cols-1 md:grid-cols-3 md:gap-4'>
               <div className='col-span-2'>
-                <article className="bg-white rounded-xs shadow-xs border border-gray-100 overflow-hidden">
-
-                  <div className="p-4 md:p-4">
+                <article className="md:bg-white md:rounded-xs md:shadow-xs overflow-hidden">
+                  <div className="p-0 md:p-4">
                     {/* Article Header */}
-
                     <header className="mt-5">
-                      <h1 className="text-xl  md:text-2xl font-bold text-gray-900 mb-6 leading-tight">
+                      <h1 className="text-xl md:text-3xl font-medium text-gray-700 mb-6 leading-tight">
                         {post.title}
                       </h1>
-
-
-
-
-                      {/* Action Buttons */}
-
                     </header>
 
                     {/* Article Content */}
@@ -410,94 +400,62 @@ export default function BlogPost({ slug }: BlogPostProps) {
                         </div>
                       )}
                     </div>
-
-
                   </div>
                 </article>
-
               </div>
-              <div className='col-span-1 bg-white'>
-   
-
-              <div className="lg:sticky md:py-0 py-10 lg:top-28 lg:min-h-[calc(100vh-7rem)]">
-               <div className='w-full md:block hidden'>
-                 <Blogside/>
-                 </div>
-  <div>
-    <div className="bg-[#E22026] rounded-xs shadow-xs text-white p-4 text-center">
-      <h2 className="text-2xl md:text-xl font-semibold mb-4 tracking-tight">
-        Ready to Meet Your Specialist?
-      </h2>
-      <p className="text-base md:text-lg mb-6 leading-relaxed">
-        Schedule a consultation with one of our expert doctors and take the first step toward better health.
-      </p>
-      <button
-        onClick={() => (window.location.href = "/contact")}
-        className="inline-flex items-center px-6 font-medium py-2 bg-white text-red-600  rounded-xs hover:bg-red-50 hover:text-gray-700 transition-all duration-200 shadow-xs hover:shadow-md"
-      >
-        Book Now
-      </button>
-    </div>
-  </div>
-   
-</div>
-            
-              </div>
-            </div>
-            {/* Main Article */}
-
-
-            {/* Related Posts */}
-            {relatedPosts.length > 0 && (
-              <section className="mt-10">
-          
-                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                  {relatedPosts.map((relatedPost) => {
-                    const relatedImageUrl = getWixImageUrl(
-                      relatedPost.media?.wixMedia?.image || relatedPost.coverMedia?.image
-                    )
-                    return (
-                      <div
-                        key={relatedPost._id}
-                        className="bg-white rounded-xs shadow-xs border border-gray-100 overflow-hidden hover:shadow-md transition-shadow duration-300"
-                      >
-                        <button
-                          onClick={() => window.location.href = `/blog/${relatedPost.slug}`}
-                          className="block w-full text-left"
-                        >
-                          {relatedImageUrl && (
-                            <div className="aspect-[16/9] overflow-hidden">
-                              <img
-                                src={relatedImageUrl}
-                                alt={relatedPost.title}
-                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
-                              />
-                            </div>
-                          )}
-                          <div className="p-4">
-                            <h3 className="font-medium text-lg line-clamp-2 mb-2 group-hover:text-blue-600 transition-colors duration-200">
+              <div className='col-span-1 bg-white md:p-4'>
+                {/* Related Posts */}
+                {relatedPosts.length > 0 && (
+                  <section className="mt-5">
+                    <h2 className="text-xl md:text-3xl font-medium text-gray-700 mb-3 leading-tight">Related Articles</h2>
+                    <div className="space-y-4">
+                      {relatedPosts.map((relatedPost) => {
+                        const relatedImageUrl = getWixImageUrl(
+                          relatedPost.media?.wixMedia?.image || relatedPost.coverMedia?.image
+                        );
+                        return (
+                          <a
+                            key={relatedPost._id}
+                            href={`/blog/${relatedPost.slug}`}
+                            className="flex items-center bg-gray-50 rounded-xs border border-gray-100 shadow-xs hover:shadow-xs transition-all duration-300 p-3"
+                          >
+                            {relatedImageUrl && (
+                              <div className="w-16 h-16 flex-shrink-0 overflow-hidden rounded-md">
+                                <img
+                                  src={relatedImageUrl}
+                                  alt={relatedPost.title}
+                                  className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+                                />
+                              </div>
+                            )}
+                            <h3 className="ml-3 text-base font-medium text-gray-600 hover:text-gray-800 transition-colors duration-200 line-clamp-2">
                               {relatedPost.title}
                             </h3>
-                            {relatedPost.excerpt && (
-                              <p className="text-gray-600 text-sm line-clamp-3 mb-4">{relatedPost.excerpt}</p>
-                            )}
-                            <div className="flex items-center justify-between text-xs text-gray-500">
-                              <span>{formatDate(relatedPost.firstPublishedDate)}</span>
-                              <span>
-                                {calculateReadTime(
-                                  relatedPost.richContent || relatedPost.contentText,
-                                  relatedPost.minutesToRead
-                                )}
-                              </span>
-                            </div>
-                          </div>
-                        </button>
-                      </div>
-                    )
-                  })}
+                          </a>
+                        );
+                      })}
+                    </div>
+                  </section>
+                )}
+                <div className="lg:sticky mt-4 md:mt-0 md:py-0 md:py-10 lg:top-28 lg:min-h-[calc(100vh-7rem)]">
+                  <div className="bg-[#E22026] rounded-xs shadow-xs text-white p-4 text-center">
+                    <h2 className="text-2xl md:text-xl font-semibold mb-4 tracking-tight">
+                      Ready to Meet Your Specialist?
+                    </h2>
+                    <p className="text-base md:text-lg mb-6 leading-relaxed">
+                      Schedule a consultation with one of our expert doctors and take the first step toward better health.
+                    </p>
+                    <button
+                      onClick={() => (window.location.href = "/contact")}
+                      className="inline-flex items-center px-6 font-medium py-2 bg-white text-red-600 rounded-xs hover:bg-red-50 hover:text-gray-700 transition-all duration-200 shadow-xs hover:shadow-md"
+                    >
+                      Book Now
+                    </button>
+                  </div>
                 </div>
-              </section>
-            )}
+              </div>
+            </div>
+
           </div>
         </div>
       </main>
