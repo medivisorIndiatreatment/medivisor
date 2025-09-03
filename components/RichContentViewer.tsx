@@ -180,7 +180,7 @@ export function RicosRenderer({ content, className = "" }: RicosRendererProps) {
                   alt={altText}
                   width={width}
                   height={height}
-                  className="w-full h-full object-cover transition-transform duration-500 "
+                  className="w-full h-auto md:h-full md:object-contain object-cover transition-transform duration-500 "
                   priority={(startIndex + idx) < 2}
                   unoptimized
                 />
