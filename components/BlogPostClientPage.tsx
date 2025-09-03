@@ -18,7 +18,7 @@ import {
   Share2,
   Bookmark,
 } from 'lucide-react'
-import Blogside from '@/components/BlogAside'
+import Blogside from '@/components/blogAside'
 import { RicosRenderer } from './RichContentViewer'
 import { extractTextFromRicos, type RicosContent } from '../lib/ricos-parser'
 
