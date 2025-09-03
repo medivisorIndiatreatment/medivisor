@@ -154,6 +154,7 @@ export default function BlogPost({ slug }: BlogPostProps) {
         if (!wixClient.posts) {
           console.error('Error: wixClient.posts module not available')
           setError('Blog service not available. Please check configuration.')
+          setIsLoading(false)
           return
         }
 
@@ -170,7 +171,6 @@ export default function BlogPost({ slug }: BlogPostProps) {
             if (response.post) {
               fetchedPost = response.post as Post
               console.log('Successfully fetched post using getPostBySlug')
-              console.log('Rich content:', fetchedPost.richContent)
             }
           }
         } catch (getBySlugError) {
@@ -193,44 +193,43 @@ export default function BlogPost({ slug }: BlogPostProps) {
           }
         }
 
-        if (!fetchedPost) {
-          try {
-            if (typeof wixClient.posts.listPosts === 'function') {
-              console.log('Trying listPosts as fallback...')
-              const response = await wixClient.posts.listPosts({
-                paging: { limit: 100 },
-              })
-
-              const foundPost = response.posts?.find((p: any) => p.slug === slug)
-              if (foundPost) {
-                fetchedPost = foundPost as Post
-                console.log('Successfully found post using listPosts')
-              }
-            }
-          } catch (listError) {
-            console.error('listPosts also failed:', listError)
-          }
-        }
-
         if (fetchedPost) {
           setPost(fetchedPost)
 
           // Fetch related posts
           try {
             let relatedPostsData: Post[] = []
+            if (typeof wixClient.posts.queryPosts === 'function') {
+              console.log('Trying to fetch related posts using queryPosts...')
+              const postTags = fetchedPost.tags || []
+              const postCategories = fetchedPost.categoryIds || []
 
-            if (typeof wixClient.posts.listPosts === 'function') {
+              let query = wixClient.posts.queryPosts().ne('_id', fetchedPost._id).limit(6)
+
+              if (postTags.length > 0) {
+                query = query.hasSome('tags', postTags)
+                console.log('Querying related posts by tags:', postTags)
+              } else if (postCategories.length > 0) {
+                query = query.hasSome('categoryIds', postCategories)
+                console.log('Querying related posts by categories:', postCategories)
+              } else {
+                console.log('No tags or categories found, fetching recent posts instead.')
+              }
+
+              const relatedResponse = await query.find()
+              relatedPostsData = relatedResponse.items as Post[]
+            } else {
+              console.log('Falling back to listPosts for related content...')
+              // Fallback to listPosts and filter
               const relatedResponse = await wixClient.posts.listPosts({
-                paging: { limit: 6 },
+                paging: { limit: 10 },
               })
-              relatedPostsData = (relatedResponse.posts || [])
+              const postsList = relatedResponse.posts || []
+              relatedPostsData = postsList
                 .filter((p: any) => p._id !== fetchedPost._id)
                 .slice(0, 6) as Post[]
-            } else if (typeof wixClient.posts.queryPosts === 'function') {
-              const relatedResponse = await wixClient.posts.queryPosts().ne('_id', fetchedPost._id).limit(6).find()
-              relatedPostsData = relatedResponse.items as Post[]
             }
-
+            console.log('Fetched related posts count:', relatedPostsData.length)
             setRelatedPosts(relatedPostsData)
           } catch (relatedError) {
             console.error('Failed to fetch related posts:', relatedError)
