@@ -294,7 +294,7 @@ export function RicosRenderer({ content, className = "" }: RicosRendererProps) {
 
       case "ORDERED_LIST":
         return (
-          <ol key={index} className="list-decimal mb-8 space-y-3 text-base text-gray-700 md:ml-6 md:border md:border-gray-100 rounded-xs p-4 bg-white ">
+          <ol key={index} className="list-decimal mb-4 space-y-` text-base text-gray-700  ">
             {node.nodes?.map((childNode, childIndex) => (
               <li key={childIndex} className="leading-relaxed">
                 {childNode.nodes?.map((textNode, textIndex) => renderNode(textNode, textIndex))}
