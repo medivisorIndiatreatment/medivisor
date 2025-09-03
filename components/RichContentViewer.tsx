@@ -294,7 +294,7 @@ export function RicosRenderer({ content, className = "" }: RicosRendererProps) {
 
       case "ORDERED_LIST":
         return (
-          <ol key={index} className="list-decimal mb-4 space-y-` text-base text-gray-700  ">
+          <ol key={index} className="list-decimal mb-4 space-y-` text-base text-gray-700 md:ml-6  ">
             {node.nodes?.map((childNode, childIndex) => (
               <li key={childIndex} className="leading-relaxed">
                 {childNode.nodes?.map((textNode, textIndex) => renderNode(textNode, textIndex))}
@@ -316,7 +316,7 @@ export function RicosRenderer({ content, className = "" }: RicosRendererProps) {
             key={index}
             className="relative border-l-4 border-blue-500 md:pl-6 py-4 my-8 bg-blue-50 rounded-xs"
           >
-            <div className="absolute -left-2 -top-2 text-4xl text-blue-300 font-serif">“</div>
+            <div className="absolute -left-2 -top-2 text-4xl text-red-300 font-serif">“</div>
             <div className="italic text-base text-gray-800 leading-relaxed">
               {node.nodes?.map((childNode, childIndex) => renderNode(childNode, childIndex))}
             </div>
