@@ -79,17 +79,17 @@ export default function Header() {
 
   return (
     <>
-      <div className={`h-[80px] ${isSticky ? 'block' : 'hidden'}`} />
+      <div className={`h-[100px] ${isSticky ? 'block' : 'hidden'}`} />
       <header
-        className={`bg-white transition-all duration-300 container mx-auto ${
+        className={`bg-white transition-all duration-300 ${
           isSticky
-            ? 'fixed top-0 left-0 w-full z-50 shadow-lg'
-            : 'relative z-50 shadow-sm'
+            ? 'sticky top-0 left-0 py-3 w-full z-50 shadow-lg'
+            : 'relative z-50 shadow-sm py-3'
         }`}
       >
         <nav
-          className={`flex justify-between items-center px-4 lg:px-0 transition-all duration-300 ${
-            isSticky ? 'py-3' : 'md:py-4 py-1'
+          className={`flex justify-between  container mx-auto items-center px-4 lg:px-0 transition-all duration-300 ${
+            isSticky ? 'py-3' : 'md:py-2 py-3'
           }`}
         >
           {/* Logo */}

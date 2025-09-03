@@ -277,7 +277,7 @@ export default function BlogPost({ slug }: BlogPostProps) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white">
         <main className="container mx-auto px-4 py-12">
-          <div className="max-w-4xl mx-auto">
+          <div className=" mx-auto">
             <div className="animate-pulse">
               <div className="h-8 bg-gray-200 rounded w-1/4 mb-8"></div>
               <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
@@ -362,122 +362,32 @@ export default function BlogPost({ slug }: BlogPostProps) {
       <main className="container mx-auto px-4 py-8 md:py-12">
         <div className=" mx-auto">
           {/* Breadcrumb */}
-          <nav className="mb-8">
-            <button
-              onClick={() => window.history.back()}
-              className="inline-flex items-center text-gray-600 hover:text-blue-600 transition-colors duration-200 font-medium"
-            >
-              <ChevronLeft className="w-4 h-4 mr-1" />
-              Back to Blog
-            </button>
+          <nav className="my-3">
+           <button
+  className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border bg-background hover:text-accent-foreground h-10 px-4 py-2 border-gray-200 text-gray-600 hover:bg-gray-50"
+>
+  <ChevronLeft className="w-4 h-4 mr-2" />
+  Back to Blog
+</button>
           </nav>
           <div className="space-y-12">
             <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
               <div className='col-span-2'>
-                <article className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-                  {/* Hero Media */}
-                  {(youtubeEmbedUrl || embedVideoUrl || imageUrl) && (
-                    <div className="aspect-[16/9] relative overflow-hidden">
-                      {youtubeEmbedUrl ? (
-                        <iframe
-                          className="absolute inset-0 w-full h-full"
-                          src={youtubeEmbedUrl}
-                          title={post.title}
-                          frameBorder="0"
-                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                          allowFullScreen
-                        />
-                      ) : embedVideoUrl ? (
-                        <video
-                          src={embedVideoUrl}
-                          poster={embedThumbnailUrl}
-                          controls
-                          className="w-full h-full object-cover"
-                          aria-label={`Play video for ${post.title}`}
-                        >
-                          Your browser does not support the video tag.
-                        </video>
-                      ) : imageUrl ? (
-                        <img
-                          src={imageUrl}
-                          alt={post.title}
-                          className="w-full h-full object-cover"
-                        />
-                      ) : null}
-                    </div>
-                  )}
-
-                  <div className="p-8 md:p-12">
+                <article className="bg-white rounded-xs shadow-xs border border-gray-100 overflow-hidden">
+                 
+                  <div className="p-4 md:p-4">
                     {/* Article Header */}
-                    <header className="mb-8">
-                      <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-6 leading-tight">
+                    
+                    <header className="mt-5">
+                      <h1 className="text-xl  md:text-2xl font-bold text-gray-900 mb-6 leading-tight">
                         {post.title}
                       </h1>
 
-                      {/* Meta Information */}
-                      <div className="flex flex-wrap items-center gap-6 text-sm text-gray-600 mb-6">
-                        <div className="flex items-center gap-2">
-                          <Calendar className="w-4 h-4" />
-                          <span>{formatDate(post.firstPublishedDate)}</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <Clock className="w-4 h-4" />
-                          <span>{readTime}</span>
-                        </div>
-                        {post.viewCount && (
-                          <div className="flex items-center gap-2">
-                            <Eye className="w-4 h-4" />
-                            <span>{post.viewCount.toLocaleString()} views</span>
-                          </div>
-                        )}
-                      </div>
 
-                      {/* Excerpt */}
-                      {post.excerpt && (
-                        <p className="text-xl text-gray-700 leading-relaxed mb-8 font-light">
-                          {post.excerpt}
-                        </p>
-                      )}
+                    
 
                       {/* Action Buttons */}
-                      <div className="flex flex-wrap items-center gap-4 mb-8">
-                        <button
-                          onClick={() => setIsLiked(!isLiked)}
-                          className={`inline-flex items-center gap-2 px-4 py-2 rounded-full border transition-all duration-200 ${isLiked
-                              ? 'bg-red-50 border-red-200 text-red-600'
-                              : 'bg-gray-50 border-gray-200 text-gray-600 hover:bg-red-50 hover:border-red-200 hover:text-red-600'
-                            }`}
-                        >
-                          <Heart className={`w-4 h-4 ${isLiked ? 'fill-current' : ''}`} />
-                          <span>{post.likeCount ? post.likeCount + (isLiked ? 1 : 0) : isLiked ? 1 : 0}</span>
-                        </button>
-
-                        <button
-                          onClick={() => setIsBookmarked(!isBookmarked)}
-                          className={`inline-flex items-center gap-2 px-4 py-2 rounded-full border transition-all duration-200 ${isBookmarked
-                              ? 'bg-blue-50 border-blue-200 text-blue-600'
-                              : 'bg-gray-50 border-gray-200 text-gray-600 hover:bg-blue-50 hover:border-blue-200 hover:text-blue-600'
-                            }`}
-                        >
-                          <Bookmark className={`w-4 h-4 ${isBookmarked ? 'fill-current' : ''}`} />
-                          <span>Save</span>
-                        </button>
-
-                        <button
-                          onClick={handleShare}
-                          className="inline-flex items-center gap-2 px-4 py-2 rounded-full border bg-gray-50 border-gray-200 text-gray-600 hover:bg-blue-50 hover:border-blue-200 hover:text-blue-600 transition-all duration-200"
-                        >
-                          <Share2 className="w-4 h-4" />
-                          <span>Share</span>
-                        </button>
-
-                        {post.commentingEnabled && (
-                          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border bg-gray-50 border-gray-200 text-gray-600">
-                            <MessageCircle className="w-4 h-4" />
-                            <span>{post.commentCount || 0} comments</span>
-                          </div>
-                        )}
-                      </div>
+                 
                     </header>
 
                     {/* Article Content */}
@@ -498,27 +408,7 @@ export default function BlogPost({ slug }: BlogPostProps) {
                       )}
                     </div>
 
-                    <div className="border-t border-gray-200 mt-12 pt-8">
-                      {/* Tags */}
-                      {(post.tags || post.hashtags) && (
-                        <div className="mb-8">
-                          <h3 className="text-lg font-semibold text-gray-900 mb-4">Tags</h3>
-                          <div className="flex flex-wrap gap-2">
-                            {[...(post.tags || []), ...(post.hashtags || [])].map((tag, index) => (
-                              <span
-                                key={index}
-                                className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-medium"
-                              >
-                                {tag.startsWith('#') ? tag : `#${tag}`}
-                              </span>
-                            ))}
-                          </div>
-                        </div>
-                      )}
-
-                      {/* Social Sharing */}
-                    
-                    </div>
+                   
                   </div>
                 </article>
                 

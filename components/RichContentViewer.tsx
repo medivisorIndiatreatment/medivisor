@@ -1,12 +1,12 @@
 import React from "react"
 import { type RicosNode, type RicosContent, getWixMediaUrl } from "@/lib/ricos-parser"
 import { Button } from "@/components/ui/button"
-import { Card } from "@/components/ui/card"
-import { Download, ExternalLink, Play } from 'lucide-react' // Added Play and Download for consistency
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Download, ExternalLink, Play } from 'lucide-react'
 import Image from "next/image"
 import { getYouTubeEmbedUrl } from "@/lib/utils"
 import type { JSX } from "react/jsx-runtime"
- import { FaCheckCircle } from 'react-icons/fa';
+import { FaCheckCircle } from 'react-icons/fa';
 
 interface RicosRendererProps {
   content: RicosContent | string
@@ -16,7 +16,7 @@ interface RicosRendererProps {
 export function RicosRenderer({ content, className = "" }: RicosRendererProps) {
   // Handle legacy HTML content
   if (typeof content === "string") {
-    return <div className={`prose prose-lg max-w-none ${className}`} dangerouslySetInnerHTML={{ __html: content }} />
+    return <div className={`prose  text-smpmd:rose-base max-w-none ${className}`} dangerouslySetInnerHTML={{ __html: content }} />
   }
 
   const renderTextWithDecorations = (textData: any): React.ReactNode => {
@@ -31,7 +31,7 @@ export function RicosRenderer({ content, className = "" }: RicosRendererProps) {
 
         switch (decoration.type) {
           case "BOLD":
-            element = <strong className="font-bold text-gray-900">{element}</strong>
+            element = <span className="font-semibold text-gray-700">{element}</span>
             break
           case "ITALIC":
             element = <em className="italic">{element}</em>
@@ -66,7 +66,7 @@ export function RicosRenderer({ content, className = "" }: RicosRendererProps) {
                   color: foreground,
                   backgroundColor: background,
                 }}
-                className={`${background ? "px-2 py-1 rounded-md" : ""}`}
+                className={`${background ? "px-0 py-1 rounded-md" : ""}`}
               >
                 {element}
               </span>
@@ -117,13 +117,13 @@ export function RicosRenderer({ content, className = "" }: RicosRendererProps) {
     switch (node.type) {
       case "PARAGRAPH":
         if (!node.nodes || node.nodes.length === 0) {
-          return <div key={index} className="h-0" /> // Empty paragraph spacing
+          return <div key={index} className="h-0" />
         }
 
         return (
           <p
             key={index}
-            className={`text-lg text-gray-700 leading-relaxed mb-3 ${getTextAlignment(node.paragraphData?.textStyle?.textAlignment)}`}
+            className={ text-sm`md:text-base text-gray-700 leading-relaxed mb-3 ${getTextAlignment(node.paragraphData?.textStyle?.textAlignment)}`}
           >
             {node.nodes?.map((childNode, childIndex) => renderNode(childNode, childIndex))}
           </p>
@@ -138,7 +138,7 @@ export function RicosRenderer({ content, className = "" }: RicosRendererProps) {
           3: "text-3xl font-bold mb-5 mt-8 text-gray-900 leading-tight",
           4: "text-2xl font-bold mb-4 mt-6 text-gray-900 leading-tight",
           5: "text-xl font-bold mb-3 mt-5 text-gray-900 leading-tight",
-          6: "text-lg font-bold mb-2 mt-4 text-gray-900 leading-tight",
+          6:  text-sm"md:text-base font-bold mb-2 mt-4 text-gray-900 leading-tight",
         }
 
         return (
@@ -165,19 +165,19 @@ export function RicosRenderer({ content, className = "" }: RicosRendererProps) {
 
         return (
           <figure key={index} className={`my-8 ${getAlignment(alignment)}`}>
-            <div className="relative overflow-hidden rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300">
+            <div className="relative overflow-hidden rounded-xs shadow-xs hover:shadow-sm transition-shadow duration-300">
               <Image
                 src={getWixMediaUrl(imageId, width, height) || "/placeholder.svg"}
                 alt={altText}
                 width={width}
                 height={height}
                 className="w-full h-auto object-cover  transition-transform duration-500"
-                priority={index < 2} // Prioritize first few images
-                unoptimized // Required for output: 'export'
+                priority={index < 2}
+                unoptimized
               />
             </div>
             {caption && (
-              <figcaption className="text-sm text-gray-600 mt-3 text-center italic bg-gray-50 px-4 py-2 rounded-lg">
+              <figcaption className="text-sm text-gray-600 mt-3 text-center italic bg-gray-50 px-4 py-2 ro text-smumd:nded-base">
                 {caption}
               </figcaption>
             )}
@@ -196,7 +196,7 @@ export function RicosRenderer({ content, className = "" }: RicosRendererProps) {
 
         return (
           <div key={index} className="my-8">
-            <div className="relative aspect-video bg-black rounded-xl overflow-hidden shadow-lg">
+            <div className="relative aspect-video bg-black rounded-xl overflow-hidden s text-smhmd:adow-base">
               {youtubeEmbedUrl ? (
                 <iframe
                   className="w-full h-full"
@@ -224,27 +224,21 @@ export function RicosRenderer({ content, className = "" }: RicosRendererProps) {
 
       case "BULLETED_LIST":
         return (
-         
-
-<ul key={index} className="list-none mb-4 space-y-1 text-lg text-gray-700">
-  {node.nodes?.map((childNode, childIndex) => (
-    <li key={childIndex} className="flex items-start gap-x-3">
-      {/* Replace bullet with check icon */}
-      <FaCheckCircle className="text-white fill-[#74BF44] mt-1 ml-2 flex-shrink-0" />
-      
-      {/* Content block */}
-      <div className="flex-1">
-        {childNode.nodes?.map((textNode, textIndex) => renderNode(textNode, textIndex))}
-      </div>
-    </li>
-  ))}
-</ul>
-
+          <ul key={index} className="list-none mb-4 space-y-1 text-sm md:text-base text-gray-700">
+            {node.nodes?.map((childNode, childIndex) => (
+              <li key={childIndex} className="flex items-start gap-x-3">
+                <FaCheckCircle className="text-white fill-[#74BF44] mt-1 ml-2 flex-shrink-0" />
+                <div className="flex-1">
+                  {childNode.nodes?.map((textNode, textIndex) => renderNode(textNode, textIndex))}
+                </div>
+              </li>
+            ))}
+          </ul>
         )
 
       case "ORDERED_LIST":
         return (
-          <ol key={index} className="list-decimal list-inside mb-8 space-y-3 text-lg text-gray-700 ml-4">
+          <ol key={index} className="list-decimal  mb-8 space-y-2 text-sm md:text-base text-gray-700 ml-2">
             {node.nodes?.map((childNode, childIndex) => (
               <li key={childIndex} className="leading-relaxed pl-2">
                 {childNode.nodes?.map((textNode, textIndex) => renderNode(textNode, textIndex))}
@@ -254,7 +248,6 @@ export function RicosRenderer({ content, className = "" }: RicosRendererProps) {
         )
 
       case "LIST_ITEM":
-        // This is handled by the parent list components
         return (
           <React.Fragment key={index}>
             {node.nodes?.map((childNode, childIndex) => renderNode(childNode, childIndex))}
@@ -268,7 +261,7 @@ export function RicosRenderer({ content, className = "" }: RicosRendererProps) {
             className="relative border-l-4 border-blue-500 pl-8 py-6 my-8 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-r-xl"
           >
             <div className="absolute -left-2 -top-2 text-4xl text-blue-400 font-serif">"</div>
-            <div className="italic text-lg text-gray-800 leading-relaxed">
+            <div className="italic text-sm md:text-base text-gray-800 leading-relaxed">
               {node.nodes?.map((childNode, childIndex) => renderNode(childNode, childIndex))}
             </div>
           </blockquote>
@@ -280,7 +273,7 @@ export function RicosRenderer({ content, className = "" }: RicosRendererProps) {
 
         return (
           <div key={index} className="my-8">
-            <div className="relative bg-gray-900 rounded-xl overflow-hidden shadow-lg">
+            <div className="relative bg-gray-900 rounded-xl overflow-hidden s text-smhmd:adow-base">
               <div className="flex items-center justify-between px-4 py-2 bg-gray-800 border-b border-gray-700">
                 <span className="text-sm text-gray-300 font-medium">{language}</span>
                 <div className="flex space-x-2">
@@ -317,7 +310,7 @@ export function RicosRenderer({ content, className = "" }: RicosRendererProps) {
           <div key={index} className="my-8 flex justify-center">
             <Button
               asChild
-              className="inline-flex items-center gap-2 px-6 py-3 text-base font-medium rounded-lg shadow-lg hover:shadow-xl transition-all duration-200"
+              className="inline-flex items-center gap-2 px-6 py-3 text-base font-medium ro text-smumd:nded-base s text-smhmd:adow-base hover:shadow-xl transition-all duration-200"
               style={{
                 backgroundColor: buttonStyle?.backgroundColor || "#3B82F6",
                 borderColor: buttonStyle?.borderColor,
@@ -342,14 +335,13 @@ export function RicosRenderer({ content, className = "" }: RicosRendererProps) {
 
         if (!embedSrc) return null
 
-        // Handle YouTube embeds specifically if they come through EMBED type
         const embedYoutubeUrl = getYouTubeEmbedUrl(embedSrc)
 
         return (
           <div key={index} className="my-8">
-            <div className="aspect-video bg-gray-100 rounded-xl overflow-hidden shadow-lg">
+            <div className="aspect-video bg-gray-100 rounded-xl overflow-hidden s text-smhmd:adow-base">
               <iframe
-                src={embedYoutubeUrl || embedSrc} // Use converted YouTube URL or original embed src
+                src={embedYoutubeUrl || embedSrc}
                 className="w-full h-full"
                 frameBorder="0"
                 allowFullScreen
@@ -362,34 +354,48 @@ export function RicosRenderer({ content, className = "" }: RicosRendererProps) {
       case "GALLERY":
         const galleryItems = node.galleryData?.items || []
 
-        return (
-          <div key={index} className="my-8">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {galleryItems.map((item, itemIndex) => {
-                const itemImageId = item.image?.src?.id
-                if (!itemImageId) return null
+        // Group items into pairs for the two-column layout
+        const groupedItems = []
+        for (let i = 0; i < galleryItems.length; i += 2) {
+          groupedItems.push(galleryItems.slice(i, i + 2))
+        }
 
-                return (
-                  <Card key={itemIndex} className="overflow-hidden hover:shadow-lg transition-shadow duration-300">
-                    <div className="relative aspect-square overflow-hidden">
-                      <Image
-                        src={getWixMediaUrl(itemImageId, 400, 400) || "/placeholder.svg"}
-                        alt={item.title || `Gallery image ${itemIndex + 1}`}
-                        fill
-                        className="object-cover hover:scale-110 transition-transform duration-500"
-                        unoptimized // Required for output: 'export'
-                      />
-                    </div>
-                    {(item.title || item.description) && (
-                      <div className="p-4">
-                        {item.title && <h4 className="font-semibold text-gray-900 mb-1">{item.title}</h4>}
-                        {item.description && <p className="text-sm text-gray-600">{item.description}</p>}
+        return (
+          <div key={index} className="my-8 space-y-8">
+            {groupedItems.map((group, groupIndex) => (
+              <div key={groupIndex} className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                {group.map((item, itemIndex) => {
+                  const itemImageId = item.image?.src?.id
+                  if (!itemImageId) return null
+
+                  return (
+                    <Card key={itemIndex} className="overflow-hidden hover:s text-smhmd:adow-base transition-shadow duration-300 h-full flex flex-col">
+                      <div className="relative aspect-video overflow-hidden">
+                        <Image
+                          src={getWixMediaUrl(itemImageId, 600, 338) || "/placeholder.svg"}
+                          alt={item.title || `Gallery image ${itemIndex + 1}`}
+                          fill
+                          className="object-cover hover:scale-110 transition-transform duration-500"
+                          unoptimized
+                        />
                       </div>
-                    )}
-                  </Card>
-                )
-              })}
-            </div>
+                      <CardHeader>
+                        {item.title && <CardTitle>{item.title}</CardTitle>}
+                        {item.description && <CardDescription>{item.description}</CardDescription>}
+                      </CardHeader>
+                      <CardContent className="flex-grow">
+                        {item.description && (
+                          <p className="text-sm text-gray-600">
+                            {item.description}
+                          </p>
+                        )}
+                        {/* You can add more content here based on your Ricos data structure */}
+                      </CardContent>
+                    </Card>
+                  )
+                })}
+              </div>
+            ))}
           </div>
         )
 
@@ -450,7 +456,6 @@ export function RicosRenderer({ content, className = "" }: RicosRendererProps) {
         )
 
       default:
-        // Handle unknown node types by rendering child nodes
         if (node.nodes) {
           return <div key={index}>{node.nodes.map((childNode, childIndex) => renderNode(childNode, childIndex))}</div>
         }
@@ -459,13 +464,12 @@ export function RicosRenderer({ content, className = "" }: RicosRendererProps) {
   }
 
   return (
-    <div className={`prose prose-lg max-w-none ${className}`}>
+    <div className={`prose  text-smpmd:rose-base max-w-none ${className}`}>
       {content.nodes?.map((node, index) => renderNode(node, index))}
     </div>
   )
 }
 
-// Helper function to format file size
 function formatFileSize(bytes: number): string {
   if (bytes === 0) return "0 Bytes"
   const k = 1024
