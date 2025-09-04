@@ -241,6 +241,9 @@ body {
     align-items: center;
     gap: 0.25rem;
   }
+  .ytp-hide-controls{
+    display: none !important;
+  }
  .container {
     padding: 0px 80px;
     }

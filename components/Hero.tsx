@@ -1,33 +1,33 @@
 'use client';
 import React from 'react';
-import { CircleCheck  } from 'lucide-react';
+import { CircleCheck } from 'lucide-react';
 import { FaCheckCircle } from 'react-icons/fa';
 const HeroSection = () => {
   return (
     <section
       aria-label="Hero Section"
-      className="relative md:h-[calc(100vh-10px)]  overflow-hidden md:py-10"
+      className="relative  md:px-0 px-2 md:h-[calc(100vh-10px)]  overflow-hidden md:py-10"
       id="home"
     >
-      <div className="absolute inset-0 z-20 bg-cover bg-center bg-shadow-1"></div>
+      <div className="absolute inset-0 z-20 bg-contain md:bg-cover bg-center bg-shadow-1"></div>
       <div className="absolute inset-0 z-10 bg-banner"></div>
       <div className="relative z-30 container mx-auto px-4 md:px-0 md:pt-10 grid grid-cols-1 md:grid-cols-12 items-end md:items-center gap-3 h-full">
         {/* Left Content */}
-        <div className="order-1 md:order-1 mt-24 md:mt-0 text-white relative md:col-span-7 z-40 h-full w-full flex items-end">
+        <div className="order-1 md:order-1 mt-32 md:mt-0 text-white relative md:col-span-7 z-40 h-full w-full flex items-end">
           <div>
-            <h1 className="text-2xl md:text-5xl lg:text-5xl leading-tight mb-4 text-left uppercase font-light"> {/* Adjusted font sizes and added font-light */}
+            <h1 className="text-2xl md:text-5xl lg:text-5xl leading-tight mb-4 text-left uppercase font-semibold"> {/* Adjusted font sizes and added font-light */}
               <span className="block">
                 Affordable, World-Class Medical Treatment{' '}
-                <span className="block md:inline mt-2 font-extralight"> {/* Made "for Globally" more subtle */}
-                  for{' '}
-                  <strong className="font-semibold"> {/* Kept "Globally" strong but slightly less heavy */}
-                    International Patients
-                  </strong>
-                </span>
+                {/* Made "for Globally" more subtle */}
+                for{' '}
+                <strong className="font-semibold"> {/* Kept "Globally" strong but slightly less heavy */}
+                  International Patients
+                </strong>
               </span>
+
             </h1>
             <p className="mt-4 text-white mb-6 text-lg md:text-left  md:text-xl leading-relaxed"> {/* Increased font size and line height */}
-          Looking for advanced medical treatment overseas? India could be your best choice—thanks to world-class clinical expertise, cost advantages, and fast visa and treatment processes.
+              Looking for advanced medical treatment overseas? India could be your best choice—thanks to world-class clinical expertise, cost advantages, and fast visa and treatment processes.
             </p>
           </div>
         </div>
@@ -62,7 +62,7 @@ const HeroSection = () => {
                 'On-ground Support',
               ].map((item, index) => (
                 <li key={index} className="flex items-start gap-x-2">
-                  <FaCheckCircle  className="text-white fill-[#74BF44] mt-1"/> {/* Icon remains as requested */}
+                  <FaCheckCircle className="text-white fill-[#74BF44] mt-1" /> {/* Icon remains as requested */}
                   <span>{item}</span>
                 </li>
               ))}
@@ -73,16 +73,16 @@ const HeroSection = () => {
               already benefited from our services. <strong>You could be next.</strong>
             </p>
 
-           <a href='/contact'>
-             <button
-              aria-label="Get a free quote"
-              className="w-full bg-[#74BF44] cursor-pointer text-white text-base md:text-lg md:font-medium py-3 rounded-md hover:bg-[#74BF44]/90 transition duration-300 mb-3" // Slightly increased button text size
+            <a href='/contact'>
+              <button
+                aria-label="Get a free quote"
+                className="w-full bg-[#74BF44] cursor-pointer text-white text-base md:text-lg md:font-medium py-3 rounded-md hover:bg-[#74BF44]/90 transition duration-300 mb-3" // Slightly increased button text size
 
-              type="button"
-            >
-              Get a free quotation today!
-            </button>
-           </a>
+                type="button"
+              >
+                Get a free quotation today!
+              </button>
+            </a>
 
             {/* <div className="text-center cursor-pointer mt-0 px-2 flex items-center justify-start">
               <div className="relative flex ml-6 my-3 items-center justify-center gap-x-2">

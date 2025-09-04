@@ -62,7 +62,7 @@ export default function ServiceSection() {
         '(min-width: 768px)': { slidesToScroll: 2 },
       },
     },
-    [Autoplay({ delay: 3000, stopOnInteraction: false, stopOnMouseEnter: true })],
+    [Autoplay({ delay: 4000, stopOnInteraction: false, stopOnMouseEnter: true })],
   )
 
   const getImageUrlFromItem = useCallback((item: any): string => {
@@ -139,7 +139,7 @@ export default function ServiceSection() {
           <div className="inline-flex items-center justify-center w-20 h-20 bg-blue-50 rounded-full mb-6">
             <BriefcaseMedical className="h-10 w-10 text-blue-600" />
           </div>
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4 tracking-tight">
+          <h2 className="md:text-4xl text-3xl font-bold text-gray-700 mb-4">
             Our Treatments
           </h2>
           <p className="text-lg text-gray-600">
@@ -152,11 +152,11 @@ export default function ServiceSection() {
 
   return (
     <>
-      <section className="bg-gray-50 py-12">
-        <div className="container mx-auto px-4">
-          <div className="flex justify-between items-center mb-6">
+      <section className="bg-gray-50 px-2 md:px-0 py-12">
+        <div className="container mx-auto ">
+          <div className="flex justify-between items-center mb-4 md:mb-4">
             <div>
-              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 tracking-tight">
+              <h2 className="md:text-4xl text-3xl font-bold text-gray-700">
                 Our Treatments
               </h2>
               {error && (
@@ -169,17 +169,17 @@ export default function ServiceSection() {
             <div className="flex gap-2">
               <button
                 onClick={() => emblaApi?.scrollPrev()}
-                className="bg-white text-gray-700 p-2 rounded-full shadow-md hover:bg-gray-100 transition-colors duration-200 disabled:opacity-50"
+                className="bg-white text-gray-700 p-1.5 rounded-full shadow-md hover:bg-gray-100 transition-colors duration-200 disabled:opacity-50"
                 aria-label="Previous slide"
               >
-                <ChevronLeft className="w-6 h-6" />
+                <ChevronLeft className=" w-5 h-5" />
               </button>
               <button
                 onClick={() => emblaApi?.scrollNext()}
-                className="bg-white text-gray-700 p-2 rounded-full shadow-md hover:bg-gray-100 transition-colors duration-200 disabled:opacity-50"
+                className="bg-white text-gray-700 p-1.5 rounded-full shadow-md hover:bg-gray-100 transition-colors duration-200 disabled:opacity-50"
                 aria-label="Next slide"
               >
-                <ChevronRight className="w-6 h-6" />
+                <ChevronRight className=" w-5 h-5" />
               </button>
             </div>
           </div>
@@ -205,11 +205,11 @@ export default function ServiceSection() {
                         }}
                       />
                     </div>
-                    <div className="p-6 space-y-3 flex flex-col h-full">
-                      <h4 className="tracking-tight text-lg md:text-xl font-medium text-darkText mb-1 md:mb-3 items-center line-clamp-2 transition-colors duration-200 font-helvetica">
+                    <div className="md:p-4 p-3 space-y-3 flex flex-col md:mt-0 mt-4 h-full">
+                      <h4 className="md:text-xl text-2xl font-medium leading-tight text-gray-700 overflow-hidden mt-0">
                         {service.hospitalName}
                       </h4>
-                      <h3 className="text-gray-700 leading-relaxed text-base md:text-lg mb-2 line-clamp-3">
+                      <h3 className="text-gray-700 leading-relaxed text-[19px] md:text-lg  mb-2 line-clamp-3">
                         {service.treatmentName}
                       </h3>
                       {service.description && (
@@ -220,7 +220,7 @@ export default function ServiceSection() {
                       <div className="mt-auto pt-2 text-left">
                         {/* The 'onClick' handler is added here to open the modal */}
                         <button
-                          className=" cursor-pointer"
+                          className=" inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border bg-gray-50 hover:text-accent-foreground h-8 px-4 py-1 border-gray-200 text-gray-600 hover:bg-gray-100"
                           onClick={() => setIsModalOpen(true)}
                         >
                           Enquire Now

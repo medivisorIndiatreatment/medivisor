@@ -203,7 +203,7 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
               </div>
 
               <div className="grid gap-2">
-                <Label htmlFor="whatsapp">WhatsApp</Label>
+                <Label htmlFor="whatsapp">WhatsApp/ Viber</Label>
                 <div className="flex gap-x-3">
                   <FormField
                     control={form.control}

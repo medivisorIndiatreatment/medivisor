@@ -68,7 +68,7 @@ interface MediaCoverageCarouselProps {
 }
 
 export default function MediaCoverageCarousel({
-  title = "Latest Media Coverage",
+  title = " Media Coverage",
 
   showViewAll = true,
   maxItems = 8,
@@ -150,14 +150,14 @@ export default function MediaCoverageCarousel({
     return (
       <Card
         key={item._id}
-        className="group relative overflow-hidden rounded-xs border border-slate-100 bg-white shadow-none transition-all duration-300 hover:shadow-xl"
+        className="group relative overflow-hidden rounded-xs border-2 p-2 border-gray-200 bg-white shadow-none transition-all duration-300 hover:shadow-xl"
       >
-        <div className="aspect-[4/3] relative bg-slate-100 overflow-hidden">
+        <div className="aspect-[4/3] relative overflow-hidden">
           {mediaType === "image" && (
             <img
               src={getOptimizedImageUrl(item) || "/placeholder.svg"}
               alt={item.title || "Media item"}
-              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
+              className="w-full h-full mb-2 object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
               onError={(e) => {
                 const target = e.target as HTMLImageElement
                 target.src = "/placeholder.svg?height=300&width=400"
@@ -178,8 +178,8 @@ export default function MediaCoverageCarousel({
             {mediaType}
           </Badge>
         </div>
-        <CardContent className="p-6 space-y-4">
-          <h3 className="text-lg font-semibold text-gray-900 min-h-14 line-clamp-2">{item.title || "Untitled Media"}</h3>
+        <CardContent className="md:p-6 p-3 border-t-2  mt-2 border-gray-200 space-y-4">
+          <h3 className="text-gray-700 leading-relaxed  tracking-tight text-2xl font-medium leading-tight overflow-hidden mb-2  line-clamp-2">{item.title || "Untitled Media"}</h3>
       
         </CardContent>
       </Card>
@@ -201,11 +201,11 @@ export default function MediaCoverageCarousel({
   }
 
   return (
-    <section className="md:py-10 py-4 border-t md:border-none border-b border-gray-100 bg-gray-50">
-      <div className="container mx-auto px-4 md:px-0">
-        <div className="flex justify-between items-center mb-2 md:mb-6">
+    <section className="md:py-10 py-10 border-t px-2 md:px-0 md:border-none border-b border-gray-100 bg-white">
+      <div className="container mx-auto ">
+        <div className="flex justify-between items-center mb-4 md:mb-6">
           <div className="space-y-2">
-            <h2 className="text-2xl md:text-3xl font-bold text-gray-900">{title}</h2>
+            <h2 className="text-3xl md:text-3xl font-bold text-gray-900">{title}</h2>
          
           </div>
           {showViewAll && (
@@ -233,8 +233,8 @@ export default function MediaCoverageCarousel({
               ))}
             </CarouselContent>
             {/* Arrows hidden on mobile */}
-            <CarouselPrevious className=" flex left-2 bg-white border-gray-200 w-10 h-10 shadow-lg hover:bg-gray-50" />
-            <CarouselNext className=" flex right-2 bg-white border-gray-200 w-10 h-10 shadow-lg hover:bg-gray-50" />
+            <CarouselPrevious className=" flex left-2 bg-white border-gray-200 w-8 h-8 shadow-lg hover:bg-gray-50" />
+            <CarouselNext className=" flex right-2 bg-white border-gray-200 w-8 h-8 shadow-lg hover:bg-gray-50" />
           </Carousel>
         )}
       </div>

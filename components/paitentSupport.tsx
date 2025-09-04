@@ -44,24 +44,24 @@ export default function PaitentSupport() {
   }
 
   return (
-    <section className="md:py-10 py-4 bg-white">
+    <section className="md:py-10 py-10 md:px-0 px-2 bg-gray-50" id="PatientSupport">
       <div className="container mx-auto md:px-0 px-4">
         {/* Use flex-col-reverse to place content first on mobile, then md:grid to restore original layout */}
         <div className="md:grid lg:grid-cols-12 md:gap-12 items-center flex flex-col-reverse">
           {/* Content Side */}
-          <div className="space-y-6 col-span-5 md:order-1 order-2 mt-0 md:mt-0">
-             <h2 className="text-2xl md:text-4xl font-bold text-gray-900 mb-2 leading-snug">
+          <div className="space-y-3 mdLspacey-6 col-span-5 md:order-1 order-2 mb-2 md:mb-0">
+            <h2 className="md:text-4xl text-3xl font-bold text-gray-700">
               We Stand by Our Patients Every Step of the Way
             </h2>
 
-            <p className="md:text-lg text-base text-gray-600 leading-relaxed">
+            <p className="md:text-lg text-[19px] text-gray-600 leading-relaxed">
               Medivisor takes pride in providing unwavering support to our patients
               throughout their journey. From the moment they step foot in the
               Delhi airport, our dedicated team ensures that they are never left
               to navigate their medical experience alone.
             </p>
 
-            <p className="md:text-lg text-base text-gray-600 leading-relaxed">
+            <p className="md:text-lg text-[19px] text-gray-600 leading-relaxed">
               At every juncture of their treatment process, at least one Medivisor
               staff member is by their side, offering escorting, guidance, and
               assistance every step of the way. Our commitment is to ensure that
@@ -71,20 +71,20 @@ export default function PaitentSupport() {
           </div>
 
           {/* Video Side */}
-          <div className="relative md:col-span-7 w-full mt-5 md:mt-0 md:order-2 order-1">
-            <div className="relative rounded-xs overflow-hidden shadow-md">
-              <div className="relative rounded-xs shadow-lg">
-                <iframe
-                  src="https://www.youtube.com/embed/94RNiXZj8_8?si=7O8XpKXWlyNQq6az"
-                  title="Patient Support Journey"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                  referrerPolicy="strict-origin-when-cross-origin"
-                  allowFullScreen
-                  className="w-full shadow-sm h-full border-y-0 border-gray-100 aspect-[17/10]"
-                />
-              </div>
-            </div>
-          </div>
+         <div className="relative md:col-span-7 w-full mt-5 md:mt-0 md:order-2 order-1">
+  <div className="relative rounded-xs overflow-hidden shadow-md">
+    <div className="relative rounded-xs shadow-lg">
+      <iframe
+        src="https://www.youtube.com/embed/94RNiXZj8_8?modestbranding=1&controls=0&rel=0"
+        title="YouTube video player"
+        className="w-full aspect-[17/10]"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowFullScreen
+      ></iframe>
+    </div>
+  </div>
+</div>
+
         </div>
       </div>
     </section>

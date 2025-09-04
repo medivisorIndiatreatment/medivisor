@@ -3,9 +3,9 @@
 import { useEffect, useState, useCallback, useRef } from "react"
 import { media } from "@wix/sdk"
 import Link from "next/link"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { ChevronLeft, ChevronRight, Play, Pause } from "lucide-react"
+import { ChevronLeft, ChevronRight } from "lucide-react"
 import useEmblaCarousel from "embla-carousel-react"
 import { Skeleton } from "@/components/ui/skeleton"
 import useSWR from "swr"
@@ -68,6 +68,7 @@ function getYouTubeEmbedUrl(youtubeUrl: string | undefined): string | null {
   const match = youtubeUrl.match(regExp)
 
   if (match && match[1] && match[1].length === 11) {
+    // Note: The original code had a typo here. This is the correct way.
     return `https://www.youtube.com/embed/${match[1]}`
   }
   return null
@@ -88,11 +89,11 @@ const fetcher = (url: string) => fetch(url).then((r) => r.json())
 
 export default function BlogCarousel() {
   const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true, align: "start", skipSnaps: false, dragFree: false })
-  const [isPlaying, setIsPlaying] = useState(true)
+  const [isPlaying, setIsPlaying] = useState(false) // Initially set to false to stop autoplay
   const autoplayRef = useRef<NodeJS.Timeout | null>(null)
   const AUTOPLAY_DELAY = 3000 // 3 seconds
 
-  const { data, error, isLoading } = useSWR(`/api/wix-posts?limit=${LIMIT}&offset=${0}`, fetcher)
+  const { data, isLoading } = useSWR(`/api/wix-posts?limit=${LIMIT}&offset=${0}`, fetcher)
 
   const posts: Post[] = Array.isArray(data?.posts)
     ? data.posts.map((p: any) => ({
@@ -124,51 +125,41 @@ export default function BlogCarousel() {
     setIsPlaying(false)
   }, [])
 
-  const toggleAutoplay = useCallback(() => {
-    if (isPlaying) {
-      stopAutoplay()
-    } else {
-      startAutoplay()
-    }
-  }, [isPlaying, startAutoplay, stopAutoplay])
-
   const scrollPrev = useCallback(() => {
     emblaApi && emblaApi.scrollPrev()
-  }, [emblaApi])
+    stopAutoplay() // Stop autoplay on user interaction
+  }, [emblaApi, stopAutoplay])
 
   const scrollNext = useCallback(() => {
     emblaApi && emblaApi.scrollNext()
-  }, [emblaApi])
+    stopAutoplay() // Stop autoplay on user interaction
+  }, [emblaApi, stopAutoplay])
 
   const handleMouseEnter = useCallback(() => {
-    if (isPlaying) {
-      stopAutoplay()
-    }
-  }, [isPlaying, stopAutoplay])
+    stopAutoplay()
+  }, [stopAutoplay])
 
   const handleMouseLeave = useCallback(() => {
-    if (!isPlaying) {
-      startAutoplay()
-    }
-  }, [isPlaying, startAutoplay])
+    // You can choose to re-enable autoplay here if desired
+    // For this request, we are not re-enabling it.
+  }, [])
 
   useEffect(() => {
-    if (!emblaApi) return
-    startAutoplay()
+    // Removed the initial call to startAutoplay() to fulfill the request.
     return () => {
       stopAutoplay()
     }
-  }, [emblaApi, startAutoplay, stopAutoplay])
+  }, [emblaApi, stopAutoplay])
 
   return (
     <section className="py-4 md:py-10">
-      <div className="container mx-auto md:px-0 px-8">
+      <div className="container mx-auto">
         {isLoading ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {Array.from({ length: 4 }).map((_, index) => (
-              <div key={index} className="flex flex-col overflow-hidden border-gray-200 shadow-sm">
-                <Skeleton className="w-full h-56" />
-                <div className="p-4 bg-white">
+              <div key={index} className="flex flex-col overflow-hidden rounded-lg shadow-sm">
+                <Skeleton className="w-full h-56 rounded-t-lg" />
+                <div className="p-4 bg-gray-100">
                   <div className="pb-2">
                     <Skeleton className="h-6 w-3/4 mb-2" />
                   </div>
@@ -188,119 +179,101 @@ export default function BlogCarousel() {
         ) : posts.length === 0 ? (
           <p className="text-center text-gray-600 dark:text-gray-400 mt-10 text-lg">No featured posts available.</p>
         ) : (
-          <div className="relative">
-            <div
-              className="overflow-hidden"
-              ref={emblaRef}
-              onMouseEnter={handleMouseEnter}
-              onMouseLeave={handleMouseLeave}
-            >
+          <div className="relative p-2 md:p-0">
+            <div className="overflow-hidden" ref={emblaRef} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
               <div className="flex -ml-4">
                 {posts.map((post) => {
                   const embedVideoUrl = post.media?.embedMedia?.video?.url
                   const embedThumbnailUrl = post.media?.embedMedia?.thumbnail?.url
                   const youtubeEmbedUrl = getYouTubeEmbedUrl(embedVideoUrl)
-                  const wixImageUrl = getWixImageUrl(
-                    post.media?.wixMedia?.image || post.coverMedia?.image,
-                  )
+                  const wixImageUrl = getWixImageUrl(post.media?.wixMedia?.image || post.coverMedia?.image)
                   const readTime = calculateReadTime(post.content)
 
                   return (
                     <div key={post._id} className="flex-none w-full sm:w-1/2 lg:w-1/4 pl-4">
-                      <div className="flex flex-col overflow-hidden border border-gray-100 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300 ease-in-out">
+                      <Card className="flex flex-col h-full pb-1 shadow-xs hover:shadow-sm transition-shadow duration-300 ease-in-out border-gray-200">
                         <Link href={`/blog/${post.slug}`} className="block">
-                          <div className="relative w-full h-48 overflow-hidden">
-                            {youtubeEmbedUrl ? (
-                              <iframe
-                                className="absolute top-0 left-0 w-full h-full"
-                                src={youtubeEmbedUrl}
-                                title={post.title}
-                                frameBorder="0"
-                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                                allowFullScreen
-                              />
-                            ) : embedVideoUrl ? (
-                              <video
-                                src={embedVideoUrl}
-                                poster={embedThumbnailUrl || "/placeholder.svg"}
-                                controls
-                                className="w-full h-full object-cover"
-                                aria-label={`Play video for ${post.title}`}
-                              >
-                                Your browser does not support the video tag.
-                              </video>
-                            ) : wixImageUrl ? (
-                              <img
-                                src={wixImageUrl || "/placeholder.svg"}
-                                alt={post.title}
-                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
-                              />
-                            ) : (
-                              <div className="w-full h-48 bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-gray-500 dark:text-gray-400 text-lg">
-                                No Media Available
-                              </div>
-                            )}
-                          </div>
-                        </Link>
-                        <div className="p-4 bg-white flex flex-col flex-grow">
-                          <div className="pb-2">
-                            <div className="text-xl font-medium leading-tight">
-                              <Link
-                                href={`/blog/${post.slug}`}
-                                className="hover:text-primary line-clamp-2 text-gray-700 transition-colors duration-200"
-                              >
-                                {post.title}
-                              </Link>
+                          <CardHeader className="p-0 rounded-t-xs overflow-hidden">
+                            <div className="relative w-full" style={{ paddingBottom: "56.25%" }}>
+                              {youtubeEmbedUrl ? (
+                                <iframe
+                                  className="absolute top-0 left-0 w-full h-full object-cover rounded-t-lg"
+                                  src={youtubeEmbedUrl}
+                                  title={post.title}
+                                  frameBorder="0"
+                                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                  allowFullScreen
+                                />
+                              ) : embedVideoUrl ? (
+                                <video
+                                  src={embedVideoUrl}
+                                  poster={embedThumbnailUrl || "/placeholder.svg"}
+                                  controls
+                                  className="absolute top-0 left-0 w-full h-full object-cover rounded-t-lg"
+                                  aria-label={`Play video for ${post.title}`}
+                                >
+                                  Your browser does not support the video tag.
+                                </video>
+                              ) : wixImageUrl ? (
+                                <img
+                                  src={wixImageUrl || "/placeholder.svg"}
+                                  alt={post.title}
+                                  className="absolute top-0 left-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
+                                />
+                              ) : (
+                                <div className="absolute top-0 left-0 w-full h-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-gray-500 dark:text-gray-400 text-lg rounded-t-lg">
+                                  No Media Available
+                                </div>
+                              )}
                             </div>
-                          </div>
-                          <span className="text-sm text-gray-600 dark:text-gray-600">
-                            {post.firstPublishedDate &&
-                              new Date(post.firstPublishedDate).toLocaleDateString("en-US", {
-                                year: "numeric",
-                                month: "short",
-                                day: "numeric",
-                              })}
-                          </span>
-                          <div className="flex-grow pt-2">
-                            {post.excerpt && (
-                              <p className="text-gray-600 dark:text-gray-700 text-base line-clamp-3">{post.excerpt}</p>
-                            )}
-                          </div>
-                          <div className="flex justify-between items-center pt-4 mt-auto">
-                            <span className="text-sm text-gray-600 dark:text-gray-400">{readTime}</span>
-                            <Link href={`/blog/${post.slug}`} passHref>
-                              <button className="border-gray-200 text-medium rounded-sm border px-3 py-1 text-sm font-medium text-gray-700 hover:bg-gray-100 transition-colors duration-200">
-                                Read More
-                              </button>
+                          </CardHeader>
+                        </Link>
+                        <CardContent className="flex flex-col flex-grow p-3 bg-white rounded-b-xs">
+                          <CardTitle className="md:text-xl text-2xl font-medium leading-tight h-16 overflow-hidden mt-2">
+                            <Link href={`/blog/${post.slug}`} className="hover:text-primary line-clamp-2 text-gray-700 transition-colors duration-200">
+                              {post.title}
                             </Link>
+                          </CardTitle>
+                          <div className="flex justify-start gap-x-3 items-center my-2">
+                            <CardDescription className="text-base text-gray-500 font-[400 ] dark:text-gray-600">
+                              {post.firstPublishedDate &&
+                                new Date(post.firstPublishedDate).toLocaleDateString("en-US", {
+                                  year: "numeric",
+                                  month: "short",
+                                  day: "numeric",
+                                })}
+                            </CardDescription>
+                            <span className="text-base text-gray-500 font-[400 ] dark:text-gray-600 ">{readTime}</span>
                           </div>
-                        </div>
-                      </div>
+                          <p className="text-gray-600 dark:text-gray-700 md:text-lg text-[19px] line-clamp-3 mb-2 flex-grow">
+                            {post.excerpt}
+                          </p>
+                        </CardContent>
+                      </Card>
                     </div>
                   )
                 })}
               </div>
             </div>
             <Button
-              className="absolute top-2/5 -translate-y-1/2 border-gray-200 cursor-pointer left-4 -ml-4 z-40 rounded-full bg-white w-10 h-10 p-0"
+              className="absolute top-[45%] -translate-y-1/2 border-gray-200 cursor-pointer left-4 -ml-4 z-40 rounded-full bg-white md:w-8 w-8 h-8 md:h-8 p-0 shadow-md hover:shadow-lg transition-shadow"
               variant="outline"
               onClick={scrollPrev}
             >
-              <ChevronLeft className="w-5 h-5" />
+              <ChevronLeft className="md:w-5 w-4 w-4 md:h-5" />
               <span className="sr-only">Previous slide</span>
             </Button>
             <Button
-              className="absolute top-2/5 -translate-y-1/2 border-gray-200 cursor-pointer right-4 -mr-4 z-10 rounded-full bg-white w-10 h-10 p-0"
+              className="absolute top-[45%] -translate-y-1/2 border-gray-200 cursor-pointer right-4 -mr-4 z-10 rounded-full bg-white md:w-8 w-8 h-8 md:h-8 p-0 shadow-md hover:shadow-lg transition-shadow"
               variant="outline"
               onClick={scrollNext}
             >
-              <ChevronRight className="w-5 h-5" />
+              <ChevronRight className="md:w-5 w-4 w-4 md:h-5" />
               <span className="sr-only">Next slide</span>
             </Button>
           </div>
         )}
       </div>
-      
     </section>
   )
 }

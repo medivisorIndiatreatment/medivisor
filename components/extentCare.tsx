@@ -234,16 +234,16 @@ export default function SocialActivityCarousel() {
   }
 
   return (
-    <section className="md:py-10 py-4 bg-white relative overflow-hidden">
-      <div className="container mx-auto md:px-0 px-4 relative">
+    <section className="md:py-10 py-10 bg-gray-50  md:px-0 px-2 relative overflow-hidden">
+      <div className="container mx-auto relative">
         <div className="grid lg:grid-cols-12 md:gap-12 items-center">
           {/* Content Column - Displayed first on mobile, then on the left on desktop */}
           <div className="lg:col-span-5 space-y-3 md:space-y-5 lg:order-2 order-1 mb-5 lg:mt-0">
             <div className="space-y-2">
-           <h2 className="text-2xl md:text-4xl font-bold text-gray-900 mb-2 leading-snug">
+             <h2 className="md:text-4xl text-3xl font-bold text-gray-700">
                 Every Treatment Counts
               </h2>
-              <p className=" text-base md:text-lg text-gray-600 leading-relaxed">
+              <p className=" text-[19px] md:text-lg text-gray-600 leading-relaxed">
                 We dedicate a significant portion of our revenue to supporting underprivileged individuals in the regions where we operate. This commitment brings us immense joy and fulfillment, knowing we’re making a meaningful impact for those in need. Additionally, the heartfelt well-wishes and blessings we receive create a positive environment that supports us in achieving the highest success rates for our patients.
               </p>
             </div>
@@ -266,7 +266,7 @@ export default function SocialActivityCarousel() {
                           {imageUrl ? (
                             <OptimizedImage
                               src={imageUrl}
-                              alt={moment.title_fld || "Happy moment"}
+                              alt={moment.title || "Happy moment"}
                               fill
                               className="object-cover"
                               fallbackSrc="/placeholder.svg?height=520&width=800&text=Recovery Story"
@@ -284,11 +284,9 @@ export default function SocialActivityCarousel() {
                             <div className="absolute bottom-0 left-0 right-0 p-4 md:p-10 text-white">
                               <div className="max-w-2xl space-y-4">
                                 <h3 className="text-2xl md:text-4xl font-bold leading-tight">
-                                  {moment.title_fld || "Untitled Story"}
+                                  {moment.title || "Untitled Story"}
                                 </h3>
-                                <p className="text-lg md:text-xl opacity-90 leading-relaxed line-clamp-2">
-                                  {moment.shortDescription || moment.excerpt}
-                                </p>
+                            
                                 <div className="flex flex-wrap items-center gap-6 text-sm opacity-80">
                                   {moment.firstPublishedDate && (
                                     <div className="flex items-center gap-2 bg-white/20 backdrop-blur-sm px-3 py-1.5 rounded-full">
@@ -319,11 +317,11 @@ export default function SocialActivityCarousel() {
               </div>
               {/* Enhanced Navigation Controls */}
               {moments.length > 1 && (
-                <div className="absolute inset-0 flex items-center justify-between p-6 pointer-events-none">
+                <div className="absolute inset-0 flex items-center justify-between p-0 md:p-6 pointer-events-none">
                   <Button
                     variant="outline"
                     size="icon"
-                    className="pointer-events-auto w-8 h-8 bg-white/90 hover:bg-white border-white/50 shadow-xl backdrop-blur-sm hover:scale-110 transition-all duration-300"
+                    className="pointer-events-auto w-8 h-8 rounded-full bg-white/90 hover:bg-white border-white/50 shadow-xl backdrop-blur-sm hover:scale-110 transition-all duration-300"
                     onClick={prevSlide}
                   >
                     <ChevronLeft className="h-6 w-6 text-gray-700" />
@@ -331,7 +329,7 @@ export default function SocialActivityCarousel() {
                   <Button
                     variant="outline"
                     size="icon"
-                    className="pointer-events-auto w-8 h-8 bg-white/90 hover:bg-white border-white/50 shadow-xl backdrop-blur-sm hover:scale-110 transition-all duration-300"
+                    className="pointer-events-auto w-8 h-8 rounded-full bg-white/90 hover:bg-white border-white/50 shadow-xl backdrop-blur-sm hover:scale-110 transition-all duration-300"
                     onClick={nextSlide}
                   >
                     <ChevronRight className="h-6 w-6 text-gray-700" />

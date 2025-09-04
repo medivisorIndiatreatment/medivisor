@@ -108,11 +108,11 @@ export default function DidYouKnowSection() {
 
   return (
     <section className="w-full bg-gray-50 py-4 md:py-10">
-      <div className="container mx-auto px-0">
-        <div className="bg-white rounded-md p-4 md:p-10 md:grid grid-cols-2 items-center gap-4 md:gap-12 overflow-hidden border border-gray-100 transition-all duration-700">
+      <div className="container mx-auto ">
+        <div className="md:bg-white rounded-xs p-2  md:p-6 md:grid grid-cols-2 items-center gap-4 md:gap-12 overflow-hidden md:border border-none border-gray-100 transition-all duration-700">
           {/* Left Image Slider (Sticky on Mobile) */}
-          <div className="relative col-span-1 group h-[300px] md:h-auto md:h-96 lg:h-[500px] md:static sticky top-0 md:top-auto mb-6 md:mb-0">
-            <div className="relative w-full h-full overflow-hidden rounded-md">
+          <div className="relative col-span-1 group h-[250px]  md:h-96 lg:h-[500px] md:static sticky top-0 md:top-auto mb-6 md:mb-0">
+            <div className="relative w-full h-full overflow-hidden rounded-xs">
               {/* Main Image */}
               <div className="relative w-full h-full">
                 <Image
@@ -158,7 +158,7 @@ export default function DidYouKnowSection() {
 
        <div className="md:pt-6 pt-2 col-span-1 flex justify-center md:justify-start">
   <div className="max-w-2xl md:px-0">
-    <h3 className="md:text-4xl text-2xl font-bold text-gray-900 mb-4">
+    <h3 className="md:text-4xl text-3xl font-bold text-gray-700 mb-4">
       Did You Know?
     </h3>
 
@@ -169,7 +169,7 @@ export default function DidYouKnowSection() {
             <CircleCheck className="text-[#74BF44] md:text-base text-xs" />
           </div>
         </div>
-        <span className="text-base md:text-lg">
+        <span className="text-[19px] md:text-lg">
           Over 2 million international patients travel to India every year for affordable, high-quality medical care.
         </span>
       </li>
@@ -180,7 +180,7 @@ export default function DidYouKnowSection() {
             <CircleCheck className="text-[#74BF44] md:text-base text-xs" />
           </div>
         </div>
-        <span className="text-base md:text-lg">
+        <span className="text-[19px] md:text-lg">
           India offers treatment at up to 80% lower costs than the Philippines, Thailand, Malaysia, or Singapore.
         </span>
       </li>
@@ -191,7 +191,7 @@ export default function DidYouKnowSection() {
             <CircleCheck className="text-[#74BF44] md:text-base text-xs" />
           </div>
         </div>
-        <span className="text-base md:text-lg">
+        <span className="text-[19px] md:text-lg">
           India is home to hundreds of world-class, JCI-accredited hospitals and thousands of internationally trained surgeons.
         </span>
       </li>
@@ -202,7 +202,7 @@ export default function DidYouKnowSection() {
             <CircleCheck className="text-[#74BF44] md:text-base text-xs" />
           </div>
         </div>
-        <span className="text-base md:text-lg">
+        <span className="text-[19px] md:text-lg">
           The country leads in robotic surgeries, organ transplants, bone marrow transplants, and advanced cancer therapies—all at affordable prices.
         </span>
       </li>
@@ -213,7 +213,7 @@ export default function DidYouKnowSection() {
             <CircleCheck className="text-[#74BF44] md:text-base text-xs" />
           </div>
         </div>
-        <span className="text-base md:text-lg">
+        <span className="text-[19px] md:text-lg">
           With an Indian eVisa available within 24–72 hours, patients can start treatment immediately, with virtually no waiting time.
         </span>
       </li>
@@ -224,7 +224,7 @@ export default function DidYouKnowSection() {
             <CircleCheck className="text-[#74BF44] md:text-base text-xs" />
           </div>
         </div>
-        <span className="text-base md:text-lg">
+        <span className="text-[19px] md:text-lg">
          Medivisor has proudly assisted over 2,000 patients from the Pacific Islands, Africa, CIS countries, and beyond in accessing seamless, world-class medical care in India.
         </span>
       </li>
@@ -235,7 +235,7 @@ export default function DidYouKnowSection() {
             <CircleCheck className="text-[#74BF44] md:text-base text-xs" />
           </div>
         </div>
-        <span className="text-base md:text-lg">
+        <span className="text-[19px] md:text-lg">
         You can reach our India Office at 
         {" "}  <a
             href="tel:+91 83682 47758"

@@ -347,7 +347,7 @@ export default function BlogPost({ slug }: BlogPostProps) {
     return (
       <div className="min-h-screen md:py-10 py-4 bg-gradient-to-br from-gray-50 to-white">
         <main className="container mx-auto px-4 py-12 text-center">
-          <div className="max-w-md mx-auto">
+          {/* <div className="max-w-md mx-auto">
             <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
               <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <span className="text-2xl">🔍</span>
@@ -363,7 +363,7 @@ export default function BlogPost({ slug }: BlogPostProps) {
                 Go Back
               </button>
             </div>
-          </div>
+          </div> */}
         </main>
       </div>
     )
@@ -380,7 +380,7 @@ export default function BlogPost({ slug }: BlogPostProps) {
       <main className="container mx-auto">
         <div className="mx-auto">
           {/* Breadcrumb */}
-          <nav className="md:my-3">
+          {/* <nav className="md:my-3">
             <a href='/blog'>
               <button
                 className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border bg-background hover:text-accent-foreground h-10 px-4 py-2 border-gray-200 text-gray-600 hover:bg-gray-50"
@@ -389,7 +389,7 @@ export default function BlogPost({ slug }: BlogPostProps) {
                 Back to Blog
               </button>
             </a>
-          </nav>
+          </nav> */}
           <div className="md:space-y-12">
             <div className='grid grid-cols-1 md:grid-cols-3 md:gap-4'>
               <div className='col-span-2'>
@@ -397,7 +397,7 @@ export default function BlogPost({ slug }: BlogPostProps) {
                   <div className="p-0 md:p-4">
                     {/* Article Header */}
                     <header className="mt-5">
-                      <h1 className="text-xl md:text-3xl font-medium text-gray-700 mb-6 leading-tight">
+                      <h1 className="text-2xl md:text-3xl font-medium text-gray-700 mb-6 leading-tight">
                         {post.title}
                       </h1>
                     </header>
