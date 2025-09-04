@@ -12,7 +12,9 @@ import { Form, FormControl, FormField, FormItem, FormMessage } from '@/component
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { Loader2, Mail, Check, AlertCircle, X, Phone, User, MessageSquare, MapPin } from 'lucide-react';
 import { cn } from "@/lib/utils";
-import { useRouter } from 'next/navigation'; // Import useRouter
+import { useRouter } from 'next/navigation';
+
+import { countries } from 'countries-list';
 
 // Define the component and its types
 interface ContactModalProps {
@@ -20,26 +22,11 @@ interface ContactModalProps {
   onClose: () => void;
 }
 
-interface CountryRow {
+interface CountryData {
   name: string;
   iso: string;
   dial: string;
 }
-
-// Mock data for demo purposes
-const mockCountries: CountryRow[] = [
-  { name: "United States", iso: "US", dial: "+1" },
-  { name: "Canada", iso: "CA", dial: "+1" },
-  { name: "United Kingdom", iso: "GB", dial: "+44" },
-  { name: "Australia", iso: "AU", dial: "+61" },
-  { name: "Germany", iso: "DE", dial: "+49" },
-  { name: "France", iso: "FR", dial: "+33" },
-  { name: "Japan", iso: "JP", dial: "+81" },
-  { name: "India", iso: "IN", dial: "+91" },
-  { name: "China", iso: "CN", dial: "+86" },
-  { name: "Brazil", iso: "BR", dial: "+55" },
-  // Add more countries as needed
-].sort((a, b) => a.name.localeCompare(b.name));
 
 // Mock submit function for demo
 const submitContact = async (data: any) => {
@@ -52,7 +39,7 @@ const formSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters').max(50, 'Name must be less than 50 characters'),
   email: z.string().email('Please enter a valid email address'),
   phone: z.string().regex(/^\d{6,15}$/, 'Please enter a valid WhatsApp number (6-15 digits)'),
-  countryCode: z.string().regex(/^\+\d{1,4}$/, 'Please select a valid country code'),
+  countryCode: z.string().regex(/^\+\d{1,4}$/, 'Please enter a valid country code (e.g., +1, +44)'),
   message: z.string().min(10, 'Message must be at least 10 characters').max(500, 'Message must be less than 500 characters'),
 });
 
@@ -60,13 +47,21 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLocating, setIsLocating] = useState(true);
   const [submitStatus, setSubmitStatus] = useState<'success' | 'error' | null>(null);
-  const router = useRouter(); // Initialize the router
+  const router = useRouter();
 
-  const countries = useMemo<CountryRow[]>(() => mockCountries, []);
+  // Use a useMemo to process the countries data once
+  const countriesData = useMemo<CountryData[]>(() => {
+    return Object.entries(countries).map(([iso, country]) => ({
+      name: country.name,
+      iso,
+      dial: `+${country.phone[0]}`,
+    })).sort((a, b) => a.name.localeCompare(b.name));
+  }, []);
 
-  const defaultCountry = useMemo<CountryRow>(() => {
-    return countries.find((c) => c.iso === "US") || countries[0] || { name: "United States", iso: "US", dial: "+1" };
-  }, [countries]);
+  // Determine the default country based on a common choice, e.g., US
+  const defaultCountry = useMemo<CountryData>(() => {
+    return countriesData.find((c) => c.iso === "US") || countriesData[0] || { name: "United States", iso: "US", dial: "+1" };
+  }, [countriesData]);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -79,20 +74,24 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
     }
   });
 
-  const { reset, setValue, watch } = form;
+  const { reset, setValue, watch, formState: { errors } } = form;
+
+  // Watch the countryCode field to determine if we're using a manual code
+  const countryCodeWatch = watch('countryCode');
+  const showManualCode = countryCodeWatch === 'manual';
 
   // Effect to handle success status and redirect
   useEffect(() => {
     if (submitStatus === 'success') {
       const timer = setTimeout(() => {
-        router.push('/thank-you'); // Redirect to the thank you page
-        onClose(); // Close the modal
-      }, 2000); // 2-second delay before redirecting
+        router.push('/thank-you');
+        onClose();
+      }, 2000);
       return () => clearTimeout(timer);
     }
-  }, [submitStatus, onClose, router]); // Add router to dependency array
+  }, [submitStatus, onClose, router]);
 
-  // Effect to automatically detect the user's location on component mount
+  // Effect to automatically detect the user's location
   useEffect(() => {
     if ("geolocation" in navigator) {
       navigator.geolocation.getCurrentPosition(
@@ -104,7 +103,7 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
 
             const countryCode = data?.address?.country_code?.toUpperCase();
             if (countryCode) {
-              const detectedCountry = countries.find(c => c.iso === countryCode);
+              const detectedCountry = countriesData.find(c => c.iso === countryCode);
               if (detectedCountry) {
                 setValue('countryCode', detectedCountry.dial);
               }
@@ -124,7 +123,7 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
       console.log("Geolocation is not supported by this browser.");
       setIsLocating(false);
     }
-  }, [countries, setValue]);
+  }, [countriesData, setValue]);
 
   const handleClose = () => {
     reset();
@@ -136,7 +135,7 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
     setIsSubmitting(true);
     setSubmitStatus(null);
 
-    const selectedCountry = countries.find(c => c.dial === values.countryCode);
+    const selectedCountry = countriesData.find(c => c.dial === values.countryCode);
     const countryName = selectedCountry ? selectedCountry.name : '';
 
     try {
@@ -162,10 +161,9 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
   };
 
   const uniqueDialCodes = useMemo(() => {
-    const set = new Set<string>();
-    for (const c of countries) set.add(c.dial);
-    return Array.from(set).sort((a, b) => Number(a.replace("+", "")) - Number(b.replace("+", "")));
-  }, [countries]);
+    const dialCodes = countriesData.map(c => c.dial);
+    return [...new Set(dialCodes)].sort((a, b) => Number(a.replace("+", "")) - Number(b.replace("+", "")));
+  }, [countriesData]);
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
@@ -178,7 +176,7 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
             onClick={handleClose}
             className="absolute top-2 bg-gray-100 right-2 h-6 w-6 rounded-full text-white transition-colors"
           >
-            <X className="h-3 w-3  " />
+            <X className="h-3 w-3" />
           </Button>
 
           <div className="text-center pr-8">
@@ -266,9 +264,9 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
                 <div className="relative mt-1">
                   <select
                     id="country-select"
-                    value={countries.find(c => c.dial === watch('countryCode'))?.iso || ''}
+                    value={countriesData.find(c => c.dial === watch('countryCode'))?.iso || ''}
                     onChange={(e) => {
-                      const selectedCountry = countries.find(c => c.iso === e.target.value);
+                      const selectedCountry = countriesData.find(c => c.iso === e.target.value);
                       if (selectedCountry) {
                         setValue('countryCode', selectedCountry.dial, { shouldValidate: true });
                       }
@@ -277,7 +275,7 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
                     disabled={isLocating}
                   >
                     {isLocating && <option value="" disabled>Locating...</option>}
-                    {!isLocating && countries.map((c) => (
+                    {!isLocating && countriesData.map((c) => (
                       <option key={c.iso} value={c.iso}>
                         {c.name} ({c.dial})
                       </option>
@@ -291,7 +289,7 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
                 </div>
               </div>
 
-              {/* Phone Number */}
+              {/* Phone Number with Manual Input Option */}
               <div>
                 <Label htmlFor="whatsapp" className="text-sm font-medium mb-1 text-gray-600 flex items-center">
                   <Phone className="w-4 h-4 mr-1" />
@@ -302,16 +300,40 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
                     control={form.control}
                     name="countryCode"
                     render={({ field }) => (
-                      <select
-                        {...field}
-                        className="h-9 w-16 rounded-md border border-gray-300 bg-white px-1 text-xs focus:outline-none focus:border-[#E22026] focus:ring-2 focus:ring-[#E22026]/20"
-                      >
-                        {uniqueDialCodes.map((dial) => (
-                          <option key={dial} value={dial}>
-                            {dial}
-                          </option>
-                        ))}
-                      </select>
+                      <>
+                        {!showManualCode ? (
+                          <select
+                            {...field}
+                            className="h-9 w-16 rounded-md border border-gray-300 bg-white px-1 text-xs focus:outline-none focus:border-[#E22026] focus:ring-2 focus:ring-[#E22026]/20"
+                            onChange={(e) => {
+                              const value = e.target.value;
+                              if (value === 'manual') {
+                                setValue('countryCode', '', { shouldValidate: true });
+                              } else {
+                                field.onChange(value);
+                              }
+                            }}
+                          >
+                            {uniqueDialCodes.map((dial) => (
+                              <option key={dial} value={dial}>
+                                {dial}
+                              </option>
+                            ))}
+                            <option value="manual">Manual</option>
+                          </select>
+                        ) : (
+                          <div className="w-1/4">
+                            <Input
+                              {...field}
+                              placeholder="+XX"
+                              className="h-9 text-sm border-gray-300 focus:border-[#E22026] focus:ring-[#E22026]/20 rounded-md"
+                            />
+                            {errors.countryCode && (
+                              <FormMessage className="text-xs mt-1">{errors.countryCode.message}</FormMessage>
+                            )}
+                          </div>
+                        )}
+                      </>
                     )}
                   />
                   <FormField
