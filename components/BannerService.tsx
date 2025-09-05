@@ -29,7 +29,7 @@ export default function Banner({
   children,
 }: BannerProps) {
   return (
-    <section className="relative overflow-hidden bg-white py-0 pt-10 md:pt-0 md:py-0 md:h-[70vh]">
+    <section className="relative md:px-0 px-2 overflow-hidden bg-white py-0 pt-10 md:pt-0 md:py-0 md:h-[70vh]">
 
 
 
@@ -42,11 +42,11 @@ export default function Banner({
               {topSpanText}
             </span>
           )}
-          <h1 className="text-2xl md:text-5xl font-semibold text-black leading-tight">
+          <h1 className="text-3xl md:text-5xl font-semibold text-black leading-tight">
             {title}
           </h1>
           <p
-            className="text-gray-700 text-base md:text-lg leading-relaxed"
+            className="text-gray-700 text-[19px] md:text-lg leading-relaxed"
             dangerouslySetInnerHTML={{ __html: description }}
           />
 

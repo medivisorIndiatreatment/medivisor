@@ -112,7 +112,7 @@ export default function WhyChooseUsSection() {
         : defaultContent
 
   return (
-    <section className="relative py-10 bg-gray-100 px-4 md:px-10 overflow-hidden">
+    <section className="relative py-10 bg-gray-100 px-2 md:px-0 overflow-hidden">
       {/* Overlay for readability */}
       <div className="absolute inset-0 bg-white opacity-60"></div>
 
@@ -168,14 +168,14 @@ export default function WhyChooseUsSection() {
                   {isCurrentlyHovered ? stat.hoverIcon : stat.icon}
                 </div>
                 <h3 className="text-3xl font-semibold text-gray-900 leading-tight z-10">{stat.value}</h3>
-                <p className="text-base md:text-xl text-gray-700 mt-1 font-medium z-10">{stat.label}</p>
-                <p className="md:px-10 px-4 text-base md:text-lg text-gray-700 mt-2 z-10">{stat.description}</p>
+                <p className="text-2xl md:text-xl text-gray-700 mt-1 font-medium z-10">{stat.label}</p>
+                <p className="md:px-10 px-4 text-[19px] md:text-lg text-gray-700 mt-2 z-10">{stat.description}</p>
               </motion.div>
             )
           })}
         </div>
 
-      
+
       </div>
     </section>
   )

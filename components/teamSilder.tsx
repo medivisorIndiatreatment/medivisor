@@ -178,8 +178,8 @@ export default function TeamSlider() {
 
   if (currentTeamMembers.length === 0) {
     return (
-      <section className="bg-white md:py-10 py-4">
-        <div className="container mx-auto px-4 md:px-0">
+      <section className="bg-white md:py-10 md:px-0 px-2 py-10">
+        <div className="container mx-auto">
           <div className="text-center max-w-2xl mx-auto">
             <div className="inline-flex items-center justify-center w-24 h-24 bg-gradient-to-br from-red-100 to-purple-100 rounded-full mb-8">
               <Users className="h-12 w-12 text-red-600" />
@@ -195,11 +195,11 @@ export default function TeamSlider() {
   }
 
   return (
-    <section className="bg-gray-50 md:py-10 py-4">
-      <div className="container mx-auto px-4 md:px-0">
-        <div className="flex justify-between items-center mb-2 md:mb-6">
+    <section className="bg-gray-50 px-2 md:px-0 md:py-10 py-10">
+      <div className="container mx-auto ">
+        <div className="flex justify-between items-center mb-3 md:mb-6">
           <div>
-            <h2 className="text-2xl md:text-4xl font-bold text-gray-900">Our Team</h2>
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900">Our Team</h2>
           </div>
           <div className="flex gap-2">
             <button
@@ -241,7 +241,7 @@ export default function TeamSlider() {
                     />
                   </div>
                   <div className="p-6 flex flex-col flex-grow">
-                    <h3 className="text-xl font-semibold text-gray-900 mb-1">{member.name}</h3>
+                    <h3 className="md:text-xl text-2xl font-semibold text-gray-900 mb-1">{member.name}</h3>
                     <p className="text-base text-gray-600 font-medium mb-3 line-clamp-1">{member.role}</p>
                     <p className="text-sm text-gray-600 leading-relaxed line-clamp-3 flex-grow">
                       {member.shortDescription || member.bio}

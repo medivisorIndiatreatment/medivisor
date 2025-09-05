@@ -105,7 +105,7 @@ const ServiceCard = ({ service, onOpenModal }: { service: Service; onOpenModal: 
 
   return (
     <div className="keen-slider__slide">
-      <div className="group bg-white rounded-xs overflow-hidden shadow-xs hover:shadow-xs transition-all duration-300 border border-gray-100 h-[550px] md:h-[650px] flex flex-col relative">
+      <div className="group bg-white rounded-xs overflow-hidden shadow-xs hover:shadow-xs transition-all duration-300 border border-gray-100 h-auto md:h-[730px] flex flex-col relative">
         {service.isPopular && (
           <div className="absolute top-3 right-3 z-10 bg-gradient-to-r from-red-500 to-red-600 text-white text-xs font-medium px-2 py-1 rounded-full">
             Popular
@@ -128,9 +128,9 @@ const ServiceCard = ({ service, onOpenModal }: { service: Service; onOpenModal: 
             </div>
           )}
         </div>
-        <div className="md:p-5 p-3 flex flex-col flex-grow">
-          <div className="flex items-start justify-between mb-3">
-            <h3 className="md:text-xl text-xl font-medium text-gray-900 text-left leading-tight flex-1">{service.title}</h3>
+        <div className="md:p-3 p-3 flex flex-col flex-grow">
+          <div className="flex items-start justify-between my-3">
+            <h3 className="md:text-xl text-2xl font-medium text-gray-900 text-left leading-tight flex-1">{service.title}</h3>
             {service.price && (
               <div className="flex items-center gap-1 text-green-600 font-medium text-sm ml-2">
                 <DollarSign className="w-3 h-3" />
@@ -139,7 +139,7 @@ const ServiceCard = ({ service, onOpenModal }: { service: Service; onOpenModal: 
             )}
           </div>
           {(service.duration || service.tags) && (
-            <div className="flex items-center gap-2 md:mb-3 flex-wrap">
+            <div className="flex items-center gap-2 md:mb-3 mb-2 flex-wrap">
               {service.duration && (
                 <div className="flex items-center gap-1 text-gray-500 text-xs bg-gray-100 px-2 py-1 rounded-full">
                   <Clock className="w-3 h-3" />
@@ -154,8 +154,8 @@ const ServiceCard = ({ service, onOpenModal }: { service: Service; onOpenModal: 
               ))}
             </div>
           )}
-          <div className="md:mb-4 flex-grow h- ">
-            <p className="md:text-lg text-sm text-left text-gray-600 leading-relaxed">
+          <div className="md:mb-4 mb-5 flex-grow h- ">
+            <p className="md:text-base text-[19px] text-left text-gray-600 leading-relaxed">
               {truncateText(service.shortDescription || service.description)}
             </p>
           </div>
@@ -163,17 +163,17 @@ const ServiceCard = ({ service, onOpenModal }: { service: Service; onOpenModal: 
             <ul className="space-y-2">
               {service.benefits.slice(0, 3).map((benefit, benefitIndex) => (
                 <li key={benefitIndex} className="flex items-start gap-2">
-                  <div className="flex-shrink-0 w-4 md:w-5 h-4 md:h-5 rounded-full bg-green-100 flex items-center justify-center mt-0.5">
-                    <Check className="w-3 h-3 text-green-600" />
+                  <div className="flex-shrink-0 w-6 md:w-5 h-6 md:h-5 rounded-full bg-green-100 flex items-center justify-center mt-0.5">
+                    <Check className="md:w-3 md:h-3 w-4 h-4 text-green-600" />
                   </div>
-                  <span className="md:text-base text-sm text-left text-gray-600 leading-relaxed">{benefit}</span>
+                  <span className="md:text-base text-[19px] text-left text-gray-600 leading-relaxed">{benefit}</span>
                 </li>
               ))}
             </ul>
           </div>
           <div className="mt-auto pt-0 text-left">
             <Button
-              className="inline-flex items-center w-full justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border bg-background hover:text-accent-foreground h-10 px-4 py-2 border-gray-200 text-gray-600 hover:bg-gray-50  left-4 right-4 mb-3"
+              className="inline-flex items-center w-full justify-center whitespace-nowrap rounded-md text-lg font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border bg-background hover:text-accent-foreground h-10 px-4 py-2 border-gray-200 text-gray-600 hover:bg-gray-50  left-4 right-4 mb-3"
               onClick={onOpenModal}
             >
               {service.ctaText || 'Enquire Now'}
@@ -391,11 +391,11 @@ export default function Services() {
 
   return (
     <>
-      <section className="relative bg-white py-4 md:py-10" id="Services">
-        <div className="container md:px-0 px-4 mx-auto">
-          <div className="flex justify-between items-center mb-2 md:mb-6">
+      <section className="relative bg-white py-10 px-2 md:px-0 md:py-10" id="Services">
+        <div className="container  mx-auto">
+          <div className="flex justify-between items-center mb-3 md:mb-6">
             <div>
-              <h2 className="text-2xl md:text-4xl mb-0 font-bold text-left text-gray-900">Our Services</h2>
+              <h2 className="text-3xl  md:text-4xl mb-2 font-bold text-left text-gray-900">Our Services</h2>
               {error && (
                 <div className="flex items-center gap-2 text-sm text-amber-600 mt-2">
                   <AlertCircle className="w-4 h-4" />

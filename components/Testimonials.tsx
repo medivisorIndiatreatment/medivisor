@@ -50,12 +50,12 @@ export default function Testimonials() {
       treatment: "Kidney Stone Removal",
       title: "Freda Sofu from Solomon Islands - Kidney Stone Removal",
     },
-    {
-      id: "dQw4w9WgXcQ",
-      name: "Maria Santos",
-      treatment: "Cardiac Surgery",
-      title: "Maria Santos from Philippines - Cardiac Surgery",
-    },
+    // {
+    //   id: "dQw4w9WgXcQ",
+    //   name: "Maria Santos",
+    //   treatment: "Cardiac Surgery",
+    //   title: "Maria Santos from Philippines - Cardiac Surgery",
+    // },
   ]
 
   useEffect(() => {
