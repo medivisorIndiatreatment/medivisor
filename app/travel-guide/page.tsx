@@ -40,40 +40,40 @@ export default function TravelGuidePage() {
 
   return (
     <div className="min-h-screen bg-white font-sans antialiased">
-     <Banner
-  topSpanText="Travel Guide"
-  title="Your Medical Journey to India Made Easy"
-  description="Traveling for treatment can feel overwhelming, but we’re here to make it simple. From what to pack, where to stay, and how to get around — our guide helps you and your family feel prepared, comfortable, and confident every step of the way."
-  buttonText="Explore Travel Tips"
-  buttonLink="/initiatives"
-  bannerBgImage="/service-banner.png"
-  mainImageSrc="/about-main.png"
-  mainImageAlt="Friendly Travel Guide for Medical Journey"
-/>
+      <Banner
+        topSpanText="Travel Guide"
+        title="Your Medical Journey to India Made Easy"
+        description="Traveling for treatment can feel overwhelming, but we’re here to make it simple. From what to pack, where to stay, and how to get around — our guide helps you and your family feel prepared, comfortable, and confident every step of the way."
+        buttonText="Explore Travel Tips"
+        buttonLink="/initiatives"
+        bannerBgImage="/service-banner.png"
+        mainImageSrc="/about-main.png"
+        mainImageAlt="Friendly Travel Guide for Medical Journey"
+      />
 
 
       {/* Before Departure Section */}
-      <section className="relative bg-white border-t border-gray-100 py-10">
-        <div className="container px-4 md:px-0 mx-auto">
+      <section className="relative px-2 md:px-0 bg-white border-t border-gray-100 py-10">
+        <div className="container  mx-auto">
           <div className="text-center mb-8">
             <div className="flex justify-center mb-6">
               <div className="p-3 bg-gray-100 animate-pulse rounded-xs shadow-xs border border-gray-200">
                 <img src="/icon/air.png" className="w-10 h-10" alt="Departure Icon" />
               </div>
             </div>
-            <h2 className="text-2xl md:text-4xl font-bold text-gray-900 mb-2">Before Departure</h2>
-            <p className="md:text-lg text-base text-gray-600 max-w-2xl mx-auto">A comprehensive checklist to help you prepare for a successful and stress-free medical trip.</p>
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-2">Before Departure</h2>
+            <p className="md:text-lg text-[19px] text-gray-600 max-w-2xl mx-auto">A comprehensive checklist to help you prepare for a successful and stress-free medical trip.</p>
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {beforeDepartureItems.map((item, index) => (
               <Card key={index} className="bg-gray-50 border border-gray-100 rounded-xs shadow-xs hover:shadow-sm transition-all duration-300">
-                <div className="flex items-center gap-3 p-4 border-b border-gray-100">
+                <div className="flex items-center gap-3 p-3 md:p-4 border-b border-gray-200 md:border-gray-100">
                   <div className="flex-shrink-0 p-3 bg-white rounded-full shadow-sm text-gray-900">{item.icon}</div>
-                  <CardTitle className="text-lg font-semibold text-gray-900">{item.title}</CardTitle>
+                  <CardTitle className="md:text-lg text-2xl font-semibold text-gray-700">{item.title}</CardTitle>
                 </div>
-                <CardContent className="p-4">
-                  <p className="text-gray-700 text-base leading-relaxed">{item.description}</p>
+                <CardContent className="p-3 md:p-4">
+                  <p className="text-gray-700 text-xl md:text-base leading-relaxed">{item.description}</p>
                 </CardContent>
               </Card>
             ))}
@@ -82,8 +82,8 @@ export default function TravelGuidePage() {
       </section>
 
       {/* At the Transit Airport Section */}
-      <section className="py-16 bg-gray-50">
-        <div className="container px-4 md:px-0 mx-auto">
+      <section className="py-10 px-2 md:px-0 bg-gray-50">
+        <div className="container mx-auto">
           <div className="text-center mb-10">
             <div className="flex justify-center mb-4">
               <div className="p-4 bg-white  rounded-full shadow-sm border border-gray-200">
@@ -91,7 +91,7 @@ export default function TravelGuidePage() {
               </div>
             </div>
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-2">At the Transit Airport</h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">Smart strategies to navigate your layover with ease and confidence.</p>
+            <p className="md:text-lg text-[19px] text-gray-600 max-w-2xl mx-auto">Smart strategies to navigate your layover with ease and confidence.</p>
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -100,11 +100,11 @@ export default function TravelGuidePage() {
                 <div className="relative h-40 w-full overflow-hidden">
                   <img src={tip.image} alt={tip.title} className="object-cover w-full h-full group-hover:scale-110 transition-transform duration-700" />
                 </div>
-                <CardHeader className="px-5 pt-4 pb-1">
-                  <CardTitle className="text-xl font-semibold text-gray-800">{tip.title}</CardTitle>
+                <CardHeader className="md:px-5 px-3 pt-4 pb-1">
+                  <CardTitle className="text-2xl font-semibold text-gray-800">{tip.title}</CardTitle>
                 </CardHeader>
-                <CardContent className="px-5 pb-5 pt-0">
-                  <p className="text-gray-600 text-base leading-relaxed">{tip.description}</p>
+                <CardContent className="md:px-5 px-3 pb-5 pt-0">
+                  <p className="text-gray-600 text-[19px] md:text-base leading-relaxed">{tip.description}</p>
                 </CardContent>
               </Card>
             ))}
@@ -113,7 +113,7 @@ export default function TravelGuidePage() {
       </section>
 
       {/* After Arriving Section */}
-      <section className="py-16 border-t border-gray-200 bg-white">
+      <section className="py-10 px-2 md:px-0 border-t border-gray-200 bg-white">
         <div className="container px-4 md:px-0 mx-auto grid grid-cols-1 lg:grid-cols-2 gap-10 items-start">
           {/* Left Side */}
           <div className="lg:sticky top-20">
@@ -123,17 +123,17 @@ export default function TravelGuidePage() {
 
           {/* Right Side */}
           <div className="space-y-6">
-            <p className="text-lg text-gray-600">Follow these important steps to ensure a smooth arrival and transition for your medical journey in India.</p>
+            <p className="md:text-lg text-[19px] text-gray-600">Follow these important steps to ensure a smooth arrival and transition for your medical journey in India.</p>
             <div className="space-y-4">
               {arrivalSteps.map((step, index) => (
                 <div key={index} className="flex items-start gap-3">
                   <CheckCircle className="text-[#75c044] mt-1 flex-shrink-0" />
-                  <p className="text-gray-700">{step}</p>
+                  <p className="text-gray-700 md:text-base text-[19px]">{step}</p>
                 </div>
               ))}
             </div>
             <div className="pt-6 border-t border-gray-100">
-              <p className="text-gray-600">Safe travels, and we look forward to assisting you on your medical journey in India. If you have any further questions or need support, feel free to reach out. <b>Take care and best wishes for a successful and comfortable stay.</b></p>
+              <p className="text-gray-600 md:text-base text-[19px]">Safe travels, and we look forward to assisting you on your medical journey in India. If you have any further questions or need support, feel free to reach out. <b>Take care and best wishes for a successful and comfortable stay.</b></p>
             </div>
           </div>
         </div>

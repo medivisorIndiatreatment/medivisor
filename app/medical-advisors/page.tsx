@@ -136,7 +136,7 @@ export default function MedicalAdvisorsPage() {
 
     return (
 
-      <Card className="group relative border-gray-100 flex flex-col overflow-hidden rounded-md border bg-white shadow-none ring-1 ring-gray-100 transition-all duration-300 hover:shadow-sm rounded-xs hover:ring-primary/50 dark:bg-gray-900 dark:ring-gray-800 dark:hover:ring-primary/50">
+      <Card className="group relative border-gray-100 flex flex-col overflow-hidden rounded-md border bg-white shadow-none ring-1 ring-gray-100 transition-all duration-300 hover:shadow-sm rounded-xs hover:ring-primary/50  ">
         {/* Image Section */}
         <div className="relative h-72 w-full overflow-hidden">
           {imageUrl ? (
@@ -155,7 +155,7 @@ export default function MedicalAdvisorsPage() {
           <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
         </div>
         {/* Content */}
-        <div className="flex flex-grow flex-col space-y-0 px-5 mt-1 py-4">
+        <div className="flex flex-grow flex-col space-y-0 px-5 mt-1 py-2 md:py-4">
           {/* Name */}
           <h2 className="text-2xl font-semibold text-gray-700 mb-0">
             {advisor.name || "Medical Advisor"}
@@ -166,11 +166,11 @@ export default function MedicalAdvisorsPage() {
           {advisor.specialty && (
             <div className="flex items-center gap-0 ">
 
-              <span className="text-lg font-medium text-gray-600 mb-0 ">{advisor.specialty}</span>
+              <span className="text-lg font-normal text-gray-600 mb-0 ">{advisor.specialty}</span>
             </div>
           )}
-          <p className="text-gray-700 text-base md:text-base mb-3 mt-0 leading-relaxed flex-grow line-clamp-2">
-           {advisor.experience}
+          <p className="text-gray-700 text-[19px] md:text-base mb-3 mt-0 leading-relaxed flex-grow line-clamp-2">
+            {advisor.experience}
           </p>
         </div>
         {/* Footer CTA */}
@@ -194,13 +194,13 @@ export default function MedicalAdvisorsPage() {
         description="At Medivisor India Treatment, our team of highly qualified and experienced medical advisors is dedicated to guiding you through your healthcare journey. Discover the specialists who make world-class treatment accessible."
         buttonText="Find Your Specialist"
         buttonLink="/medical-advisors/#advisor-gallery" // Updated anchor
- 
+
         bannerBgImage="/placeholder.svg?height=800&width=1200" // Placeholder for a relevant image
-         mainImageSrc="/about-main.png" 
+        mainImageSrc="/about-main.png"
         mainImageAlt="Medivisor India Medical Advisors"
       />
-     
-      <section className="bg-gray-50">
+
+      <section className="bg-gray-50 px-2 md:px-0 py-10">
         <div className="container mx-auto md:px-0 px-4 py-4  md:py-10">
           {/* Error State */}
           {error && (

@@ -105,7 +105,7 @@ const ServiceCard = ({ service, onOpenModal }: { service: Service; onOpenModal: 
 
   return (
     <div className="keen-slider__slide">
-      <div className="group bg-white rounded-xs overflow-hidden shadow-xs hover:shadow-xs transition-all duration-300 border border-gray-100 h-auto md:h-[730px] flex flex-col relative">
+      <div className="group bg-white rounded-xs overflow-hidden shadow-xs hover:shadow-xs transition-all duration-300 border border-gray-100 h-auto md:h-[650px] flex flex-col relative">
         {service.isPopular && (
           <div className="absolute top-3 right-3 z-10 bg-gradient-to-r from-red-500 to-red-600 text-white text-xs font-medium px-2 py-1 rounded-full">
             Popular
@@ -130,30 +130,10 @@ const ServiceCard = ({ service, onOpenModal }: { service: Service; onOpenModal: 
         </div>
         <div className="md:p-3 p-3 flex flex-col flex-grow">
           <div className="flex items-start justify-between my-3">
-            <h3 className="md:text-xl text-2xl font-medium text-gray-900 text-left leading-tight flex-1">{service.title}</h3>
-            {service.price && (
-              <div className="flex items-center gap-1 text-green-600 font-medium text-sm ml-2">
-                <DollarSign className="w-3 h-3" />
-                {service.price}
-              </div>
-            )}
+            <h3 className="md:text-xl text-2xl font-medium line-clamp-1 text-gray-900 text-left leading-tight flex-1">{service.title}</h3>
+           
           </div>
-          {(service.duration || service.tags) && (
-            <div className="flex items-center gap-2 md:mb-3 mb-2 flex-wrap">
-              {service.duration && (
-                <div className="flex items-center gap-1 text-gray-500 text-xs bg-gray-100 px-2 py-1 rounded-full">
-                  <Clock className="w-3 h-3" />
-                  {service.duration}
-                </div>
-              )}
-              {service.tags?.slice(0, 2).map((tag, tagIndex) => (
-                <div key={tagIndex} className="flex items-center gap-1 text-blue-600 text-xs bg-blue-50 px-2 py-1 rounded-full">
-                  <Tag className="w-3 h-3" />
-                  {tag}
-                </div>
-              ))}
-            </div>
-          )}
+          
           <div className="md:mb-4 mb-5 flex-grow h- ">
             <p className="md:text-base text-[19px] text-left text-gray-600 leading-relaxed">
               {truncateText(service.shortDescription || service.description)}
@@ -173,7 +153,7 @@ const ServiceCard = ({ service, onOpenModal }: { service: Service; onOpenModal: 
           </div>
           <div className="mt-auto pt-0 text-left">
             <Button
-              className="inline-flex items-center w-full justify-center whitespace-nowrap rounded-md text-lg font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border bg-background hover:text-accent-foreground h-10 px-4 py-2 border-gray-200 text-gray-600 hover:bg-gray-50  left-4 right-4 mb-3"
+              className="inline-flex items-center w-full justify-center whitespace-nowrap rounded-md md:text-base text-lg font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border bg-background hover:text-accent-foreground h-10 px-4 py-2 border-gray-200 text-gray-600 hover:bg-gray-50  left-4 right-4 mb-3"
               onClick={onOpenModal}
             >
               {service.ctaText || 'Enquire Now'}

@@ -103,14 +103,14 @@ export default function SafetyMeasures() {
   const isTwoCards = cards.length === 2;
 
   return (
-    <section className="md:py-10 py-6 bg-gray-50 overflow-hidden">
+    <section className="md:py-10 py-10 bg-gray-50 overflow-hidden">
       <div className="container mx-auto px-4 md:px-0">
         {/* Heading */}
         <div className="text-center mb-8 sm:mb-10 md:mb-12">
-          <h2 className="text-2xl md:text-4xl font-bold text-gray-900">
+          <h2 className="text-3xl md:text-4xl font-bold text-gray-900">
             Our Patient Safety Measures
           </h2>
-          <p className="mt-3 sm:mt-4 text-base md:text-lg text-gray-700 max-w-2xl mx-auto px-2">
+          <p className="mt-3 sm:mt-4 text-[19px] md:text-lg text-gray-700 max-w-2xl mx-auto px-2">
             At Medivisor, patient safety is not just a protocol - it's a promise.
             From the moment a patient lands to the time they return home, we implement
             robust systems to ensure every step of their medical journey is secure.
@@ -126,7 +126,7 @@ export default function SafetyMeasures() {
                 key={tab.id}
                 variant="outline"
                 size="sm"
-                className={`flex items-center gap-2 px-4 py-2 whitespace-nowrap rounded-full border transition-all duration-200 ${
+                className={`flex items-center text-lg gap-2 px-4 py-2 whitespace-nowrap rounded-full border transition-all duration-200 ${
                   activeTab === tab.id
                     ? 'bg-red-600 text-white border-red-600'
                     : 'bg-white text-gray-600 border-gray-200 hover:bg-red-50'
@@ -145,7 +145,7 @@ export default function SafetyMeasures() {
               <Button
                 key={tab.id}
                 variant="ghost"
-                className={`py-3 px-6 text-base md:text-lg font-semibold border-b-4 rounded-none transition-all ${
+                className={`py-3 px-6 text-lg md:text-lg font-semibold border-b-4 rounded-none transition-all ${
                   activeTab === tab.id
                     ? 'text-red-600 border-red-600'
                     : 'text-gray-600 border-transparent hover:text-red-600'
@@ -160,7 +160,7 @@ export default function SafetyMeasures() {
 
           {/* Content */}
           <div className="tab-content-container bg-white p-4 overflow-y-auto max-h-[500px]">
-            <h2 className="text-xl sm:text-2xl font-medium text-gray-700 mb-4 text-center">
+            <h2 className="text-2xl sm:text-2xl font-medium text-gray-700 mb-4 text-center">
               {tabContent[activeTab as keyof typeof tabContent].title}
             </h2>
 
@@ -174,15 +174,15 @@ export default function SafetyMeasures() {
               {cards.map((card, index) => (
                 <div
                   key={index}
-                  className="bg-white rounded-md border border-gray-100 p-5 sm:p-6 hover:shadow-md transition-all"
+                  className="bg-white rounded-md md:border md:border-gray-100 p-0 sm:p-6 hover:shadow-md transition-all"
                 >
-                  <h3 className="text-base sm:text-xl md:text-2xl font-semibold text-gray-700 mb-3">
+                  <h3 className="text-[19px] sm:text-xl md:text-2xl font-semibold text-gray-700 mb-3">
                     {card.title}
                   </h3>
-                  <p className="text-gray-700 text-sm md:text-base leading-relaxed mb-4">
+                  <p className="text-gray-700 text-[19px] md:text-base leading-relaxed mb-4">
                     {card.description}
                   </p>
-                  <ul className="space-y-2 text-sm md:text-base text-gray-700">
+                  <ul className="space-y-2 text-[19px] md:text-base text-gray-700">
                     {card.details.map((detail, detailIndex) => (
                       <li key={detailIndex} className="flex items-start gap-2">
                         <span className="text-[#4CAF50] font-bold mt-1">✓</span>

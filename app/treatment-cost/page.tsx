@@ -162,12 +162,12 @@ export default function TreatmentsPage() {
           mainImageSrc="/about-main.png"
           mainImageAlt="Affordable Medical Treatment Costs in India"
         />
-        <section className="bg-gray-100 py-10">
-          <div className="container mx-auto px-4 md:px-0">
-            <Card className="bg-white/80 md:w-2/3 mx-auto md:p-7 p-2 px-2 backdrop-blur-sm border-0 shadow-xs">
-              <CardContent className="space-y-6 px-3">
+        <section className="bg-gray-100 px-2 md:px-0 py-10">
+          <div className="container mx-auto ">
+            <Card className="md:bg-white/80 md:shadow-xs shadow-none md:w-2/3 md:px-6 px-0 mx-auto md:p-7  md:backdrop-blur-sm border-0 ">
+              <CardContent className="space-y-6 px-0 md:px-3">
                 <div className="prose prose-lg max-w-none">
-                  <p className="text-base md:text-lg text-gray-700 mt-2 z-10">
+                  <p className="text-[19px] md:text-lg text-gray-700 mt-2 z-10">
                     As Medivisor, our expertise lies in orchestrating medical
                     treatments in India, and we take pride in delivering
                     detailed and personalized cost estimates. To initiate the
@@ -193,11 +193,11 @@ export default function TreatmentsPage() {
                 </div>
 
                 <div className="grid md:grid-cols-2 gap-6 mt-8">
-                  <Card className="border border-gray-200 shadow-xs bg-gray-50/50">
-                    <CardContent className="p-6">
-                      <div className="flex items-center gap-3 mb-4">
-                        <Mail className="h-5 w-5 text-gray-700" />
-                        <h3 className="font-semibold text-lg text-gray-800">
+                  <Card className="border border-gray-200 shadow-xs bg-white md:bg-gray-50/50">
+                    <CardContent className="md:p-6 p-3">
+                      <div className="flex items-center gap-3 mb-1 md:mb-4">
+                        <Mail className="md:h-5 w-6 h-6 md:w-5 text-gray-700" />
+                        <h3 className="font-semibold text-xl md:text-lg text-gray-800">
                           Email Your Reports
                         </h3>
                       </div>
@@ -214,11 +214,11 @@ export default function TreatmentsPage() {
                     </CardContent>
                   </Card>
 
-                  <Card className="border border-gray-200 shadow-xs bg-gray-50/50">
-                    <CardContent className="p-6">
-                      <div className="flex items-center gap-3 mb-4">
-                        <MessageCircle className="h-5 w-5 text-green-600" />
-                        <h3 className="font-semibold text-lg text-gray-800">
+                  <Card className="border border-gray-200 shadow-xs bg-white md:bg-gray-50/50">
+                    <CardContent className="md:p-6 p-3">
+                      <div className="flex items-center gap-3 mb-1 md:mb-4">
+                        <MessageCircle className="md:h-5 w-6 h-6 md:w-5 text-green-500" />
+                        <h3 className="font-semibold text-xl md:text-lg text-gray-800">
                           WhatsApp / Viber
                         </h3>
                       </div>
@@ -248,8 +248,8 @@ export default function TreatmentsPage() {
           </div>
         </section>
 
-        <section id="treatments-gallery" className="container mx-auto px-4 py-10">
-          <div className="space-y-6">
+        <section id="treatments-gallery" className=" px-2 py-10">
+          <div className="space-y-6 container mx-auto">
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {loading && (
                 <>

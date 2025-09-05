@@ -57,56 +57,67 @@ export default function TreatmentProcessPage() {
   ]
 
   return (
-    <section className="min-h-screen">
+    <section className="min-h-screen md:px-0 px-2 bg-white">
       <div className="space-y-0">
         {steps.map((step, index) => {
           const IconComponent = step.icon
           const isEven = index % 2 === 0
           const sectionBg = isEven ? "md:bg-gray-50" : "md:bg-white bg-gray-50"
           const cardBg = isEven ? "bg-white" : "bg-gray-50"
-          const cardBgInner = isEven ? "bg-gray-50" : "bg-white" // 👈 alternate logic
+          const cardBgInner = isEven ? "bg-gray-50" : "bg-white"
 
           return (
-            <div key={step.id} className={`${sectionBg} py-14`}>
-              <div className="container mx-auto md:px-0 px-4">
+            <div key={step.id} className={`${sectionBg} py-10 sm:py-14`}>
+              <div className="container mx-auto px-4 sm:px-6 lg:px-0">
                 <div
-                  className={`flex flex-col ${isEven ? "lg:flex-row" : "lg:flex-row-reverse"} items-center border border-gray-200 md:border-none  gap-8 lg:gap-12`}
+                  className={`flex flex-col ${
+                    isEven ? "lg:flex-row" : "lg:flex-row-reverse"
+                  } items-center gap-6 sm:gap-10 lg:gap-12 
+                  border-0 sm:border sm:border-gray-200`}
                 >
                   {/* Image + Icon */}
-                  <div className="flex-1 relative group">
-                    <div className="relative overflow-hidden rounded-xs shadow-md transition-transform ">
+                  <div className="flex-1 relative group w-full">
+                    <div className="relative overflow-hidden rounded-md shadow-none sm:shadow-md transition-transform">
                       <img
                         src={step.image || "/placeholder.svg"}
                         alt={step.title}
-                        className="w-full h-[200px] md:h-[400px] object-cover"
+                        className="w-full h-[220px] sm:h-[280px] md:h-[380px] lg:h-[420px] object-cover"
                       />
                     </div>
-                    <div className="absolute -top-4 -left-4 w-16 h-16 bg-white text-gray-700 rounded-full flex items-center justify-center shadow-md border border-gray-200">
-                      <IconComponent className="w-8 h-8" />
+                    <div className="absolute md:-top-5 top-2 md:-left-5 left-2 sm:-top-6 sm:-left-6 w-14 h-14 sm:w-16 sm:h-16 bg-white text-gray-700 rounded-full flex items-center justify-center shadow-md border border-gray-200">
+                      <IconComponent className="w-7 h-7 sm:w-8 sm:h-8" />
                     </div>
                   </div>
 
                   {/* Text Content */}
-                  <div className="flex-1 px-2 md:px-0 space-y-2 md:space-y-5">
-                    <h2 className="text-2xl md:text-3xl font-bold text-gray-900 leading-tight">{step.title}</h2>
-                    <p className="text-base text-gray-600 leading-relaxed">{step.description}</p>
+                  <div className="flex-1 w-full px-1 sm:px-3 md:px-0 space-y-3 md:space-y-5">
+                    <h2 className="text-2xl sm:text-2xl md:text-3xl font-bold text-gray-900 leading-snug">
+                      {step.title}
+                    </h2>
+                    <p className="text-[19px] sm:text-base md:text-lg text-gray-600 leading-relaxed">
+                      {step.description}
+                    </p>
 
                     {/* Inner Card */}
-                    <div className={`rounded-xs border border-gray-100 shadow-xs overflow-hidden ${cardBg}`}>
+                    <div
+                      className={`rounded-md overflow-hidden ${cardBg} 
+                      border-0 sm:border sm:border-gray-100 
+                      shadow-none sm:shadow-sm`}
+                    >
                       {/* Header */}
-                      <div className="px-5 pt-3">
-                        <h3 className="text-lg font-semibold text-gray-700">What's Included</h3>
+                      <div className="px-0 pt-3 mb-4 md:mb-2 sm:px-5">
+                        <h3 className="text-xl sm:text-lg font-semibold text-gray-700">What's Included</h3>
                       </div>
 
                       {/* Features List */}
-                      <div className="p-5 grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <div className="md:p-4 sm:p-5 grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
                         {step.features.map((feature, featureIndex) => (
                           <div
                             key={featureIndex}
-                            className={`flex items-center gap-2 px-3 py-2 rounded-xs hover:bg-gray-100 transition ${cardBgInner}`}
+                            className={`flex items-center gap-2 px-2 sm:px-3 py-2 rounded-md hover:bg-gray-100 transition ${cardBgInner}`}
                           >
-                            <CheckCircle className="w-5 h-5 text-[#74BF44] flex-shrink-0" />
-                            <span className="text-sm md:text-base text-gray-800">{feature}</span>
+                            <CheckCircle className="w-5 h-5 sm:w-5 sm:h-5 text-[#74BF44] flex-shrink-0" />
+                            <span className="text-[19px] sm:text-sm md:text-base text-gray-800">{feature}</span>
                           </div>
                         ))}
                       </div>

@@ -154,64 +154,55 @@ export default function ModernMomentPage({ params }: PageProps) {
     <main className="min-h-screen bg-gray-50">
       {/* Navigation */}
       <div className="sticky top-0 z-40 bg-white/95 backdrop-blur-xl border-b border-slate-200/60 shadow-sm">
-        <div className="container mx-auto px-6 py-4">
+        <div className="container mx-auto px-4 py-4 md:px-6">
           <div className="flex items-center justify-between">
             <Link href="/photo-albums">
-              <Button variant="ghost" className="flex items-center gap-2 hover:bg-slate-100 rounded-xl px-4 py-2">
+              <Button variant="ghost" className="flex items-center gap-2 hover:bg-slate-100 rounded-xl px-2 py-1 md:px-4 md:py-2">
                 <ArrowLeft className="h-4 w-4" />
-                <span className="font-medium">Back to Gallery</span>
+                <span className="hidden md:inline font-medium">Back to Gallery</span>
+                <span className="md:hidden font-medium">Back</span>
               </Button>
             </Link>
-
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 md:gap-3">
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={handleLike}
-                className={`flex items-center gap-2 rounded-xl px-4 py-2 transition-colors ${isLiked ? "text-rose-600 bg-rose-50 hover:bg-rose-100" : "hover:bg-slate-100"
-                  }`}
+                className={`flex items-center gap-2 rounded-xl px-2 py-1 md:px-4 md:py-2 transition-colors ${isLiked ? "text-rose-600 bg-rose-50 hover:bg-rose-100" : "hover:bg-slate-100"}`}
               >
                 <Heart className={`h-4 w-4 ${isLiked ? "fill-current" : ""}`} />
-                <span className="font-medium">{likeCount}</span>
+                <span className="font-medium text-xs md:text-base">{likeCount}</span>
               </Button>
-
-              <Button variant="ghost" size="sm" onClick={handleShare} className="rounded-xl px-4 py-2">
+              <Button variant="ghost" size="sm" onClick={handleShare} className="rounded-xl px-2 py-1 md:px-4 md:py-2">
                 <Share2 className="h-4 w-4" />
               </Button>
             </div>
           </div>
         </div>
       </div>
-
-      <div className="container mx-auto px-0 py-12">
+      <div className="container mx-auto px-0 py-6 md:py-12">
         {/* Hero Section */}
-        <div className="mb-12">
+        <div className="mb-6 md:mb-12">
           {coverImageUrl && (
-            <div className="relative h-[60vh] md:h-[80vh] overflow-hidden rounded-xs shadow-xs mb-8 group">
+            <div className="relative h-[40vh] md:h-[80vh] overflow-hidden rounded-none md:rounded-3xl shadow-xs md:shadow-2xl mb-8 group">
               <img
                 src={coverImageUrl}
                 alt={moment.title_fld || "Happy moment"}
-
                 className="object-cover object-center w-full h-full transition-transform duration-700 group-hover:scale-105"
-
-
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-
-              {/* Floating Info Card */}
               <div className="absolute bottom-4 inline-flex w-auto left-4 right-4">
-                <Card className="bg-white/95 backdrop-blur-xs border-0 shadow-xs rounded-xs overflow-hidden">
-                  <CardContent className="p-6">
-                    <div className="flex items-start justify-between gap-4">
+                <Card className="w-full bg-white/95 backdrop-blur-xs border-0 shadow-sm md:shadow-lg rounded-xl overflow-hidden">
+                  <CardContent className="p-4 md:p-6">
+                    <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
                       <div className="flex-1">
-                        <h1 className="text-2xl  font-bold text-gray-700 mb-3 leading-tight">
+                        <h1 className="text-xl md:text-3xl font-bold text-gray-700 mb-1 md:mb-3 leading-tight">
                           {moment.title_fld || "Untitled title_fld"}
                         </h1>
-
-                        <div className="flex flex-wrap items-center gap-4 text-sm text-slate-600 mb-4">
+                        <div className="flex flex-wrap items-center gap-2 md:gap-4 text-xs md:text-sm text-slate-600">
                           {moment.firstPublishedDate && (
-                            <div className="flex items-center gap-2">
-                              <Calendar className="h-4 w-4" />
+                            <div className="flex items-center gap-1 md:gap-2">
+                              <Calendar className="h-3 w-3 md:h-4 md:w-4" />
                               <span className="font-medium">
                                 {new Date(moment.firstPublishedDate).toLocaleDateString("en-US", {
                                   year: "numeric",
@@ -222,32 +213,29 @@ export default function ModernMomentPage({ params }: PageProps) {
                             </div>
                           )}
                           {moment.location && (
-                            <div className="flex items-center gap-2">
-                              <MapPin className="h-4 w-4" />
+                            <div className="flex items-center gap-1 md:gap-2">
+                              <MapPin className="h-3 w-3 md:h-4 md:w-4" />
                               <span className="font-medium">{moment.location}</span>
                             </div>
                           )}
                           {galleryImages.length > 0 && (
-                            <div className="flex items-center gap-2">
-                              <Images className="h-4 w-4" />
+                            <div className="flex items-center gap-1 md:gap-2">
+                              <Images className="h-3 w-3 md:h-4 md:w-4" />
                               <span className="font-medium">
                                 {galleryImages.length} photo{galleryImages.length !== 1 ? "s" : ""}
                               </span>
                             </div>
                           )}
                         </div>
-
-                        {/* {moment.shortDescription && (
-                          <p className="text-slate-700 leading-relaxed text-lg">{moment.shortDescription}</p>
-                        )} */}
                       </div>
-
-                      {moment.category && (
-                        <Badge className="bg-gradient-to-r from-rose-1000 to-pink-500 text-white border-0 rounded-full px-4 py-2 font-medium shadow-lg">
-                          <Sparkles className="h-3 w-3 mr-1.5" />
-                          {moment.category}
-                        </Badge>
-                      )}
+                      <div className="hidden md:block">
+                        {moment.category && (
+                          <Badge className="bg-gradient-to-r from-rose-1000 to-pink-500 text-white border-0 rounded-full px-4 py-2 font-medium shadow-lg">
+                            <Sparkles className="h-3 w-3 mr-1.5" />
+                            {moment.category}
+                          </Badge>
+                        )}
+                      </div>
                     </div>
                   </CardContent>
                 </Card>
@@ -255,56 +243,51 @@ export default function ModernMomentPage({ params }: PageProps) {
             </div>
           )}
         </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-6 px-4 md:px-6">
           {/* Main Content */}
-          <div className="lg:col-span-9 space-y-12">
+          <div className="md:col-span-8 lg:col-span-9 space-y-6 md:space-y-12">
             {/* Story Content */}
             {moment.content && moment.content !== moment.shortDescription && (
-              <Card className="bg-white/80  border-0 shadow-xs rounded-xs overflow-hidden">
-                <CardContent className="p-8">
-                  <div className="flex items-center gap-3 mb-6">
-                    <div className="w-12 h-12 bg-[#E22026] rounded-2xl flex items-center justify-center shadow-lg">
-                      <User className="h-6 w-6 text-white" />
+              <Card className="bg-white/80 border-0 shadow-sm md:shadow-lg rounded-xl overflow-hidden">
+                <CardContent className="p-6 md:p-8">
+                  <div className="flex items-center gap-3 mb-4 md:mb-6">
+                    <div className="w-10 h-10 md:w-12 md:h-12 bg-[#E22026] rounded-xl md:rounded-2xl flex items-center justify-center shadow-md">
+                      <User className="h-5 w-5 md:h-6 md:w-6 text-white" />
                     </div>
                     <div>
-                      <h2 className="text-2xl font-bold text-slate-900">Patient Story</h2>
-                      <p className="text-slate-600">A journey of hope and healing</p>
+                      <h2 className="text-xl md:text-2xl font-bold text-slate-900">Patient Story</h2>
+                      <p className="text-sm md:text-base text-slate-600">A journey of hope and healing</p>
                     </div>
                   </div>
-
-                  <div className="prose prose-lg prose-slate max-w-none">
+                  <div className="prose prose-sm md:prose-lg prose-slate max-w-none">
                     <RicosContentRenderer content={moment.content} />
                   </div>
                 </CardContent>
               </Card>
             )}
-
             {/* Photo Gallery */}
             {galleryImages.length > 0 && (
-              <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-xs rounded-xs overflow-hidden">
-                <CardContent className="p-8">
-                  <div className="flex items-center justify-between mb-8">
+              <Card className="md:bg-white/80 px-0 md:backdrop-blur-sm border-0 shadow-none md:shadow-lg rounded-xl overflow-hidden">
+                <CardContent className=" px-0 md:p-8">
+                  <div className="flex items-center justify-between mb-6 md:mb-8">
                     <div className="flex items-center gap-3">
-                      <div className="w-12 h-12 bg-gray-100 rounded-xs flex items-center justify-center shadow-xs">
-                        <Images className="h-6 w-6 text-gray-700" />
+                      <div className="w-10 h-10 md:w-12 md:h-12 bg-gray-100 rounded-xl md:rounded-2xl flex items-center justify-center shadow-sm">
+                        <Images className="h-8 w-8 md:h-6 md:w-6 text-gray-700" />
                       </div>
                       <div>
-                        <h2 className="text-2xl font-bold text-slate-900">Photo Gallery</h2>
-                        <p className="text-slate-600">{galleryImages.length} beautiful moments captured</p>
+                        <h2 className="text-3xl md:text-2xl font-bold text-slate-900">Photo Gallery</h2>
+                        <p className="text-[19px] md:text-base text-slate-600">{galleryImages.length} beautiful moments captured</p>
                       </div>
                     </div>
                   </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
                     {galleryImages.map((media, index) => {
                       const imageUrl = getWixImageUrl(media.src)
                       if (!imageUrl) return null
-
                       return (
                         <div
                           key={index}
-                          className="relative aspect-square overflow-hidden rounded-xs bg-slate-100 group cursor-pointer shadow-xs hover:shadow-xl transition-all duration-300"
+                          className="relative aspect-square overflow-hidden rounded-xl md:rounded-2xl bg-slate-100 group cursor-pointer shadow-sm hover:shadow-xl transition-all duration-300"
                           onClick={() => openLightbox(index)}
                         >
                           <OptimizedImage
@@ -314,19 +297,16 @@ export default function ModernMomentPage({ params }: PageProps) {
                             className="object-cover transition-transform duration-500 group-hover:scale-110"
                             fallbackSrc="/placeholder.svg?height=300&width=300&text=Beautiful Memory"
                           />
-
-                          {/* Hover Overlay */}
                           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300">
                             <div className="absolute inset-0 flex items-center justify-center">
-                              <div className="bg-white/90 backdrop-blur-sm rounded-full p-3 transform scale-75 group-hover:scale-100 transition-transform duration-300">
-                                <ZoomIn className="h-5 w-5 text-slate-700" />
+                              <div className="bg-white/90 backdrop-blur-sm rounded-full p-2 md:p-3 transform scale-75 group-hover:scale-100 transition-transform duration-300">
+                                <ZoomIn className="h-4 w-4 md:h-5 md:w-5 text-slate-700" />
                               </div>
                             </div>
-
                             {(media.title || media.description) && (
-                              <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
-                                {media.title && <p className="font-semibold text-sm mb-1">{media.title}</p>}
-                                {media.description && <p className="text-xs opacity-90">{media.description}</p>}
+                              <div className="absolute bottom-0 left-0 right-0 p-3 text-white">
+                                {media.title && <p className="font-semibold text-xs md:text-sm mb-1">{media.title}</p>}
+                                {media.description && <p className="text-xs opacity-90 hidden md:block">{media.description}</p>}
                               </div>
                             )}
                           </div>
@@ -338,24 +318,19 @@ export default function ModernMomentPage({ params }: PageProps) {
               </Card>
             )}
           </div>
-
-          {/* Sidebar */}
-          <div className="space-y-10 col-span-3">
-            {/* Quick Info Section */}
-            <div className="sticky top-0">
-              <Card className="bg-white/90 backdrop-blur-md border border-gray-100 shadow-xs rounded-xs overflow-hidden">
-                <BlogAside  />
+          {/* Desktop Sidebar */}
+          <div className="hidden md:block md:col-span-4 lg:col-span-3 space-y-6">
+            <div className="sticky top-20">
+              <Card className="bg-white/90 backdrop-blur-md border border-gray-100 shadow-sm rounded-xl overflow-hidden">
+                <BlogAside />
               </Card>
-
-              {/* Tags Section */}
               {(moment.tags || moment.hashtags || moment.category) && (
-                <Card className="bg-white/90 backdrop-blur-md border border-slate-100 shadow-xs rounded-xs overflow-hidden">
+                <Card className="bg-white/90 backdrop-blur-md border border-slate-100 shadow-sm rounded-xl overflow-hidden mt-6">
                   <CardContent className="p-6">
-                    <h2 className="text-xl font-semibold text-slate-900 flex items-center gap-2 mb-5">
+                    <h2 className="text-xl font-semibold text-slate-900 flex items-center gap-2 mb-4">
                       <Tag className="w-5 h-5 text-blue-500" />
                       Tags
                     </h2>
-
                     <div className="flex flex-wrap gap-2">
                       {moment.category && (
                         <Badge className="bg-gradient-to-r from-rose-100 to-pink-100 text-rose-700 border border-rose-200 rounded-full px-3 py-1 text-xs font-medium">
@@ -386,15 +361,12 @@ export default function ModernMomentPage({ params }: PageProps) {
                   </CardContent>
                 </Card>
               )}
-
-              {/* Share Section */}
-              <Card className="bg-[#E22026] mt-6 text-white border-0 shadow-xs rounded-xs overflow-hidden">
+              <Card className="bg-[#E22026] mt-6 text-white border-0 shadow-sm rounded-xl overflow-hidden">
                 <CardContent className="p-6">
                   <h2 className="text-xl font-semibold mb-3">Share This Story</h2>
                   <p className="text-sm text-pink-100 mb-6 leading-relaxed">
                     Help inspire others by sharing this beautiful journey of hope and healing.
                   </p>
-
                   <div className="space-y-3">
                     <Button
                       onClick={handleShare}
@@ -415,15 +387,79 @@ export default function ModernMomentPage({ params }: PageProps) {
               </Card>
             </div>
           </div>
-
+        </div>
+        {/* Mobile Sidebar Section at the bottom */}
+        <div className="md:hidden px-4 space-y-6 mt-6">
+          <Card className="bg-white/90 backdrop-blur-md border border-gray-100 shadow-sm rounded-xl overflow-hidden">
+            <BlogAside />
+          </Card>
+          {(moment.tags || moment.hashtags || moment.category) && (
+            <Card className="bg-white/90 backdrop-blur-md border border-slate-100 shadow-sm rounded-xl overflow-hidden">
+              <CardContent className="p-4">
+                <h2 className="text-lg font-semibold text-slate-900 flex items-center gap-2 mb-3">
+                  <Tag className="w-4 h-4 text-blue-500" />
+                  Tags
+                </h2>
+                <div className="flex flex-wrap gap-2">
+                  {moment.category && (
+                    <Badge className="bg-gradient-to-r from-rose-100 to-pink-100 text-rose-700 border border-rose-200 rounded-full px-3 py-1 text-xs font-medium">
+                      {moment.category}
+                    </Badge>
+                  )}
+                  {moment.tags &&
+                    moment.tags.split(",").map((tag, index) => (
+                      <Badge
+                        key={index}
+                        variant="outline"
+                        className="border border-slate-200 text-slate-600 rounded-full px-3 py-1 text-xs font-medium"
+                      >
+                        {tag.trim()}
+                      </Badge>
+                    ))}
+                  {moment.hashtags &&
+                    moment.hashtags.split(" ").map((hashtag, index) => (
+                      <Badge
+                        key={index}
+                        variant="outline"
+                        className="border border-slate-200 text-slate-600 rounded-full px-3 py-1 text-xs font-medium"
+                      >
+                        {hashtag.trim()}
+                      </Badge>
+                    ))}
+                </div>
+              </CardContent>
+            </Card>
+          )}
+          <Card className="bg-[#E22026] text-white border-0 shadow-sm rounded-xl overflow-hidden">
+            <CardContent className="p-6">
+              <h2 className="text-xl font-semibold mb-3">Share This Story</h2>
+              <p className="text-sm text-pink-100 mb-6 leading-relaxed">
+                Help inspire others by sharing this beautiful journey of hope and healing.
+              </p>
+              <div className="space-y-3">
+                <Button
+                  onClick={handleShare}
+                  className="w-full bg-white text-rose-600 hover:bg-rose-50 hover:text-rose-700 rounded-xl font-medium"
+                >
+                  <Share2 className="w-4 h-4 mr-2" />
+                  Share Story
+                </Button>
+                <Button
+                  variant="outline"
+                  className="w-full border-white text-white hover:bg-white hover:text-rose-600 rounded-xl font-medium"
+                >
+                  <Download className="w-4 h-4 mr-2" />
+                  Save Photos
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
         </div>
       </div>
-
       {/* Lightbox */}
       {isLightboxOpen && selectedImageIndex !== null && (
-        <div className="fixed inset-0 bg-black/95 backdrop-blur-sm z-50 flex items-center justify-center">
-          <div className="relative w-full h-full flex items-center justify-center p-4">
-            {/* Close Button */}
+        <div className="fixed inset-0 bg-black/95 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="relative w-full h-full flex items-center justify-center">
             <Button
               onClick={closeLightbox}
               variant="ghost"
@@ -431,8 +467,6 @@ export default function ModernMomentPage({ params }: PageProps) {
             >
               <X className="h-6 w-6" />
             </Button>
-
-            {/* Navigation Buttons */}
             {galleryImages.length > 1 && (
               <>
                 <Button
@@ -451,9 +485,7 @@ export default function ModernMomentPage({ params }: PageProps) {
                 </Button>
               </>
             )}
-
-            {/* Image */}
-            <div className="relative max-w-7xl max-h-full">
+            <div className="relative max-w-full max-h-full">
               <OptimizedImage
                 src={getWixImageUrl(galleryImages[selectedImageIndex].src) || ""}
                 alt={
@@ -467,21 +499,17 @@ export default function ModernMomentPage({ params }: PageProps) {
                 fallbackSrc="/placeholder.svg?height=800&width=1200&text=Image"
               />
             </div>
-
-            {/* Image Info */}
             {(galleryImages[selectedImageIndex].title || galleryImages[selectedImageIndex].description) && (
-              <div className="absolute bottom-4 left-4 right-4 bg-black/80 backdrop-blur-sm rounded-2xl p-4 text-white">
+              <div className="absolute bottom-4 left-4 right-4 bg-black/80 backdrop-blur-sm rounded-xl p-4 text-white">
                 {galleryImages[selectedImageIndex].title && (
-                  <h4 className="font-semibold mb-1">{galleryImages[selectedImageIndex].title}</h4>
+                  <h4 className="font-semibold text-base mb-1">{galleryImages[selectedImageIndex].title}</h4>
                 )}
                 {galleryImages[selectedImageIndex].description && (
                   <p className="text-sm opacity-90">{galleryImages[selectedImageIndex].description}</p>
                 )}
               </div>
             )}
-
-            {/* Image Counter */}
-            <div className="absolute top-4 left-4 bg-black/80 backdrop-blur-sm rounded-full px-4 py-2 text-white text-sm font-medium">
+            <div className="absolute top-4 left-4 bg-black/80 backdrop-blur-sm rounded-full px-3 py-1 text-white text-xs font-medium">
               {selectedImageIndex + 1} / {galleryImages.length}
             </div>
           </div>

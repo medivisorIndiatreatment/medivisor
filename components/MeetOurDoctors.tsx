@@ -202,11 +202,11 @@ export default function MeetOurDoctors() {
   }
 
   return (
-    <section className="bg-gray-50 md:py-10 py-4">
-      <div className="container mx-auto px-4 md:px-0">
-        <div className="flex justify-between items-center mb-2 md:mb-6">
+    <section className="bg-gray-50 md:py-10 md:px-0 px-2 py-10">
+      <div className="container mx-auto ">
+        <div className="flex justify-between items-center mb-3 md:mb-6">
           <div>
-            <h2 className="text-2xl md:text-4xl font-bold text-gray-900 mb-">Our Medical Advisors</h2>
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-"> Medical Advisors</h2>
             {error && (
               <div className="flex items-center gap-2 text-sm text-amber-600">
                 <AlertCircle className="w-4 h-4" />
@@ -221,14 +221,14 @@ export default function MeetOurDoctors() {
               className="bg-white text-gray-700 p-2 rounded-full shadow-md hover:bg-gray-100 transition-colors"
               aria-label="Previous advisor"
             >
-              <ChevronLeft className="w-5 h-5" />
+              <ChevronLeft className="w-4 md:w-5 h-4  md:h-5" />
             </button>
             <button
               onClick={() => instanceRef.current?.next()}
               className="bg-white text-gray-700 p-2 rounded-full shadow-md hover:bg-gray-100 transition-colors"
               aria-label="Next advisor"
             >
-              <ChevronRight className="w-5 h-5" />
+              <ChevronRight className="w-4 md:w-5 h-4  md:h-5" />
             </button>
           </div>
         </div>
@@ -251,9 +251,9 @@ export default function MeetOurDoctors() {
                 />
               </div>
               <div className="p-5">
-                <h3 className="text-xl font-semibold text-gray-900 mb-1">{advisor.name}</h3>
-                <p className="text-base text-gray-600 mb-2">{advisor.specialty}</p>
-                <p className="text-sm font-medium text-gray-700">
+                <h3 className="text-2xl font-semibold text-gray-900 mb-1">{advisor.name}</h3>
+                <p className="md:text-base text-[19px] text-gray-600 mb-2">{advisor.specialty}</p>
+                <p className="text-lg md:text-sm font-medium text-gray-700">
                   <span className="font-bold"></span> {advisor.experience}
                 </p>
               </div>

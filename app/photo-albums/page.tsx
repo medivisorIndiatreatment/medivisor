@@ -157,10 +157,10 @@ export default function GalleryPage() {
             )}
           </div>
           <CardHeader className="px-4 pt-3 pb-3">
-            <CardTitle className="text-lg md:text-xl text-gray-700 font-medium line-clamp-2">
+            <CardTitle className="text-2xl md:text-xl text-gray-700 font-medium line-clamp-2">
               {stripHtmlTags(moment.title_fld) || "Untitled"}
             </CardTitle>
-            <div className="flex items-center gap-2 text-xs text-gray-500 mt-1">
+            <div className="flex items-center gap-2 text-base md:text-xs text-gray-500 mt-1">
               {moment.firstPublishedDate && (
                 <div className="flex items-center gap-1">
                   <Calendar className="h-3.5 w-3.5" />
@@ -225,9 +225,9 @@ export default function GalleryPage() {
       </section>
       
 
-      <section className="bg-gray-50">
+      <section className="bg-gray-50 px-2 md:px-0 py-8 md:py-10">
         
-        <div className="container mx-auto px-4 md:px-0 py-8 md:py-10">
+        <div className="container mx-auto ">
           {error && (
             <Card className="mb-8 border-red-200 bg-red-50">
               <CardHeader>

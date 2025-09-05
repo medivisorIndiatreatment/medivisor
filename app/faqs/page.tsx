@@ -360,7 +360,7 @@ export default function FAQPage() {
                       className="w-full px-6 py-5 text-left flex items-start justify-between hover:bg-gray-50 transition-colors duration-200"
                     >
                       <div className="flex items-center gap-4 flex-1">
-                        <div className="flex-shrink-0 mt-1">
+                        <div className="flex-shrink-0 md:block hidden mt-1">
                           <div className="w-10 h-10 bg-gray-100 rounded-xs flex items-center justify-center">
                             <Icon className="w-5 h-5 text-gray-600" />
                           </div>
@@ -393,10 +393,10 @@ export default function FAQPage() {
 
                     {isOpen && (
                       <div className="px-6 pb-6 animate-in slide-in-from-top-1 duration-300">
-                        <div className="ml-14 pt-2 border-t border-gray-100">
+                        <div className="md:ml-14 pt-2 border-t border-gray-100">
                           <div className="pt-4">
                             {item.answer.split('\n\n').map((paragraph, index) => (
-                              <p key={index} className="text-gray-700 mb-4 text-base last:mb-0 leading-relaxed">
+                              <p key={index} className="text-gray-700 mb-4 text-[19px] md:text-base last:mb-0 leading-relaxed">
                                 {paragraph}
                               </p>
                             ))}

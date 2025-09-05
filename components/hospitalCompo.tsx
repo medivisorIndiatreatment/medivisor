@@ -152,7 +152,7 @@ const truncateText = (text: string, maxLength = 120): string => {
 // Hospital Card Component
 const HospitalCard = ({ hospital, onOpenModal }: { hospital: Hospital; onOpenModal: () => void }) => (
   <div className="flex-1">
-    <Card className="overflow-hidden hover:shadow-lg shadow-none transition-all duration-300 group border border-gray-100 h-full flex flex-col">
+    <Card className="overflow-hidden hover:shadow-lg shadow-none transition-all duration-300 group border border-gray-200 md:border-gray-100 h-full flex flex-col">
       <div className="relative h-48 overflow-hidden">
         <Image
           src={hospital.image || '/placeholder.svg?height=200&width=400'}
@@ -180,16 +180,16 @@ const HospitalCard = ({ hospital, onOpenModal }: { hospital: Hospital; onOpenMod
               className="object-contain"
             />
           </div>
-          <CardTitle className="text-xl font-medium text-gray-600 ">{hospital.name}</CardTitle>
+          <CardTitle className="text-2xl font-medium text-gray-600 ">{hospital.name}</CardTitle>
         </div>
-        <CardDescription className="flex items-center my-2 text-base font-medium text-gray-600 mb-0">
+        <CardDescription className="flex items-center my-2 text-lg md:text-base font-medium text-gray-600 mb-0">
           <MapPin className="h-5 w-5 mr-1 text-[#E22026] flex-shrink-0" />
           <span className="truncate">{hospital.location}</span>
         </CardDescription>
       </CardHeader>
 
       <CardContent className="pt-0 flex flex-col flex-grow">
-        <p className="text-gray-600 text-base mb-2 text-left leading-relaxed flex-grow">{truncateText(hospital.description)}</p>
+        <p className="text-gray-600 text-[19px] md:text-base mb-2 text-left leading-relaxed flex-grow">{truncateText(hospital.description)}</p>
 
         <Button
           onClick={onOpenModal}
@@ -344,31 +344,31 @@ export default function HospitalCarousel() {
 
       `}</style>
 
-      <section className="md:py-10 py-4 bg-white">
-        <div className="container mx-auto px-4 md:px-0">
+      <section className="md:py-10 py-10 px-2 md:px-0 bg-white">
+        <div className="container mx-auto ">
           {/* Header with Navigation Arrows */}
-          <div className="flex justify-between items-center mb-2 md:mb-6">
+          <div className="flex justify-between items-center mb-3 md:mb-6">
             <div className="flex-1">
-              <h2 className="text-2xl md:text-4xl font-bold text-gray-900 mb-">Our Hospital Partners</h2>
+              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-"> Hospital Partners</h2>
             </div>
 
-        
-             <div className="flex gap-2">
-                        <button
-                          onClick={() => sliderRef.current?.slickPrev()}
-                          className="bg-white text-gray-700 p-2 rounded-full shadow-md hover:bg-gray-100 transition-colors"
-                          aria-label="Previous advisor"
-                        >
-                          <ChevronLeft className="w-5 h-5" />
-                        </button>
-                        <button
-                       onClick={() => sliderRef.current?.slickNext()}
-                          className="bg-white text-gray-700 p-2 rounded-full shadow-md hover:bg-gray-100 transition-colors"
-                          aria-label="Next advisor"
-                        >
-                          <ChevronRight className="w-5 h-5" />
-                        </button>
-                      </div>
+
+            <div className="flex gap-2">
+              <button
+                onClick={() => sliderRef.current?.slickPrev()}
+                className="bg-white text-gray-700 p-2 rounded-full shadow-md hover:bg-gray-100 transition-colors"
+                aria-label="Previous advisor"
+              >
+                <ChevronLeft className="md:w-5 w-4 h-4 md:h-5" />
+              </button>
+              <button
+                onClick={() => sliderRef.current?.slickNext()}
+                className="bg-white text-gray-700 p-2 rounded-full shadow-md hover:bg-gray-100 transition-colors"
+                aria-label="Next advisor"
+              >
+                <ChevronRight className="md:w-5 w-4 h-4 md:h-5" />
+              </button>
+            </div>
           </div>
 
           <div className="hospital-carousel">

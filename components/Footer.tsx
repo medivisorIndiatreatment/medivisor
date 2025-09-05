@@ -11,7 +11,7 @@ export default function Footer() {
             <div className="flex items-center mb-4">
               <div className="w-full md:w-[250px] -ml-3 flex items-center">
                 <Image
-                     src="/Medivisor-logo.svg"
+                     src="/MRX-Logo-PNG.png"
                   alt="Medivisor Logo"
                   width={250}
                   height={60}
@@ -19,15 +19,15 @@ export default function Footer() {
                 />
               </div>
             </div>
-            <p className="md:text-base text-sm leading-[20px] text-white">
+            <p className="md:text-base text-[19px] md:leading-[20px] text-white">
               Connecting patients worldwide to world-class medical care in India with comprehensive support
               services.
             </p>
           </div>
           
           <div>
-            <h4 className="font-medium text-white mb-2 md:mb-4 text-xl md:text-3xl">Services</h4>
-            <ul className="md:space-y-5 space-y-2 text-sm leading-[20px]">
+            <h4 className="font-medium text-white mb-2 md:mb-4 text-2xl md:text-3xl">Services</h4>
+            <ul className="md:space-y-5 space-y-2 text-[16px] md:text-sm leading-[20px]">
               <li><Link href="#Services" className="hover:text-[#74BF44]">Medical Consultation</Link></li>
               <li><Link href="#Services" className="hover:text-[#74BF44]">Hospital Selection</Link></li>
               <li><Link href="#Services" className="hover:text-[#74BF44]">Visa Assistance</Link></li>
@@ -37,8 +37,8 @@ export default function Footer() {
           </div>
           
           <div>
-            <h4 className="font-medium text-white mb-2 md:mb-4 text-xl md:text-3xl">Treatments</h4>
-            <ul className="md:space-y-5 space-y-2 text-sm leading-[20px]">
+            <h4 className="font-medium text-white mb-2 md:mb-4 text-2xl md:text-3xl">Treatments</h4>
+            <ul className="md:space-y-5 space-y-2 text-[16px] md:text-sm leading-[20px]">
               <li><a href="https://wa.me/918340780250" className="hover:text-[#74BF44]">Cardiac Surgery</a></li>
               <li><a href="https://wa.me/918340780250" className="hover:text-[#74BF44]">Orthopedics</a></li>
               <li><a href="https://wa.me/918340780250" className="hover:text-[#74BF44]">Oncology</a></li>
@@ -48,35 +48,35 @@ export default function Footer() {
           </div>
           
           <div className="col-span-2 mt-10 md:mt-0 md:col-span-1">
-            <h4 className="font-medium text-white mb-2 md:mb-4 text-xl md:text-3xl">Contact</h4>
-            <ul className="md:space-y-5 space-y-2 text-sm leading-[20px]">
+            <h4 className="font-medium text-white mb-2 md:mb-4 text-2xl md:text-3xl">Contact</h4>
+            <ul className="md:space-y-5 space-y-3 text-sm md:leading-[20px]">
               <li className="flex items-start gap-2">
-                <MapPin className="text-white mt-1 w-4 h-4 flex-shrink-0" />
+                <MapPin className="text-white mt-2 md:mt-1 md:w-4 w-5 h-5 md:h-4 flex-shrink-0" />
                 <span>
                   <a 
                     href="https://maps.google.com/?q=Medivisor" 
                     target="_blank" 
                     rel="noopener noreferrer"
-                    className="hover:text-[#74BF44]"
+                    className="hover:text-[#74BF44] text-[19px]"
                   >
                     Medivisor House 359, Sector 1, Vaishali, Ghaziabad, (Delhi/NCR) India
                   </a>
                 </span>
               </li>
               <li className="flex items-start gap-2">
-                <Phone className="text-white mt-1 w-4 h-4 flex-shrink-0" />
-                <span><a href="tel:+918340780250" className="hover:text-[#74BF44]">+91 8340 780 250</a></span>
+                <Phone className="text-white mt-1 md:w-4 w-5 h-5 md:h-4 flex-shrink-0" />
+                <span><a href="tel:+918340780250" className="hover:text-[#74BF44] text-[19px] md:text-base">+91 8340 780 250</a></span>
               </li>
               <li className="flex items-start gap-2">
-                <Mail className="text-white mt-1 w-4 h-4 flex-shrink-0" />
-                <span><a href="mailto:info@medivisorhealth.com" className="hover:text-[#74BF44]">info@medivisorhealth.com</a></span>
+                <Mail className="text-white mt-1 md:w-4 w-5 h-5 md:h-4 flex-shrink-0" />
+                <span><a href="mailto:info@medivisorhealth.com" className="hover:text-[#74BF44] text-[19px] md:text-base">info@medivisorhealth.com</a></span>
               </li>
             </ul>
           </div>
         </div>
         
         <div className="mt-10 pt-8 border-t border-slate-800 flex flex-col md:flex-row justify-between items-center">
-          <p className="text-base text-[#fff]">
+          <p className="text-base text-center text-[#fff]">
             © 2025 Medivisor India Treatment. All rights reserved.
           </p>
           

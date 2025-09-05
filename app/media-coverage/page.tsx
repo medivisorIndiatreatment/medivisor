@@ -118,16 +118,14 @@ export default function MediaCoveragePage() {
   const [sortBy, setSortBy] = useState<string>("date")
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid")
 
-  // Banner Component (inline)
-
   // Media Skeleton Component (inline)
   const MediaSkeleton = ({ viewMode }: { viewMode: "grid" | "list" }) => {
     const CardSkeleton = () => (
       <Card
-        className={`overflow-hidden border-gray-200 dark:border-gray-700 ${viewMode === "list" && "flex flex-row"}`}
+        className={`overflow-hidden border-gray-200 ${viewMode === "list" && "flex flex-col sm:flex-row"}`}
       >
         <div
-          className={`relative overflow-hidden bg-gray-100 dark:bg-gray-800 ${viewMode === "grid" ? "aspect-video" : "w-48 aspect-[16/9] flex-shrink-0"}`}
+          className={`relative overflow-hidden bg-gray-100 ${viewMode === "grid" ? "aspect-video" : "w-full sm:w-48 aspect-[16/9] flex-shrink-0"}`}
         >
           <Skeleton className="w-full h-full" />
         </div>
@@ -135,7 +133,7 @@ export default function MediaCoveragePage() {
           <Skeleton className="h-5 w-3/4 rounded" />
           <Skeleton className="h-4 w-full rounded" />
           <Skeleton className="h-4 w-2/3 rounded" />
-          <div className="flex justify-between items-center mt-4 pt-2 border-t border-gray-100 dark:border-gray-800">
+          <div className="flex justify-between items-center mt-4 pt-2 border-t border-gray-100 ">
             <Skeleton className="h-3 w-1/4 rounded" />
             <Skeleton className="h-3 w-1/5 rounded" />
           </div>
@@ -380,7 +378,7 @@ export default function MediaCoveragePage() {
         case "title":
           return (a.title || "").localeCompare(b.title || "")
         case "type":
-          return a.type.locale(b.type)
+          return a.type.localeCompare(b.type)
         case "gallery":
           return (a.galleryName || "").localeCompare(b.galleryName || "")
         default:
@@ -390,6 +388,17 @@ export default function MediaCoveragePage() {
 
     setFilteredItems(filtered)
   }, [allItems, searchTerm, filterType, sortBy])
+
+  const mediaTypeCounts = allItems.reduce(
+    (acc, item) => {
+      const type = getMediaType(item)
+      if (type !== "unknown") {
+        acc[type] = (acc[type] || 0) + 1
+      }
+      return acc
+    },
+    {} as Record<string, number>,
+  )
 
   if (loading) {
     return (
@@ -456,17 +465,6 @@ export default function MediaCoveragePage() {
     )
   }
 
-  const mediaTypeCounts = allItems.reduce(
-    (acc, item) => {
-      const type = getMediaType(item)
-      if (type !== "unknown") {
-        acc[type] = (acc[type] || 0) + 1
-      }
-      return acc
-    },
-    {} as Record<string, number>,
-  )
-
   return (
     <div>
       <Banner
@@ -479,32 +477,32 @@ export default function MediaCoveragePage() {
         mainImageSrc="/about-main.png"
         mainImageAlt="Medivisor Blog – India's Top Hospitals in Focus"
       />
-      <section className="bg-gray-50 pb-10 py-6  h-min-screen ">
-        <div className="sticky top-0 z-20 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md shadow-sm border-b border-gray-200 dark:border-gray-700 py-3 sm:py-4 mb-6">
+      <section className="bg-gray-50 pb-10 py-6 md:px-0 px-2 min-h-screen">
+        <div className="sticky top-0 z-20 bg-white/80 backdrop-blur-md shadow-sm border-b border-gray-200 py-3 sm:py-4 mb-6">
           <div className="container mx-auto px-3 sm:px-4 md:px-6">
             {/* Controls */}
-            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+            <div className="flex flex-row lg:items-center lg:justify-between gap-4">
 
               {/* Search */}
-              <div className="relative flex-1">
+              <div className="relative md:block hidden flex-1">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500 h-4 w-4" />
                 <Input
                   placeholder="Search media by title, description, or gallery..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10 w-full rounded-md border-gray-200 bg-white dark:bg-gray-800 dark:border-gray-700 focus-visible:ring-gray-300"
+                  className="pl-10 w-full rounded-md border-gray-200 bg-white focus-visible:ring-gray-300"
                 />
               </div>
 
               {/* Filters + Sort */}
-              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 w-full lg:w-auto">
+              <div className="flex flex-row gap-3 sm:gap-4 w-full lg:w-auto">
                 <Select value={filterType} onValueChange={setFilterType}>
-                  <SelectTrigger className="w-full sm:w-48 rounded-md border-gray-200 bg-white dark:bg-gray-800 dark:border-gray-700 focus-visible:ring-gray-300">
+                  <SelectTrigger className="w-full sm:w-48 rounded-md border-gray-200 bg-white focus-visible:ring-gray-300">
                     <Filter className="h-4 w-4 mr-2 text-gray-500" />
                     <SelectValue placeholder="Filter by type" />
                   </SelectTrigger>
                   <SelectContent
-                    className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md shadow-lg z-50"
+                    className="bg-white border border-gray-200 rounded-md shadow-lg z-50"
                   >
                     <SelectItem value="all">All Types ({allItems.length})</SelectItem>
                     <SelectItem value="image">Images ({mediaTypeCounts.image || 0})</SelectItem>
@@ -514,11 +512,11 @@ export default function MediaCoveragePage() {
                 </Select>
 
                 <Select value={sortBy} onValueChange={setSortBy}>
-                  <SelectTrigger className="w-full sm:w-48 rounded-md border-gray-200 bg-white dark:bg-gray-800 dark:border-gray-700 focus-visible:ring-gray-300">
+                  <SelectTrigger className="w-full sm:w-48 rounded-md border-gray-200 bg-white focus-visible:ring-gray-300">
                     <SelectValue placeholder="Sort by" />
                   </SelectTrigger>
                   <SelectContent
-                    className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md shadow-lg z-50"
+                    className="bg-white border border-gray-200 rounded-md shadow-lg z-50"
                   >
                     <SelectItem value="date">Date Created</SelectItem>
                     <SelectItem value="title">Title</SelectItem>
@@ -533,7 +531,7 @@ export default function MediaCoveragePage() {
                 <Button
                   variant={viewMode === "grid" ? "default" : "outline"}
                   size="icon"
-                  className="rounded-md border-gray-300 bg-white dark:bg-gray-800"
+                  className="rounded-md border-gray-300 border bg-white"
                   onClick={() => setViewMode("grid")}
                   aria-label="Grid view"
                 >
@@ -542,7 +540,7 @@ export default function MediaCoveragePage() {
                 <Button
                   variant={viewMode === "list" ? "default" : "outline"}
                   size="icon"
-                  className="rounded-md border-gray-300 bg-white dark:bg-gray-800"
+                  className="rounded-md border-gray-300 bg-white"
                   onClick={() => setViewMode("list")}
                   aria-label="List view"
                 >
@@ -554,17 +552,10 @@ export default function MediaCoveragePage() {
         </div>
 
         <div className="container mx-auto px-4 md:px-0">
-          {/* Header */}
-
-          {/* Results Count */}
-          {/* <div className="mb-6 text-sm text-muted-foreground">
-            Showing {filteredItems.length} of {allItems.length} items
-          </div> */}
-
           {/* Content */}
           {filteredItems.length > 0 ? (
             <div
-              className={`${viewMode === "grid" ? "grid grid-cols-1 sm:grid-cols-2 space-y-10 md:space-y-4 md:grid-cols-3 lg:grid-cols-4" : "grid grid-cols-1"} gap-6`}
+              className={`${viewMode === "grid" ? "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4" : "grid grid-cols-1"} gap-6`}
             >
               {filteredItems.map((item) => {
                 const mediaType = getMediaType(item)
@@ -574,10 +565,10 @@ export default function MediaCoveragePage() {
                   <Dialog key={item._id}>
                     <DialogTrigger asChild>
                       <Card
-                        className={`group cursor-pointer border-gray-100 bg-white dark:border-gray-700 hover:shadow-sm shadow-xs transition-all duration-300 overflow-hidden rounded-xs ${viewMode === "list" && "flex flex-row"}`}
+                        className={`group cursor-pointer border-gray-100 bg-white hover:shadow-sm shadow-xs transition-all duration-300 overflow-hidden rounded-xs ${viewMode === "list" && "flex flex-col sm:flex-row"}`}
                       >
                         <div
-                          className={`relative overflow-hidden bg-gray-100 dark:bg-gray-800 flex items-center justify-center ${viewMode === "grid" ? "aspect-video" : "w-full aspect-[16/9] flex-shrink-0"}`}
+                          className={`relative overflow-hidden bg-gray-100 flex items-center justify-center ${viewMode === "grid" ? "aspect-video" : "w-full sm:w-48 aspect-[16/9] flex-shrink-0"}`}
                         >
                           {renderMediaItem(item, false)}
                           <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
@@ -604,9 +595,9 @@ export default function MediaCoveragePage() {
                           )}
                         </div>
 
-                        <CardContent className={`${viewMode === "grid" ? "p-4 border-t border-gray-200 " : "p-4 flex-1"}`}>
+                        <CardContent className={`${viewMode === "grid" ? "p-4 border-t border-gray-200" : "p-4 flex-1"}`}>
                           <div className="flex flex-col h-full">
-                            <div className="flex-grow dark:border-gray-800 pt-2">
+                            <div className="flex-grow  pt-2">
                               {item.title && (
                                 <h3 className="font-medium text-gray-700 text-lg line-clamp-2 mb-1 leading-snug">{item.title}</h3>
                               )}
@@ -616,7 +607,7 @@ export default function MediaCoveragePage() {
                                 </p>
                               )} */}
                             </div>
-                            <div className="flex items-center justify-between text-xs text-muted-foreground mt-3 pt-3 border-t border-gray-100 dark:border-gray-800">
+                            <div className="flex items-center justify-between text-xs text-muted-foreground mt-3 pt-3 border-t border-gray-100 ">
                               <span className="flex items-center gap-1">
                                 <Calendar className="h-3 w-3" />
                                 {new Date(item._createdDate).toLocaleDateString()}
@@ -631,7 +622,7 @@ export default function MediaCoveragePage() {
                     </DialogTrigger>
 
                     <DialogContent className="sm:max-w-6xl max-h-[90vh] p-0 overflow-hidden">
-                      <DialogHeader className="p-6 pb-4 border-b border-gray-100 dark:border-gray-800">
+                      <DialogHeader className="p-6 pb-4 border-b border-gray-100 ">
                         <DialogTitle className="text-2xl font-bold pr-8">{item.title || "Media Item"}</DialogTitle>
                         {item.description && (
                           <DialogDescription className="text-muted-foreground mt-2 text-base leading-relaxed">
@@ -642,7 +633,7 @@ export default function MediaCoveragePage() {
                       <div className="relative min-h-[400px] max-h-[60vh] bg-gray-50 dark:bg-gray-900 flex items-center justify-center overflow-hidden">
                         {renderMediaItem(item, true)}
                       </div>
-                      <div className="p-6 border-t border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-900/50">
+                      <div className="p-6 border-t border-gray-100  bg-gray-50/50 dark:bg-gray-900/50">
                         <div className="flex flex-wrap gap-3 mb-4">
                           <Badge variant="secondary" className="px-3 py-1">
                             <Calendar className="h-3 w-3 mr-1" />
@@ -656,9 +647,9 @@ export default function MediaCoveragePage() {
                           </Badge>
                         </div>
                         {item.link && (
-                          <Button asChild size="sm" className="bg-blue-600  b hover:bg-blue-700 text-white">
-                            <a href={item.link.url} target="flex items-center gap-1" rel="noopener noreferrer">
-                              <ExternalLink className="h-4 w-4 mr-2" />
+                          <Button asChild size="sm" className="bg-blue-600 hover:bg-blue-700 text-white">
+                            <a href={item.link.url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1">
+                              <ExternalLink className="h-4 w-4" />
                               {item.link.text || "View Link"}
                             </a>
                           </Button>

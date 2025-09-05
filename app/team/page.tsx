@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import CtaSection from "@/components/CtaSection"
 import Banner from "@/components/BannerService"
+import DidYouKnowSection from "@/components/DidYouKnow"
 
 const COLLECTION_ID = "Team1"
 
@@ -217,11 +218,12 @@ export default function TeamPage() {
         mainImageAlt="Medivisor India Treatment Team"
         bannerBgImage="/teams-bg.png"
       />
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-red-50">
-        <div className="container mx-auto py-4 py-10 px-0 md:px-6">
+      <DidYouKnowSection/>
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 py-10 px-2 md:px-0 via-white to-red-50">
+        <div className="container mx-auto ">
           {featuredMembers.length > 0 && (
             <div className="md:mb-20 mb-10">
-              <div className="flex overflow-x-auto whitespace-nowrap justify-center gap-3 mb-5 py-2">
+              <div className="flex overflow-x-auto whitespace-nowrap justify-right md:justify-center gap-3 mb-5 py-2">
                 {featuredMembers.map((member, index) => (
                   <button
                     key={member._id}
@@ -252,22 +254,22 @@ export default function TeamPage() {
                   </div>
                   <div className="p-4 md:p-8 lg:p-12 flex flex-col justify-center bg-gradient-to-br from-white to-gray-50">
                     <div className="mb-2">
-                      <h3 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">{activeMember.name}</h3>
+                      <h3 className="text-xl md:text-3xl font-bold text-gray-900 mb-2">{activeMember.name}</h3>
                       <div className="flex items-center gap-2">
-                        <p className="text-lg md:text-xl text-gray-600 font-semibold">{activeMember.role}</p>
+                        <p className="text-2xl md:text-xl text-gray-600 font-medium">{activeMember.role}</p>
                       </div>
                     </div>
                     <div className="space-y-4 mb-3">
                       {activeMember.shortDescription && (
-                        <p className="text-gray-800 font-medium text-base leading-relaxed">
+                        <p className="text-gray-800 font-medium text-[19px] md:text-base leading-relaxed">
                           {extractTextFromRichText(activeMember.shortDescription)}
                         </p>
                       )}
-                      <p className="text-gray-800 leading-relaxed text-sm md:text-base">
+                      <p className="text-gray-800 h-[250px] overflow-y-scroll md:h-full leading-relaxed text-[19px] md:text-base">
                         {extractTextFromRichText(activeMember.longDescription) || extractTextFromRichText(activeMember.bio)}
                       </p>
                     </div>
-                    <div className="flex gap-2 mb-2">
+                    <div className="flex gap-2 mb-0">
                       {activeMember.email && (
                         <a href={`mailto:${activeMember.email}`} className="p-2 sm:p-3 bg-gradient-to-r from-blue-100 to-blue-200 hover:from-blue-200 hover:to-blue-300 rounded-full transition-all duration-300 transform hover:scale-110 group shadow-md">
                           <Mail className="w-4 h-4 sm:w-5 sm:h-5 text-blue-600 group-hover:text-blue-700" />
@@ -301,7 +303,7 @@ export default function TeamPage() {
           )}
 
           {remainingMembers.length > 0 && (
-            <div className="p-4 md:px-0">
+            <div className="p-0 md:px-0">
               <h2 className="text-3xl md:text-4xl font-bold text-center text-gray-800 mb-4 md:mb-10">All Team Members</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
                 {remainingMembers.map((member) => (
@@ -323,19 +325,19 @@ export default function TeamPage() {
                         </div>
                       </div>
                     </div>
-                    <div className="p-6 bg-gradient-to-br from-white to-gray-50">
+                    <div className="md:p-6 p-4 bg-gradient-to-br from-white to-gray-50">
                       <div className="mb-4">
-                        <h3 className="text-xl font-bold text-gray-900 mb-1 group-hover:text-red-600 transition-colors duration-300">
+                        <h3 className="text-2xl font-bold text-gray-900 mb-1 group-hover:text-red-600 transition-colors duration-300">
                           {member.name}
                         </h3>
                         <div className="flex items-center gap-2">
-                          <p className="text-gray-700 font-medium text-lg line-clamp-1">{member.role}</p>
+                          <p className="text-gray-700 font-medium text-xl md:text-lg line-clamp-1">{member.role}</p>
                         </div>
                       </div>
-                      <p className="text-gray-600 text-sm leading-relaxed mb-3 line-clamp-3">
+                      <p className="text-gray-600 text-[19px] md:text-sm leading-relaxed mb-3 line-clamp-3">
                         {extractTextFromRichText(member.shortDescription) || extractTextFromRichText(member.bio)}
                       </p>
-                      <div className="flex gap-2 mb-4">
+                      <div className="flex gap-2 mb-0">
                         {member.email && (
                           <a href={`mailto:${member.email}`} className="p-2 bg-gradient-to-r from-blue-100 to-blue-200 hover:from-blue-200 hover:to-blue-300 rounded-full transition-all duration-300 transform hover:scale-110 group/icon shadow-sm">
                             <Mail className="w-4 h-4 text-blue-600 group-hover/icon:text-blue-700" />

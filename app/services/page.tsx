@@ -96,15 +96,15 @@ const ModernSkeleton = () => (
 
 export default function Services() {
 
-    const [isModalOpen, setIsModalOpen] = useState(false);
-  
-    const openModal = () => {
-      setIsModalOpen(true);
-    };
-  
-    const closeModal = () => {
-      setIsModalOpen(false);
-    }
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const openModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+  }
   const [services, setServices] = useState<Service[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -328,7 +328,7 @@ export default function Services() {
   }
 
   const ServiceCard = ({ service, index }: { service: Service; index: number }) => (
-    <div className="group bg-white rounded-xs overflow-hidden shadow-none hover:shadow-sm transition-all duration-300 border border-gray-100 h-[620px] flex flex-col relative">
+    <div className="group bg-white rounded-xs overflow-hidden shadow-none hover:shadow-sm transition-all duration-300 border border-gray-100 h-full md:h-[650px] flex flex-col relative">
       {/* Popular Badge */}
       {service.isPopular && (
         <div className="absolute top-4 right-4 z-10 bg-gradient-to-r from-red-500 to-red-600 text-white text-xs font-semibold px-3 py-1.5 rounded-full shadow-lg backdrop-blur-sm">
@@ -345,7 +345,9 @@ export default function Services() {
           loading="lazy"
           onError={(e) => {
             const target = e.target as HTMLImageElement
-            target.src = `/placeholder.svg?height=200&width=400&query=${encodeURIComponent(service.title + " medical service")}`
+            target.src = `/placeholder.svg?height=200&width=400&query=${encodeURIComponent(
+              service.title + " medical service"
+            )}`
           }}
         />
         {service.category && (
@@ -359,7 +361,7 @@ export default function Services() {
       <div className="p-3 py-4 flex flex-col flex-grow">
         {/* Header with title and price */}
         <div className="flex items-start justify-between mb-2 min-h-[2rem]">
-          <h3 className="text-xl font-medium text-gray-900 leading-tight flex-1 pr-2 line-clamp-2">
+          <h3 className="text-2xl font-medium text-gray-900 leading-tight flex-1 pr-2 line-clamp-2">
             {service.title}
           </h3>
           {service.price && (
@@ -370,56 +372,39 @@ export default function Services() {
           )}
         </div>
 
-        {/* Duration and Tags */}
-        
-
         {/* Description */}
-        <div className="mb-6  overflow-hidden">
-          <p className="text-gray-600 leading-relaxed text-lg line-clamp-3">
+        <div className="mb-6 overflow-hidden">
+          <p className="text-gray-600 leading-relaxed text-[19px] md:text-lg line-clamp-3">
             {truncateText(service.shortDescription || service.description, 120)}
           </p>
         </div>
 
         {/* Benefits */}
-        <div className="mb-3  overflow-hidden">
+        <div className="pb-20 overflow-hidden">
           <ul className="space-y-2.5">
             {service.benefits.slice(0, 3).map((benefit, benefitIndex) => (
               <li key={benefitIndex} className="flex items-start gap-3">
                 <div className="flex-shrink-0 w-5 h-5 rounded-full bg-green-100 flex items-center justify-center mt-0.5">
                   <Check className="w-3 h-3 text-green-600" />
                 </div>
-                <span className="text-base text-gray-600 leading-relaxed line-clamp-2">{benefit}</span>
+                <span className="md:text-base text-[19px] text-gray-600 leading-relaxed line-clamp-2">
+                  {benefit}
+                </span>
               </li>
             ))}
           </ul>
         </div>
 
         {/* CTA Button */}
-        {/* <div className="mt-auto">
-          <Button
-            className="w-full bg-[#E22026] hover:bg-[#c01c22] text-white font-medium py-3 px-4 rounded-xs transition-all duration-200 shadow-sm hover:shadow-md group"
-            onClick={() => {
-              if (service.ctaLink) {
-                window.open(service.ctaLink, "_blank")
-              } else {
-                setSelectedService(service)
-              }
-            }}
-          >
-            {service.ctaText || "Enquire Now"}
-            {service.ctaLink && (
-              <ExternalLink className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
-            )}
-          </Button>
-        </div> */}
         <Button
-              onClick={openModal}
-              className=" inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border bg-background hover:text-accent-foreground h-10 px-4 py-2 border-gray-200 text-gray-600 hover:bg-gray-50 absolute bottom-4 left-4 right-4 mb-3"
-            >
-              Enquire Now
-            </Button>
+          onClick={openModal}
+          className="inline-flex mt-5 items-center justify-center whitespace-nowrap rounded-md text-base md:text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border bg-background hover:text-accent-foreground h-10 px-4 py-2 border-gray-200 text-gray-600 hover:bg-gray-50 absolute bottom-4 left-4 right-4 mb-3"
+        >
+          Enquire Now
+        </Button>
       </div>
     </div>
+
   )
 
   if (loading) {
@@ -458,8 +443,8 @@ export default function Services() {
         mainImageAlt="Doctor providing expert medical guidance"
         bannerBgImage="/bg-about.png"
       />
-      <section className="relative bg-gray-50 py-12 md:py-16" id="Services">
-        <div className="container mx-auto px-4 md:px-0">
+      <section className="relative bg-gray-50 px-2 md:px-0 py-12 md:py-16" id="Services">
+        <div className="container mx-auto">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 lg:gap-4">
             {services.map((service, index) => (
               <ServiceCard key={service._id || index} service={service} index={index} />
@@ -467,8 +452,8 @@ export default function Services() {
           </div>
         </div>
       </section>
-      <CtaSection/>
-       <ContactModal isOpen={isModalOpen} onClose={closeModal} />
+      <CtaSection />
+      <ContactModal isOpen={isModalOpen} onClose={closeModal} />
     </>
   )
 }

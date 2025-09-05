@@ -243,7 +243,7 @@ export default function TeamSlider() {
                   <div className="p-6 flex flex-col flex-grow">
                     <h3 className="md:text-xl text-2xl font-semibold text-gray-900 mb-1">{member.name}</h3>
                     <p className="text-base text-gray-600 font-medium mb-3 line-clamp-1">{member.role}</p>
-                    <p className="text-sm text-gray-600 leading-relaxed line-clamp-3 flex-grow">
+                    <p className="text-[19px] text-gray-600 leading-relaxed line-clamp-3 flex-grow">
                       {member.shortDescription || member.bio}
                     </p>
                   </div>

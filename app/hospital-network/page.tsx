@@ -238,7 +238,7 @@ const HospitalCard = ({ hospital, onViewDetails }: { hospital: Hospital; onViewD
       </div>
     </div>
 
-    <CardHeader className="pb-4">
+    <CardHeader className="pb-4 px-3 md:px-4">
       <div className="flex items-center space-x-3 mb-2">
         <div className="w-10 h-10 bg-white rounded-lg shadow-md flex items-center justify-center">
           <Image
@@ -249,16 +249,16 @@ const HospitalCard = ({ hospital, onViewDetails }: { hospital: Hospital; onViewD
             className="object-contain"
           />
         </div>
-        <CardTitle className="text-xl text-gray-900">{hospital.name}</CardTitle>
+        <CardTitle className="text-2xl md:text-xl text-gray-900">{hospital.name}</CardTitle>
       </div>
-      <CardDescription className="flex items-center text-gray-600">
+      <CardDescription className="flex md:text-base text-lg items-center text-gray-600">
         <MapPin className="h-4 w-4 mr-1 text-[#E22026]" />
         {hospital.location}
       </CardDescription>
     </CardHeader>
 
     <CardContent className="pt-0">
-      <p className="text-gray-600 mb-4 line-clamp-3 leading-relaxed">{hospital.description}</p>
+      <p className="text-gray-600 md:text-base text-lg mb-4 line-clamp-3 leading-relaxed">{hospital.description}</p>
 
       <div className="grid grid-cols-2 gap-4 mb-4 text-sm">
         <div className="flex items-center bg-blue-50 p-2 rounded-lg">
@@ -275,7 +275,7 @@ const HospitalCard = ({ hospital, onViewDetails }: { hospital: Hospital; onViewD
 
       <div className="flex space-x-2">
         <Button
-          className=" text-left cursor-pointer  justify-start gap-2  text-gray-700 w-full text-base"
+          className=" text-left cursor-pointer bg-gray-100 justify-center md:justify-start gap-2  text-gray-700 px-8 md:w-auto w-full text-center text-base"
           onClick={onViewDetails}
         >
           View Details
@@ -482,8 +482,8 @@ export default function MediviosHospitalPartners() {
 
 
       {/* Featured Hospital Partners Section */}
-      <section className="py-10 bg-gray-50" id="hospital-partners">
-        <div className="container mx-auto px-4 md:px-0">
+      <section className="py-10 px-2 md:px-0 bg-gray-50" id="hospital-partners">
+        <div className="container mx-auto ">
 
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
