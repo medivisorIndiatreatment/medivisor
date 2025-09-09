@@ -468,9 +468,12 @@ export default function MediaCoveragePage() {
   return (
     <div>
       <Banner
-        topSpanText="Featured Insights from Our Hospital Network"
-        title="Stories, Innovations, and Patient Journeys from Leading Hospitals in India"
-        description="Welcome to the Medivisor India blog – your source for firsthand stories from top hospitals, expert healthcare advice, behind-the-scenes innovation, and inspiring patient experiences. Explore in-depth articles that spotlight our network’s excellence in care, technology, and treatment options across the country."
+        topSpanText="Media Coverage & Press Highlights"
+        title="Stay Updated with Medivisor in the News"
+        description="
+Our organization and its work have garnered widespread appreciation and media coverage. The following mentions serve as a testament to the positive recognition we've received.
+
+"
         buttonText="Browse Hospital Articles"
         buttonLink="/hospital-network/#hospital-blogs"
         bannerBgImage="bg-blogs.png"

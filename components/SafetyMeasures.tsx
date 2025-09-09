@@ -110,10 +110,8 @@ export default function SafetyMeasures() {
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900">
             Our Patient Safety Measures
           </h2>
-          <p className="mt-3 sm:mt-4 text-[19px] md:text-lg text-gray-700 max-w-2xl mx-auto px-2">
-            At Medivisor, patient safety is not just a protocol - it's a promise.
-            From the moment a patient lands to the time they return home, we implement
-            robust systems to ensure every step of their medical journey is secure.
+          <p className="mt-3 sm:mt-4 text-[19px] md:text-lg text-gray-700 max-w-3xl mx-auto px-2">
+          At Medivisor, patient safety isn’t just a protocol — it’s our promise. From the moment you arrive until the day you return home, every step of your medical journey is safeguarded with robust systems, dedicated care, and unwavering attention to detail.
           </p>
         </div>
 

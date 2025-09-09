@@ -434,9 +434,10 @@ export default function Services() {
   return (
     <>
       <Banner
-        topSpanText="Our Specialized Services"
+        topSpanText="Our  Services"
         title="Comprehensive Healthcare Solutions Tailored for You"
-        description="Discover our wide range of medical services designed to meet the diverse needs of international patients. From specialized treatments to general wellness, we connect you with the best healthcare providers in India."
+        description="
+At Medivisor, we make healthcare in India simple, reliable, and stress-free for international patients. From specialized treatments to general wellness, we connect you with the best healthcare providers in India. From the moment you reach out to us, we guide you at every step — so you can focus on your recovery while we take care of the rest."
         buttonText=" Connect Us"
         buttonLink="/services#list"
         mainImageSrc="/about-main.png"

@@ -57,7 +57,7 @@ export default function TreatmentProcessPage() {
   ]
 
   return (
-    <section className="min-h-screen md:px-0 px-2 bg-white">
+    <section className="min-h-screen bg-white">
       <div className="space-y-0">
         {steps.map((step, index) => {
           const IconComponent = step.icon
@@ -67,42 +67,45 @@ export default function TreatmentProcessPage() {
           const cardBgInner = isEven ? "bg-gray-50" : "bg-white"
 
           return (
-            <div key={step.id} className={`${sectionBg} py-10 sm:py-14`}>
+            <div key={step.id} className={`${sectionBg} py-10 sm:py-14 relative`}>
               <div className="container mx-auto px-4 sm:px-6 lg:px-0">
                 <div
-                  className={`flex flex-col ${
-                    isEven ? "lg:flex-row" : "lg:flex-row-reverse"
-                  } items-center gap-6 sm:gap-10 lg:gap-12 
-                  border-0 sm:border sm:border-gray-200`}
+                  className={`flex md:border-0 flex-col ${isEven ? "lg:flex-row" : "lg:flex-row-reverse"} items-center gap-6 sm:gap-10 lg:gap-12`}
                 >
-                  {/* Image + Icon */}
+                  {/* Image + Number + Icon Overlay */}
                   <div className="flex-1 relative group w-full">
-                    <div className="relative overflow-hidden rounded-md shadow-none sm:shadow-md transition-transform">
+                    <div className="relative overflow-hidden rounded-md shadow-none sm:shadow-sm">
                       <img
                         src={step.image || "/placeholder.svg"}
                         alt={step.title}
                         className="w-full h-[220px] sm:h-[280px] md:h-[380px] lg:h-[420px] object-cover"
                       />
-                    </div>
-                    <div className="absolute md:-top-5 top-2 md:-left-5 left-2 sm:-top-6 sm:-left-6 w-14 h-14 sm:w-16 sm:h-16 bg-white text-gray-700 rounded-full flex items-center justify-center shadow-md border border-gray-200">
-                      <IconComponent className="w-7 h-7 sm:w-8 sm:h-8" />
+                      {/* Step Number Overlay */}
+                      <div className="absolute top-4 left-4 md:top-6 md:left-6 w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-white/80 backdrop-blur-md flex items-center justify-center text-gray-700 font-bold text-lg sm:text-xl z-20 shadow-lg">
+                          <IconComponent className="w-7 h-7 sm:w-8 sm:h-8" />
+                      </div>
+                      {/* Icon Overlay */}
+                     
                     </div>
                   </div>
 
                   {/* Text Content */}
-                  <div className="flex-1 w-full px-1 sm:px-3 md:px-0 space-y-3 md:space-y-5">
-                    <h2 className="text-2xl sm:text-2xl md:text-3xl font-bold text-gray-900 leading-snug">
+                  <div className="flex-1 w-full px-1 sm:px-3 md:px-0 space-y-3 md:space-y-5 relative z-10">
+                    {/* Heading with Step Number */}
+                    <h2 className="text-2xl sm:text-2xl md:text-3xl font-bold text-gray-900 leading-snug flex items-center gap-3">
+                      <span className="text-gray-700 bg-white rounded-full w-10 h-10 flex items-center justify-center text-lg sm:text-xl font-bold shadow-md">
+                        {step.id}
+                      </span>
                       {step.title}
                     </h2>
+
                     <p className="text-[19px] sm:text-base md:text-lg text-gray-600 leading-relaxed">
                       {step.description}
                     </p>
 
                     {/* Inner Card */}
                     <div
-                      className={`rounded-md overflow-hidden ${cardBg} 
-                      border-0 sm:border sm:border-gray-100 
-                      shadow-none sm:shadow-sm`}
+                      className={`rounded-md overflow-hidden ${cardBg} border-0 sm:border sm:border-gray-100 shadow-none sm:shadow-sm`}
                     >
                       {/* Header */}
                       <div className="px-0 pt-3 mb-4 md:mb-2 sm:px-5">

@@ -191,8 +191,8 @@ export default function MedicalAdvisorsPage() {
       <Banner
         topSpanText="Meet Our Experts"
         title="Our Esteemed Medical Advisors"
-        description="At Medivisor India Treatment, our team of highly qualified and experienced medical advisors is dedicated to guiding you through your healthcare journey. Discover the specialists who make world-class treatment accessible."
-        buttonText="Find Your Specialist"
+        description="
+At Medivisor India Treatment, our esteemed medical advisors combine global expertise with compassionate care. They are here to guide you at every step, making your treatment journey smooth, transparent, and stress-free. Explore the specialists below and discover the doctors who bring world-class healthcare closer to you."
         buttonLink="/medical-advisors/#advisor-gallery" // Updated anchor
 
         bannerBgImage="/placeholder.svg?height=800&width=1200" // Placeholder for a relevant image

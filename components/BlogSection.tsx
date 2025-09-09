@@ -228,12 +228,16 @@ export default function BlogCarousel() {
                             </div>
                           </CardHeader>
                         </Link>
+                         <Link href={`/blog/${post.slug}`} className=" transition-colors duration-200">
                         <CardContent className="flex flex-col flex-grow p-3 bg-white rounded-b-xs">
-                          <CardTitle className="md:text-xl text-2xl font-medium leading-tight h-16 overflow-hidden mt-2">
-                            <Link href={`/blog/${post.slug}`} className="hover:text-primary line-clamp-2 text-gray-700 transition-colors duration-200">
+                          <div className="line-clamp-2 h-15">
+ <CardTitle className="md:text-xl hover:text-primary text-gray-700 text-2xl font-medium leading-tight  overflow-hidden mt-2">
+                           
                               {post.title}
-                            </Link>
+                          
                           </CardTitle>
+                          </div>
+                         
                           <div className="flex justify-start gap-x-3 items-center my-2">
                             <CardDescription className="text-base text-gray-500 font-[400 ] dark:text-gray-600">
                               {post.firstPublishedDate &&
@@ -249,6 +253,7 @@ export default function BlogCarousel() {
                             {post.excerpt}
                           </p>
                         </CardContent>
+                          </Link>
                       </Card>
                     </div>
                   )

@@ -96,8 +96,7 @@ export default function Testimonials() {
         <div className="md:text-center text-left mb-3 md:mb-6 mt-8 md:mt-0 max-w-3xl mx-auto">
           <h2 className="md:text-4xl text-3xl font-bold text-gray-700 mb-2">Patient Testimonials</h2>
           <p className="md:text-lg text-[19px] text-gray-600 leading-relaxed mb-5">
-            Hear directly from our 2000+ International Patients about how comforting and hassle-free their India
-            treatment journey became with Medivisor by their side.
+         Discover the voices of 2,000+ international patients who found comfort, care, and a hassle-free treatment journey in India — all made possible with Medivisor by their side.
           </p>
         </div>
 
@@ -145,7 +144,7 @@ export default function Testimonials() {
                 <div className="md:px-4 py-3 pt-5 border-t border-gray-100">
                   <button className="w-full px-4 py-2 bg-gray-100 text-gray-700 border border-gray-200 rounded-md  text-base font-medium">
                     <a href="/patient-testimonials" className="flex items-center justify-center gap-2">
-                      Show More Videos
+                       More Videos
                     
                     </a>
                   </button>

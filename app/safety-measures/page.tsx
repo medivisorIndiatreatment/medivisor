@@ -16,8 +16,9 @@ export default function Treatment() {
 
       <Banner
         topSpanText="Safety Measures"
-        title="Driving Positive Change in Healthcare"
-        description="At Medivisor India Treatment, we believe in going beyond just facilitating treatment. We are committed to a range of initiatives aimed at improving healthcare access, promoting awareness, and fostering community well-being across India."
+        title="Ensuring Care with Trust and Responsibility
+"
+        description="At Medivisor India Treatment, safety comes first. We follow strict protocols, partner with accredited hospitals, and take every precaution to make your healthcare journey secure and worry-free. Beyond patient care, we are committed to initiatives that improve healthcare access, raise awareness, and promote community well-being across India."
         buttonText="Learn More"
         buttonLink="/initiatives" 
         bannerBgImage="/service-banner.png" // Replace with an image relevant to your initiatives (e.g., community outreach, health camp, research)

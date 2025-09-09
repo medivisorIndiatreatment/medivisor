@@ -250,15 +250,17 @@ export default function EnhancedTestimonialsPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50">
       {/* Hero Section */}
-      <Banner
-        topSpanText="Patient Testimonials"
-        title="Your Medical Journey in India Starts Here"
-        description="From the first consultation to post-treatment recovery, Medivisor India Treatment ensures a smooth and transparent process. Our expert advisors assist you at every stage—helping you choose the right hospital, understand cost estimates, manage travel, and receive the best possible care with clarity and confidence."
-        buttonText="Start Your Treatment Journey"
-        bannerBgImage="/grandparents-grandchildren-globe-with-inclusion-text-concept-as-abstract-vector-featuring-g_980716-652718.jpg"
-        mainImageSrc="/about-main.png"
-        mainImageAlt="Medivisor Treatment Advisors Guiding Your Journey"
-      />
+     <Banner
+  topSpanText="Patient Testimonials"
+  title="
+2,000+ International Patients Share Their Journey"
+  description="From choosing the right hospital to seamless post-treatment care, our patients’ experiences with Medivisor are filled with trust, comfort, and hope. Watch their stories and see how we make every journey unforgettable."
+  buttonText="Read Their Stories"
+  bannerBgImage="/grandparents-grandchildren-globe-with-inclusion-text-concept-as-abstract-vector-featuring-g_980716-652718.jpg"
+  mainImageSrc="/about-main.png"
+  mainImageAlt="International Patients Sharing Experiences with Medivisor"
+/>
+
 
 
       {/* Search and Filter Section */}

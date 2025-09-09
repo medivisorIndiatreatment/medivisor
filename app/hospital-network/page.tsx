@@ -466,8 +466,9 @@ export default function MediviosHospitalPartners() {
       {/* Hero Section with Medivios Branding */}
       <Banner
         topSpanText="Explore Our Hospital Network"
-        title="Your Gateway to Leading Healthcare Facilities"
-        description="Medivisor India Treatment partners with a vast network of top-tier hospitals across India, ensuring you have access to specialized treatments, cutting-edge technology, and compassionate care close to home. Discover the right hospital for your needs."
+        title="Connecting You to India’s Leading Hospitals
+"
+        description="Medivisor India Treatment partners with trusted hospitals across India — from multi-specialty centers to super-specialty institutes. With advanced facilities and expert doctors, you get the right care at the right place. Check below to explore our hospital network."
         buttonText="Find a Hospital"
         buttonLink="/hospital-network/#hospital-partners" // Changed the link to reflect hospital network
 

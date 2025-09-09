@@ -66,8 +66,12 @@ export default function AboutPage() {
 
       <Banner
         topSpanText="About Medivisor"
-        title="Your Trusted Partner for World-Class Healthcare in India"
-        description="Medivisor India Treatment is a trusted medical travel agency that assists international patients in accessing advanced, world-class medical care across India. With over 10 years of experience, we’ve supported more than 2,000 overseas patients and maintained an impressive 95%+ success and satisfaction rate. Our dedication to compassionate, professional service has been recognized by organizations such as the WHALE (World Health Alliance for Leadership and Excellence), Indian Health Bureau and the Mitra Foundation."
+        title="Your Trusted Gateway to World-Class Healthcare in India.
+
+"
+        description="Medivisor India Treatment is a trusted medical travel partner for international patients seeking advanced, world-class healthcare in India. With over a decade of expertise, we have proudly assisted 2,000+ overseas patients, achieving a remarkable 95%+ success and satisfaction rate.<br/>
+
+Our unwavering commitment to compassionate care and professional service has earned us recognition from esteemed organizations, including the WHALE (World Health Alliance for Leadership and Excellence), the Indian Health Bureau, and the Mitra Foundation."
         buttonText="Discover How We Help"
         buttonLink="/contact"
         mainImageSrc="/about-main.png"

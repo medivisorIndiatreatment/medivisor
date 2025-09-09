@@ -29,7 +29,7 @@ export default function Banner({
   children,
 }: BannerProps) {
   return (
-    <section className="relative md:px-0 px-2 overflow-hidden bg-white py-0 pt-10 md:pt-0 md:py-0 md:h-[70vh]">
+    <section className="relative md:px-0 px-2 overflow-hidden bg-white py-10  md:py-10 md:h-[80vh]">
 
 
 

@@ -213,9 +213,9 @@ export default function GalleryPage() {
     <>
       <section className="">
         <Banner
-          topSpanText="Experience the Healing Journey"
-          title="Patient Activities & Recovery Stories"
-          description="At Medivisor India Treatment, every patient journey is unique and inspiring. Explore stories of resilience, recovery, and transformation."
+          topSpanText="Patient Activities"
+          title="Bringing Comfort, Care, and Happiness"
+          description="At Medivisor, we believe that maintaining a positive mindset is essential for faster healing and recovery, especially when undergoing treatment in a foreign land without all your family members around. This conviction drives us to organize a myriad of activities and events designed not only to alleviate boredom but also to create a vibrant environment that positively influences the mental and emotional well-being of our patients."
           buttonText="Explore Activities"
           buttonLink="/patient-activities/#activities-gallery"
           bannerBgImage="/faq-banner.png"

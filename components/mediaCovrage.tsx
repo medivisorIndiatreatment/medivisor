@@ -179,7 +179,7 @@ export default function MediaCoverageCarousel({
           </Badge>
         </div>
         <CardContent className="md:p-6 p-3 border-t-2  mt-2 border-gray-200 space-y-4">
-          <h3 className="text-gray-700 leading-relaxed  tracking-tight text-2xl font-medium leading-tight overflow-hidden mb-2  line-clamp-2">{item.title || "Untitled Media"}</h3>
+          <h3 className="md:text-xl hover:text-primary text-gray-700 text-2xl font-semibold leading-tight  overflow-hidden mt-2 mb-2  line-clamp-2">{item.title || "Untitled Media"}</h3>
       
         </CardContent>
       </Card>

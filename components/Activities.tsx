@@ -69,9 +69,7 @@ export default function Activities() {
             We Go Beyond Care —<br className="md:hidden block" /> We Celebrate Life
           </h2>
           <p className="mt-2 text-gray-700 md:text-lg text-[19px]">
-            More than just treatment — we care, we celebrate, and we create joyful
-            experiences during your healing journey. From personal visits to vibrant
-            events, your happiness is our mission.
+          Beyond treatment, we bring care, joy, and unforgettable moments. From warm personal visits to lively events, your healing journey with us is filled with smiles and celebration — because your happiness is our true mission.
           </p>
         </div>
 

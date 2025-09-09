@@ -84,8 +84,8 @@ export default function VisaPage() {
     <>
       <Banner
         topSpanText="Visa Made Simple"
-        title="Caring Visa Support for Patients & Families"
-        description="When health is your priority, paperwork shouldn’t weigh you down. At Medivisor, we make the visa process easy and worry-free."
+        title="Caring Support for Patients & Their Families"
+        description="When your health is the priority, visa paperwork shouldn’t slow you down. At Medivisor, we simplify the entire process—guiding you step by step to ensure a smooth, stress-free experience so you can focus on what truly matters: your care and recovery. Follow our 3 simple steps to get your visa quickly, easily, and without any stress."
         buttonText="Start Visa Process"
         buttonLink="#visa-support"
         bannerBgImage="/visa-banner.png"
@@ -124,7 +124,9 @@ export default function VisaPage() {
 
                         {/* Text Section */}
                         <div className="flex-1 space-y-4 w-full">
-                          <h2 className="text-3xl sm:text-2xl font-bold text-gray-900 leading-tight">{document.title}</h2>
+                          <h2 className="text-3xl sm:text-2xl font-bold text-gray-900 leading-tight">
+                            Step {index + 1}: {document.title}
+                          </h2>
                           <p className="text-[19px] sm:text-lg text-gray-600 leading-relaxed">{document.description}</p>
 
                           <div className="rounded-md border border-gray-100 shadow-sm overflow-hidden bg-white">
@@ -152,76 +154,75 @@ export default function VisaPage() {
             </div>
 
             {/* Download + Visa Extension */}
-         <div className="py-10 px-4 sm:px-6 md:px-0">
-  <div className="container mx-auto">
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-      {/* Left Box */}
-      <div>
-        <div className="text-center md:text-left bg-gray-50 rounded-lg p-6 sm:p-8 md:p-10 h-full flex flex-col justify-center shadow-sm">
-          <Download className="w-10 h-10 sm:w-12 sm:h-12 text-[#E22026] mb-4 mx-auto md:mx-0" />
-          <h3 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 mb-3">
-            Download e-Visa Application Form
-          </h3>
-          <p className="text-[19px] md:text-lg text-gray-600 mb-6 leading-relaxed">
-            If you haven't received the e-Visa form, download it directly below.
-          </p>
-          <a href="/e-Visa Application Form.docx" className="w-full sm:w-auto">
-            <Button className="w-full sm:w-auto bg-[#E22026] border border-red-300 text-white text-sm md:text-base font-medium px-6 py-3 rounded-md shadow-sm transition duration-300 hover:bg-[#74BF44] hover:scale-105">
-              Download Application Form
-            </Button>
-          </a>
-        </div>
-      </div>
+            <div className="py-10 px-4 sm:px-6 md:px-0">
+              <div className="container mx-auto">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  {/* Left Box */}
+                  <div>
+                    <div className="text-center md:text-left bg-gray-50 rounded-lg p-6 sm:p-8 md:p-10 h-full flex flex-col justify-center shadow-sm">
+                      <Download className="w-10 h-10 sm:w-12 sm:h-12 text-[#E22026] mb-4 mx-auto md:mx-0" />
+                      <h3 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 mb-3">
+                        Download e-Visa Application Form
+                      </h3>
+                      <p className="text-[19px] md:text-lg text-gray-600 mb-6 leading-relaxed">
+                        If you haven't received the e-Visa form, download it directly below.
+                      </p>
+                      <a href="/e-Visa Application Form.docx" className="w-full sm:w-auto">
+                        <Button className="w-full sm:w-auto bg-[#E22026] border border-red-300 text-white text-sm md:text-base font-medium px-6 py-3 rounded-md shadow-sm transition duration-300 hover:bg-[#74BF44] hover:scale-105">
+                          Download Application Form
+                        </Button>
+                      </a>
+                    </div>
+                  </div>
 
-      {/* Right Box */}
-      <div>
-        <div className="h-full text-center md:text-left rounded-lg border border-red-300 bg-gradient-to-br from-[#E22026] to-[#c4181e] shadow-sm">
-          <div className="p-4 sm:p-8 md:p-10">
-            <div className="pb-4 flex justify-center md:justify-start">
-              <AlertTriangle className="w-10 h-10 sm:w-12 sm:h-12 text-white" />
-            </div>
-            <h4 className="text-2xl sm:text-xl md:text-2xl font-semibold text-white mb-6">
-              Visa Extension Information
-            </h4>
+                  {/* Right Box */}
+                  <div>
+                    <div className="h-full text-center md:text-left rounded-lg border border-red-300 bg-gradient-to-br from-[#E22026] to-[#c4181e] shadow-sm">
+                      <div className="p-4 sm:p-8 md:p-10">
+                        <div className="pb-4 flex justify-center md:justify-start">
+                          <AlertTriangle className="w-10 h-10 sm:w-12 sm:h-12 text-white" />
+                        </div>
+                        <h4 className="text-2xl sm:text-xl md:text-2xl font-semibold text-white mb-6">
+                          Visa Extension Information
+                        </h4>
 
-            <div className="space-y-6 md:border-none border-t border-red-400 pt-4">
-              {/* First Item */}
-              <div className="flex flex-col items-center md:flex-row md:items-start gap-3 pb-4 border-b border-red-400 text-center md:text-left">
-                <div className="w-9 h-9 flex items-center justify-center rounded-full bg-green-100 md:bg-green-100">
-                  <CheckCircle className="w-6 h-6 text-[#74BF44]" />
-                </div>
-                <div>
-                  <p className="font-semibold text-xl sm:text-lg text-white">
-                    Initial Validity: 60 days
-                  </p>
-                  <p className="text-[18px] text-gray-100">
-                    Your initial free eVisa will be valid for 60 days from issue date.
-                  </p>
+                        <div className="space-y-6 md:border-none border-t border-red-400 pt-4">
+                          {/* First Item */}
+                          <div className="flex flex-col items-center md:flex-row md:items-start gap-3 pb-4 border-b border-red-400 text-center md:text-left">
+                            <div className="w-9 h-9 flex items-center justify-center rounded-full bg-green-100 md:bg-green-100">
+                              <CheckCircle className="w-6 h-6 text-[#74BF44]" />
+                            </div>
+                            <div>
+                              <p className="font-semibold text-xl sm:text-lg text-white">
+                                Initial Validity: 60 days
+                              </p>
+                              <p className="text-[18px] text-gray-100">
+                                Your initial free eVisa will be valid for 60 days from issue date.
+                              </p>
+                            </div>
+                          </div>
+
+                          {/* Second Item */}
+                          <div className="flex flex-col items-center md:flex-row md:items-start gap-3 text-center md:text-left">
+                            <div className="w-9 h-9 flex items-center justify-center rounded-full bg-green-100 md:bg-green-100">
+                              <CheckCircle className="w-6 h-6 text-[#74BF44]" />
+                            </div>
+                            <div>
+                              <p className="font-semibold text-xl sm:text-lg text-white">
+                                Extension Cost: $80 per person
+                              </p>
+                              <p className="text-lg text-gray-100">
+                                If an extension is needed, we will arrange it for you (government fee applies).
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
-
-              {/* Second Item */}
-              <div className="flex flex-col items-center md:flex-row md:items-start gap-3 text-center md:text-left">
-                <div className="w-9 h-9 flex items-center justify-center rounded-full bg-green-100 md:bg-green-100">
-                  <CheckCircle className="w-6 h-6 text-[#74BF44]" />
-                </div>
-                <div>
-                  <p className="font-semibold text-xl sm:text-lg text-white">
-                    Extension Cost: $80 per person
-                  </p>
-                  <p className="text-lg text-gray-100">
-                    If an extension is needed, we will arrange it for you (government fee applies).
-                  </p>
-                </div>
-              </div>
             </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
 
             {/* Important Information */}
             <div className="py-10 bg-gray-50 px-4 sm:px-6 md:px-0">

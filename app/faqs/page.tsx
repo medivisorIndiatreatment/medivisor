@@ -249,7 +249,8 @@ export default function FAQPage() {
       <Banner
         topSpanText="FAQs"
         title="Understand Your Treatment Costs Before You Begin"
-        description="Get a detailed breakdown of medical expenses across top hospitals in India. Medivisor India's trusted advisors guide you through pricing, insurance options, and affordable care pathways—so you can focus on your health, not the hassle."
+        description="
+See a clear breakdown of medical expenses at top hospitals in India. Our Medivisor advisors help you understand pricing, insurance, and affordable care options—so you can focus on your health, not the details."
         buttonText="Enquire Now"
         buttonLink="/contact"
         bannerBgImage="/faq-banner.png"
@@ -330,7 +331,7 @@ export default function FAQPage() {
           </div>
 
           {/* Right Content - FAQ Items */}
-          <div className="flex-1" ref={faqSectionRef}>
+          <div className="flex-1 py-10" ref={faqSectionRef}>
             <div className="mb-6">
               <div className="flex items-center justify-between">
                 <div>

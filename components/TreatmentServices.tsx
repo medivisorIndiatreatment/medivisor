@@ -4,10 +4,9 @@ import { useState, useEffect, useCallback } from "react"
 import useEmblaCarousel from "embla-carousel-react"
 import { ChevronLeft, ChevronRight, BriefcaseMedical, AlertCircle } from "lucide-react"
 import { getWixScaledToFillImageUrl } from "@/lib/wixMedia"
-import ContactModal from "@/components/ContactModal" // Corrected import path assuming ContactModal is a default export
+import ContactModal from "@/components/ContactModal"
 import Autoplay from "embla-carousel-autoplay"
 
-// Define a professional interface for the data
 interface Service {
   _id?: string
   hospitalName: string
@@ -16,7 +15,6 @@ interface Service {
   description?: string
 }
 
-// Reusable loading state component
 const LoadingSkeleton = () => (
   <section className="bg-white py-12">
     <div className="container mx-auto px-4">
@@ -32,12 +30,16 @@ const LoadingSkeleton = () => (
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {[...Array(4)].map((_, index) => (
-          <div key={index} className="rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+          <div
+            key={index}
+            className="rounded-xl border border-gray-100 shadow-sm overflow-hidden flex flex-col h-full"
+          >
             <div className="w-full h-56 bg-gray-200 animate-pulse" />
-            <div className="p-6 space-y-4">
+            <div className="p-6 space-y-4 flex flex-col flex-grow">
               <div className="h-6 w-3/4 bg-gray-200 rounded animate-pulse" />
               <div className="h-4 w-full bg-gray-200 rounded animate-pulse" />
               <div className="h-4 w-5/6 bg-gray-200 rounded animate-pulse" />
+              <div className="mt-auto h-8 w-24 bg-gray-200 rounded animate-pulse" />
             </div>
           </div>
         ))}
@@ -50,16 +52,15 @@ export default function ServiceSection() {
   const [services, setServices] = useState<Service[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [isModalOpen, setIsModalOpen] = useState(false); // State to control modal visibility
+  const [isModalOpen, setIsModalOpen] = useState(false)
 
-  // Configure Embla to show 4 full cards at a time and remove 'trimSnaps'
   const [emblaRef, emblaApi] = useEmblaCarousel(
     {
       loop: true,
       slidesToScroll: 1,
       breakpoints: {
-        '(min-width: 1024px)': { slidesToScroll: 4, containScroll: false },
-        '(min-width: 768px)': { slidesToScroll: 2 },
+        "(min-width: 1024px)": { slidesToScroll: 4 },
+        "(min-width: 768px)": { slidesToScroll: 2 },
       },
     },
     [Autoplay({ delay: 4000, stopOnInteraction: false, stopOnMouseEnter: true })],
@@ -153,8 +154,8 @@ export default function ServiceSection() {
   return (
     <>
       <section className="bg-gray-50 px-2 md:px-0 py-12">
-        <div className="container mx-auto ">
-          <div className="flex justify-between items-center mb-4 md:mb-4">
+        <div className="container mx-auto">
+          <div className="flex justify-between items-center mb-4">
             <div>
               <h2 className="md:text-4xl text-3xl font-bold text-gray-700">
                 Our Treatments
@@ -169,17 +170,17 @@ export default function ServiceSection() {
             <div className="flex gap-2">
               <button
                 onClick={() => emblaApi?.scrollPrev()}
-                className="bg-white text-gray-700 p-1.5 rounded-full shadow-md hover:bg-gray-100 transition-colors duration-200 disabled:opacity-50"
+                className="bg-white text-gray-700 p-1.5 rounded-full shadow-md hover:bg-gray-100 transition-colors duration-200"
                 aria-label="Previous slide"
               >
-                <ChevronLeft className=" w-5 h-5" />
+                <ChevronLeft className="w-5 h-5" />
               </button>
               <button
                 onClick={() => emblaApi?.scrollNext()}
-                className="bg-white text-gray-700 p-1.5 rounded-full shadow-md hover:bg-gray-100 transition-colors duration-200 disabled:opacity-50"
+                className="bg-white text-gray-700 p-1.5 rounded-full shadow-md hover:bg-gray-100 transition-colors duration-200"
                 aria-label="Next slide"
               >
-                <ChevronRight className=" w-5 h-5" />
+                <ChevronRight className="w-5 h-5" />
               </button>
             </div>
           </div>
@@ -191,12 +192,13 @@ export default function ServiceSection() {
                   key={service._id || index}
                   className="embla__slide px-2 min-w-0 flex-grow-0 flex-shrink-0 basis-full md:basis-1/2 lg:basis-1/4"
                 >
-                  <div className="group bg-white rounded-xs border border-gray-100 overflow-hidden ">
+                  <div className="group bg-white border border-gray-100 rounded-xs overflow-hidden flex flex-col h-full">
+                    {/* Image */}
                     <div className="relative w-full h-56 overflow-hidden">
                       <img
                         src={service.image}
                         alt={service.treatmentName}
-                        className="w-full h-full object-cover transition-transform duration-500"
+                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                         onError={(e) => {
                           const target = e.target as HTMLImageElement
                           target.src = `https://dummyimage.com/600x400/ececec/9ca3af&text=${encodeURIComponent(
@@ -205,22 +207,25 @@ export default function ServiceSection() {
                         }}
                       />
                     </div>
-                    <div className="md:p-4 p-3 space-y-3 flex flex-col md:mt-0 mt-4 h-full">
-                      <h4 className="md:text-xl text-2xl font-medium leading-tight text-gray-700 overflow-hidden mt-0">
+
+                    {/* Content */}
+                    <div className="p-4 flex flex-col flex-grow">
+                      <h4 className="md:text-xl hover:text-primary text-gray-600 text-2xl font-semibold leading-tight  overflow-hidden my-2">
                         {service.hospitalName}
                       </h4>
-                      <h3 className="text-gray-700 leading-relaxed text-[19px] md:text-lg  mb-2 line-clamp-3">
+                      <h3 className="text-lg text-gray-600 mb-2">
                         {service.treatmentName}
                       </h3>
                       {service.description && (
-                        <p className="text-sm text-gray-500 line-clamp-2 flex-grow">
+                        <p className="text-sm text-gray-500 flex-grow">
                           {service.description}
                         </p>
                       )}
-                      <div className="mt-auto pt-2 text-left">
-                        {/* The 'onClick' handler is added here to open the modal */}
+
+                      {/* Button at bottom */}
+                      <div className="mt-auto pt-3">
                         <button
-                          className=" inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border bg-gray-50 hover:text-accent-foreground h-8 px-4 py-1 border-gray-200 text-gray-600 hover:bg-gray-100"
+                          className="inline-flex items-center cursor-pointer justify-center rounded-md border border-gray-200 bg-gray-50 px-4 py-1 text-sm font-medium text-gray-600 hover:bg-gray-100"
                           onClick={() => setIsModalOpen(true)}
                         >
                           Enquire Now
@@ -235,11 +240,7 @@ export default function ServiceSection() {
         </div>
       </section>
 
-      {/* The ContactModal component is rendered conditionally based on the state */}
-      <ContactModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-      />
+      <ContactModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
     </>
   )
 }

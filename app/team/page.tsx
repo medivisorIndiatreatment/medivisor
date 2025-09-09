@@ -210,8 +210,8 @@ export default function TeamPage() {
     <>
       <Banner
         topSpanText="Meet Our Team"
-        title="The Dedicated Team Behind Medivisor India Treatment"
-        description="At Medivisor India Treatment, our strength lies in our compassionate and highly experienced team. From world-renowned specialists to dedicated patient coordinators, we are united by a singular mission: to provide unparalleled medical care and support for every international patient."
+        title="The Trusted Experts Behind Medivisor India Treatment"
+        description="At Medivisor India Treatment, our greatest strength is our compassionate and experienced team. From world-renowned doctors to dedicated patient coordinators, every member is committed to earning your trust and supporting you at every step. Together, we share one mission — to provide reliable guidance, exceptional medical care, and complete peace of mind for every international patient."
         buttonText="Enquire Now"
         buttonLink="/contact"
         mainImageSrc="/about-main.png"

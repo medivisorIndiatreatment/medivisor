@@ -324,7 +324,7 @@ export default function BlogPost({ slug }: BlogPostProps) {
           <div className="max-w-md mx-auto">
             <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
               <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <span className="text-2xl">😞</span>
+                <span className="text-2xl"></span>
               </div>
               <h1 className="text-2xl font-bold text-gray-900 mb-4">Oops! Something went wrong</h1>
               <p className="text-gray-600 mb-6">{error}</p>
@@ -347,10 +347,10 @@ export default function BlogPost({ slug }: BlogPostProps) {
     return (
       <div className="min-h-screen md:py-10 py-4 bg-gradient-to-br from-gray-50 to-white">
         <main className="container mx-auto px-4 py-12 text-center">
-          {/* <div className="max-w-md mx-auto">
+           <div className="max-w-md mx-auto">
             <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
               <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <span className="text-2xl">🔍</span>
+                <span className="text-2xl">剥</span>
               </div>
               <h1 className="text-2xl font-bold text-gray-900 mb-4">Post Not Found</h1>
               <p className="text-gray-600 mb-6">The blog post you're looking for doesn't exist.</p>
@@ -363,7 +363,7 @@ export default function BlogPost({ slug }: BlogPostProps) {
                 Go Back
               </button>
             </div>
-          </div> */}
+          </div>
         </main>
       </div>
     )
@@ -380,16 +380,15 @@ export default function BlogPost({ slug }: BlogPostProps) {
       <main className="container mx-auto">
         <div className="mx-auto">
           {/* Breadcrumb */}
-          {/* <nav className="md:my-3">
-            <a href='/blog'>
-              <button
-                className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border bg-background hover:text-accent-foreground h-10 px-4 py-2 border-gray-200 text-gray-600 hover:bg-gray-50"
-              >
-                <ChevronLeft className="w-4 h-4 mr-2" />
-                Back to Blog
-              </button>
-            </a>
-          </nav> */}
+          <nav className="md:my-3">
+            <button
+              onClick={() => window.history.back()}
+              className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border bg-background hover:text-accent-foreground h-10 px-4 py-2 border-gray-200 text-gray-600 hover:bg-gray-50"
+            >
+              <ChevronLeft className="w-4 h-4 mr-2" />
+              Back to Blog
+            </button>
+          </nav>
           <div className="md:space-y-12">
             <div className='grid grid-cols-1 md:grid-cols-3 md:gap-4'>
               <div className='col-span-2'>
@@ -413,7 +412,7 @@ export default function BlogPost({ slug }: BlogPostProps) {
                       ) : (
                         <div className="text-center py-12">
                           <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                            <span className="text-2xl">📝</span>
+                            <span className="text-2xl">統</span>
                           </div>
                           <p className="text-gray-600 italic text-lg">No content available for this post.</p>
                         </div>

@@ -37,7 +37,7 @@ const Treatment = () => { // Renamed the component to 'Treatment'
       <Banner
   topSpanText=" Treatment Process"
   title="Your Medical Journey in India, Step by Step"
-  description="Every healing journey begins with trust and guidance. At Medivisor, we make sure you never feel lost. From the moment you reach out, we listen to your concerns, connect you with trusted doctors and hospitals, explain costs in simple terms, and handle your travel and stay. During treatment and recovery, our team stays close — so you always feel cared for, supported, and confident about the choices you’re making."
+  description="Every healing journey starts with trust. At Medivisor, we guide you at every step — from understanding your concerns and connecting you with trusted doctors and hospitals, to explaining costs clearly and managing travel and stay. During treatment and recovery, our team stays close, so you always feel cared for, supported, and confident in your choices."
   buttonText="Start Your Journey"
   buttonLink="/contact"
   bannerBgImage="/grandparents-grandchildren-globe-with-inclusion-text-concept-as-abstract-vector-featuring-g_980716-652718.jpg"

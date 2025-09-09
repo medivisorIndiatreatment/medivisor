@@ -43,7 +43,7 @@ export default function TravelGuidePage() {
       <Banner
         topSpanText="Travel Guide"
         title="Your Medical Journey to India Made Easy"
-        description="Traveling for treatment can feel overwhelming, but we’re here to make it simple. From what to pack, where to stay, and how to get around — our guide helps you and your family feel prepared, comfortable, and confident every step of the way."
+        description="Traveling for treatment can feel overwhelming, but we make it simple. From what to pack, where to stay, and how to get around, our guide ensures you and your family feel prepared, comfortable, and confident at every step of your journey."
         buttonText="Explore Travel Tips"
         buttonLink="/initiatives"
         bannerBgImage="/service-banner.png"
