@@ -16,6 +16,7 @@ const ModernHelpSection = () => {
 
   return (
     <>
+    
       <section className="md:px-0 px-4 md:my-10">
         <div className="container mx-auto my-4 ">
         <div className="relative bg-[#e32128] px-4 md:px-10 rounded-xs shadow-xs relative z-10">

@@ -224,7 +224,7 @@ export default function DoctorProfileComponent() {
 
             {/* Doctor Info */}
             <div className="lg:col-span-2">
-              <div className="space-y-6">
+              <div className="space-y-5">
                 <div>
                   <h1 className="text-4xl font-medium text-foreground mb-2 text-balance">{doctor.name}</h1>
                   <p className="text-xl text-gray-700 font-semibold mb-2">{doctor.title}</p>
