@@ -50,10 +50,8 @@ export default function Treatment() {
       />
 
       {/* Safety Measures Section */}
-      <section className="py-16 container mx-auto px-4">
-        <h2 className="text-3xl font-bold text-center mb-8">Our Safety Measures</h2>
+    
         <SafetyMeasures />
-      </section>
 
       {/* Optional Initiatives / Activities */}
       <section className="py-16 md:px-0 px-4 bg-gray-50">

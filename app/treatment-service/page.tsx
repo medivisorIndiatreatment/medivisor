@@ -1,451 +1,280 @@
 "use client";
-import React, { useState, useEffect } from 'react';
+
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
-  Star,
-  MapPin,
-  Phone,
-  Mail,
-  Calendar,
-  Clock,
-  Award,
-  Users,
-  Globe,
   Heart,
   Shield,
+  Users,
+  Award,
+  Phone,
+  Mail,
+  MapPin,
+  Play,
   CheckCircle,
-  Download,
-  MessageCircle,
-  Video,
-  X,
-  ChevronDown,
-  ChevronUp,
-  Plane,
-  FileText,
-  Languages,
-  CreditCard
-} from 'lucide-react';
-import ContactModal from '@/components/ContactModal';
-
-interface DoctorProfile {
-  _id: string;
-  name: string;
-  specialty: string;
-  photo: string;
-  experience: string;
-  bio: string;
-  education: string[];
-  certifications: string[];
-  languages: string[];
-  consultationFee: number;
-  availability: string;
-  rating: number;
-  reviewsCount: number;
-  yearsOfExperience: number;
-  hospitalAffiliations: string[];
-  contactEmail: string;
-  contactPhone: string;
-  internationalServices: {
-    visaAssistance: boolean;
-    travelConcierge: boolean;
-    airportPickup: boolean;
-    icuFacilities: boolean;
-    languageInterpreter: string[];
-  };
-  packages: Array<{
-    id: string;
-    title: string;
-    priceINR: number;
-    priceUSD: number;
-    includes: string[];
-    turnaround: string;
-  }>;
-  faqs: Array<{
-    q: string;
-    a: string;
-  }>;
-  testimonials: Array<{
-    id: number;
-    name: string;
-    country: string;
-    rating: number;
-    text: string;
-  }>;
-}
-
-const mockDoctor: DoctorProfile = {
-  _id: "1",
-  name: "Sarah Johnson",
-  specialty: "Interventional Cardiology",
-  photo: "https://images.pexels.com/photos/5327585/pexels-photo-5327585.jpeg?auto=compress&cs=tinysrgb&w=1200",
-  experience: "Dr. Sarah Johnson is a world-renowned interventional cardiologist with over 18 years of experience in treating complex cardiovascular conditions.",
-  bio: "A beacon of excellence in global cardiac care, Dr. Sarah Johnson has dedicated her career to advancing patient well-being through innovative, minimally invasive treatments. Patients from around the world choose Dr. Johnson for her distinguished expertise and empathetic, patient-first approach.",
-  education: [
-    "MD - Cardiology, Harvard Medical School (2008)",
-    "MBBS - Johns Hopkins University (2004)",
-    "Fellowship in Interventional Cardiology - Mayo Clinic (2010)",
-  ],
-  certifications: [
-    "Board Certified in Cardiovascular Disease",
-    "Fellow of American College of Cardiology (FACC)",
-    "Certified in Advanced Cardiac Life Support (ACLS)",
-  ],
-  languages: ["English", "Spanish", "French", "Hindi"],
-  consultationFee: 3500,
-  availability: "Mon - Fri: 09:00 - 18:00 (IST)",
-  rating: 4.9,
-  reviewsCount: 347,
-  yearsOfExperience: 18,
-  hospitalAffiliations: [
-    "Apollo Hospital, New Delhi",
-    "Fortis Escorts Heart Institute, New Delhi",
-    "Medanta - The Medicity, Gurugram",
-  ],
-  contactEmail: "dr.sarah.johnson@medivisor.com",
-  contactPhone: "+91 98765 43210",
-  internationalServices: {
-    visaAssistance: true,
-    travelConcierge: true,
-    airportPickup: true,
-    icuFacilities: true,
-    languageInterpreter: ["Hindi", "English", "Arabic"],
-  },
-  packages: [
-    {
-      id: "pkg-basic",
-      title: "Teleconsult + Report Review",
-      priceINR: 4999,
-      priceUSD: 60,
-      includes: ["Initial teleconsult", "Second opinion report review", "Language support"],
-      turnaround: "48 hours",
-    },
-    {
-      id: "pkg-surgery",
-      title: "Surgical Package (incl. stay)",
-      priceINR: 450000,
-      priceUSD: 5400,
-      includes: [
-        "Pre-op consultation",
-        "Surgery & anesthesia",
-        "7-night hospital stay",
-        "Local transfer & concierge",
-      ],
-      turnaround: "Custom planning",
-    },
-  ],
-  faqs: [
-    {
-      q: "Do you provide visa invitation letters?",
-      a: "Yes — we provide formal medical invitation letters and an estimated cost breakdown to support visa applications.",
-    },
-    {
-      q: "Can international patients get help with travel and stay?",
-      a: "Yes, our travel concierge helps with airport pickup, hotel booking, and ground transport.",
-    },
-    {
-      q: "What languages do you speak during consultations?",
-      a: "I'm fluent in English, Spanish, French, and Hindi. We also provide professional medical interpreters for other languages.",
-    },
-    {
-      q: "How do I get a second opinion remotely?",
-      a: "You can book a teleconsultation and share your medical reports. I'll review everything and provide detailed recommendations within 48 hours.",
-    },
-  ],
-  testimonials: [
-    {
-      id: 1,
-      name: "Aisha K.",
-      country: "UAE",
-      rating: 5,
-      text: "Dr. Johnson and the team took excellent care of me. The concierge service made everything effortless.",
-    },
-    {
-      id: 2,
-      name: "James P.",
-      country: "UK",
-      rating: 5,
-      text: "Clear communication, high clinical standards and fast recovery support. Highly recommend.",
-    },
-    {
-      id: 3,
-      name: "Maria S.",
-      country: "Spain",
-      rating: 5,
-      text: "Professional, caring, and thorough. The entire process from consultation to recovery was seamless.",
-    },
-  ],
-};
-
-const DoctorProfile: React.FC = () => {
-  const [doctor, setDoctor] = useState<DoctorProfile | null>(null);
-  const [currency, setCurrency] = useState<'INR' | 'USD'>('INR');
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [expandedFaq, setExpandedFaq] = useState<number | null>(null);
-
-  useEffect(() => {
-    // Simulate API call
-    const timer = setTimeout(() => {
-      setDoctor(mockDoctor);
-    }, 500);
-    return () => clearTimeout(timer);
-  }, []);
-
-  const openModal = () => {
-    setIsModalOpen(true);
-  };
-
-  const closeModal = () => {
-    setIsModalOpen(false);
-  };
-
-  if (!doctor) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="w-16 h-16 border-4 border-gray-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading doctor profile...</p>
-        </div>
-      </div>
-    );
-  }
+  ArrowRight,
+  Stethoscope,
+  Activity,
+  Brain,
+  Zap,
+} from "lucide-react";
+import CtaSection from "@/components/CtaSection";
+export default function CancerTreatmentPage() {
+  const [isVideoPlaying, setIsVideoPlaying] = useState(false);
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Hero Section */}
-      <div className="bg-gradient-to-br from-gray-50 via-white to-gray-50 pt-8 pb-12">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 items-center lg:grid-cols-3 gap-8">
-            {/* Main Info */}
-            <div className="lg:col-span-1">
-              <div className="flex items-start space-x-6">
-                <img
-                  src={doctor.photo}
-                  alt={`Dr. ${doctor.name}`}
-                  className="w-100 h-100 rounded-xs object-cover border border-white shadow-xs"
-                />
+    <div className="bg-white text-gray-900 min-h-screen flex flex-col">
+      <div className="flex flex-1">
+        {/* Main Content */}
+        <main className="flex-1">
+          {/* Hero Section */}
+          <section className="bg-gray-50 py-14 px-4 md:px-0 md:px-0">
+            <div className="container mx-auto ">
+              <h1 className="text-3xl md:text-4xl font-extrabold text-gray-900 mb-6 leading-snug">
+                Cancer Treatment in India – Medivisor India Treatment
+              </h1>
+              <p className="text-lg md:text-xl text-gray-700 mb-4 leading-relaxed">
+                Cancer remains one of the leading health challenges worldwide, with millions of new cases diagnosed each year. For many patients, access to advanced treatment options can be limited or prohibitively expensive in their home countries. As a result, more patients are seeking treatment abroad, where they can find world-class care at a fraction of the cost.
+              </p>
+              <p className="text-lg md:text-xl text-gray-700 mb-4 leading-relaxed">
+                India has emerged as a global hub for affordable and high-quality cancer treatment. With state-of-the-art medical infrastructure, internationally trained oncologists, and cutting-edge technologies, India offers comprehensive cancer care comparable to top global standards — at significantly lower costs.
+              </p>
+              <p className="text-lg md:text-xl text-gray-700 mb-6 leading-relaxed">
+                At Medivisor India Treatment, we connect patients to some of the most trusted cancer care providers in India, including Max Healthcare, a leading name in oncology.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4">
+                <Button className="bg-[#E22026] cursor-pointer md:block hidden hover:bg-[#74BF44] text-white font-medium px-5 py-2 rounded-md shadow-md transition-all">
+                  Start Your Journey
+
+                </Button>
+                <Button
+                  variant="outline"
+                  className="border-gray-300 text-gray-700 hover:bg-gray-100 px-6"
+                >
+                  Get Second Opinion
+                </Button>
               </div>
             </div>
-            {/* Quick Contact Card */}
-            <div className="lg:col-span-2">
-              <div className="flex-1">
-                <h1 className="text-xl font-bold text-gray-700 mb-1">
-                  Dr. {doctor.name}
-                </h1>
-                <p className="text-3xl text-gray-800 font-semibold mb-3">{doctor.specialty}</p>
-                <div className="flex items-center space-x-6 mb-4">
-                  <div className="flex items-center">
-                    <div className="flex text-yellow-400 mr-2">
-                      {[...Array(5)].map((_, i) => (
-                        <Star key={i} className={`w-5 h-5 ${i < Math.floor(doctor.rating) ? 'fill-current' : ''}`} />
-                      ))}
-                    </div>
-                    <span className="text-gray-700 font-semibold">{doctor.rating}</span>
-                    <span className="text-gray-500 ml-1">({doctor.reviewsCount} reviews)</span>
-                  </div>
-                  <div className="flex items-center text-gray-600">
-                    <Award className="w-5 h-5 mr-1" />
-                    <span>{doctor.yearsOfExperience}+ years</span>
-                  </div>
-                </div>
-                <p className="text-gray-700 text-lg leading-relaxed mb-6">{doctor.bio}</p>
-                <div className="flex flex-wrap gap-3">
-                  <button
-                    onClick={openModal}
-                    className="px-6 py-3 bg-gray-50 text-gray-800 rounded-xs font-semibold hover:bg-gray-100 transition-colors shadow-xs"
-                  >
-                    <Calendar className="w-4 h-4 inline mr-2" />
-                    Book Appointment
-                  </button>
-                  <button
-                    onClick={openModal}
-                    className="px-6 py-3 bg-white border border-gray-100 text-gray-700 rounded-xs font-semibold hover:bg-gray-50 transition-colors shadow-xs"
-                  >
-                    <Globe className="w-4 h-4 inline mr-2" />
-                    International Inquiry
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      {/* Main Content */}
-      <section className=" px-2 bg-gray-50 lg:px-0 py-10">
-        <div className="container mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {/* Left Column - Main Content */}
-            <div className="lg:col-span-2 space-y-8">
-              {/* About Section */}
-              <div className="bg-white rounded-xs p-5 border border-gray-100 shadow-xs">
-                <h2 className="text-3xl font-medium text-gray-900 mb-4">About Dr. {doctor.name}</h2>
-                <p className="text-gray-700 leading-relaxed text-lg mb-6">{doctor.experience}</p>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <h3 className="text-xl font-semibold text-gray-900 mb-3">Education</h3>
-                    <ul className="space-y-2">
-                      {doctor.education.map((edu, index) => (
-                        <li key={index} className="flex items-start">
-                          <CheckCircle className="w-5 h-6 text-green-600 mr-2 mt-0.5 flex-shrink-0" />
-                          <span className="text-gray-700 text-lg">{edu}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                  <div>
-                    <h3 className="text-xl font-semibold text-gray-900 mb-3">Certifications</h3>
-                    <ul className="space-y-2">
-                      {doctor.certifications.map((cert, index) => (
-                        <li key={index} className="flex items-start">
-                          <Award className="w-5 h-6 text-gray-600 mr-2 mt-0.5 flex-shrink-0" />
-                          <span className="text-gray-700 text-lg">{cert}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                </div>
-              </div>
-              {/* International Services */}
-              <div className="bg-white rounded-xs p-5 border border-gray-100 shadow-xs">
-                <h2 className="text-3xl font-bold text-gray-900 mb-4">International Patient Services</h2>
-                <p className="text-gray-700 text-lg mb-6">
-                  Comprehensive support for international patients seeking world-class medical care in India.
+          </section>
+
+          {/* Overview Section */}
+          <section id="overview" className="py-14 px-4 md:px-0 md:px-0 bg-white">
+            <div className="container mx-auto ">
+              <div className="text-center mb-10">
+                <h2 className="text-3xl font-bold text-gray-900 mb-3">
+                  Why Choose India for Cancer Treatment?
+                </h2>
+                <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+                  India has emerged as a global hub for affordable and high-quality cancer treatment, offering
+                  comprehensive care comparable to top global standards.
                 </p>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="p-4 bg-gray-100 rounded-xs">
-                    <div className="flex items-center mb-3">
-                      <FileText className="w-10 h-10 bg-white rounded-xs p-2 text-gray-600 mr-2" />
-                      <h3 className="text-xl font-medium text-gray-700">Visa & Documentation</h3>
-                    </div>
-                    <p className="text-gray-600 text-lg">
-                      Medical invitation letters, cost estimates, and documentation support for visa applications.
-                    </p>
-                  </div>
-                  <div className="p-4 bg-gray-100 rounded-xs">
-                    <div className="flex items-center mb-3">
-                      <Plane className="w-10 h-10 bg-white rounded-xs p-2 text-gray-600 mr-2" />
-                      <h3 className="text-xl font-medium text-gray-700">Travel Concierge</h3>
-                    </div>
-                    <p className="text-gray-600 text-lg">
-                      Airport pickup, hotel arrangements, local transportation, and cultural support services.
-                    </p>
-                  </div>
-                  <div className="p-4 bg-gray-100 rounded-xs">
-                    <div className="flex items-center mb-3">
-                      <Languages className="w-10 h-10 bg-white rounded-xs p-2 text-gray-600 mr-2" />
-                      <h3 className="text-xl font-medium text-gray-700">Language Support</h3>
-                    </div>
-                    <p className="text-gray-600 text-lg">
-                      Professional medical interpreters and multilingual patient coordinators available.
-                    </p>
-                  </div>
-                  <div className="p-4 bg-gray-100 rounded-xs">
-                    <div className="flex items-center mb-3">
-                      <CreditCard className="w-10 h-10 bg-white rounded-xs p-2 text-gray-600 mr-2" />
-                      <h3 className="text-xl font-medium text-gray-700">Insurance & Billing</h3>
-                    </div>
-                    <p className="text-gray-600 text-lg">
-                      Insurance claim assistance, transparent pricing, and flexible payment options.
-                    </p>
-                  </div>
-                </div>
               </div>
-              {/* FAQ Section */}
-              <div className="bg-white rounded-xs p-5 border border-gray-100 shadow-xs">
-                <h2 className="text-3xl font-bold text-gray-900 mb-6">Frequently Asked Questions</h2>
-                <div className="space-y-4">
-                  {doctor.faqs.map((faq, index) => (
-                    <div key={index} className="border border-gray-200 rounded-xs">
-                      <button
-                        onClick={() => setExpandedFaq(expandedFaq === index ? null : index)}
-                        className="w-full px-6 py-3 text-left flex items-center justify-between bg-gray-50 hover:bg-white transition-colors rounded-xl"
-                      >
-                        <span className="font-medium text-lg text-gray-700">{faq.q}</span>
-                        {expandedFaq === index ? (
-                          <ChevronUp className="w-5 h-5 text-gray-500" />
-                        ) : (
-                          <ChevronDown className="w-5 h-5 text-gray-500" />
-                        )}
-                      </button>
-                      {expandedFaq === index && (
-                        <div className="px-6 pb-4">
-                          <p className="text-gray-700 leading-relaxed text-base">{faq.a}</p>
-                        </div>
-                      )}
+              <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                {[
+                  { icon: Award, title: "Expert Oncologists", desc: "Internationally trained doctors with decades of experience" },
+                  { icon: Zap, title: "Advanced Technology", desc: "State-of-the-art equipment and cutting-edge treatment methods" },
+                  { icon: Shield, title: "Affordable Care", desc: "World-class treatment at a fraction of global costs" },
+                  { icon: Users, title: "Holistic Support", desc: "Complete patient care from consultation to recovery" },
+                ].map((item, index) => (
+                  <Card key={index} className="text-center bg-gray-50 hover:bg-gray-100 border border-gray-100 shadow-xs hover:shadow-xs transition-all rounded-xs">
+                    <CardHeader className="p-3">
+                      <item.icon className="h-14 w-14 text-gray-700 bg-white p-3 border border-gray-200 rounded-full mx-auto mb-3" />
+                      <CardTitle className="text-xl  text-gray-700">{item.title}</CardTitle>
+                    </CardHeader>
+                    <CardContent className="text-lg p-3 pt-0 text-gray-900">
+                      <p className="text-lg text-gray-600">{item.desc}</p>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          {/* Cancer Types Section */}
+          <section id="treatments" className="py-16 px-4 md:px-0 bg-gray-50">
+            <div className="container mx-auto">
+              {/* Section Heading */}
+              <div className="text-center mb-12">
+                <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-3">
+                  Types of Cancer We Treat
+                </h2>
+                <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+                  Comprehensive, multidisciplinary care across a wide spectrum of cancer types.
+                </p>
+              </div>
+
+              {/* Cards Grid */}
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
+                {[
+                  { name: "Breast Cancer", description: "Surgery, radiation, chemotherapy, hormone therapy" },
+                  { name: "Lung Cancer", description: "Surgery, chemotherapy, radiation, targeted therapy" },
+                  { name: "Blood Cancers", description: "Chemotherapy, immunotherapy, stem cell transplant" },
+                  { name: "Brain Tumors", description: "Surgery, radiation, chemotherapy based on type" },
+                  { name: "Colorectal Cancer", description: "Surgery with high success in early stages" },
+                  { name: "Prostate Cancer", description: "Surgery, radiation, hormone therapy" },
+                  { name: "Liver Cancer", description: "Surgery, transplantation, targeted therapy" },
+                  { name: "Pancreatic Cancer", description: "Surgery, chemotherapy, palliative care" },
+                  { name: "Ovarian Cancer", description: "Debulking surgery, chemotherapy, targeted therapies" },
+                ].map((cancer, index) => (
+                  <Card
+                    key={index}
+                    className="bg-white border border-gray-100 shadow-xs hover:shadow-xs transition-all duration-200 rounded-xs"
+                  >
+                    <CardHeader className="p-5 pb-3">
+                      <CardTitle className="text-xl flex items-center text-gray-800">
+                        <Activity className="h-10 w-10 bg-gray-100 border border-gray-100 rounded-full p-2 mr-3 text-gray-700" />
+                        {cancer.name}
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="p-5 pt-0">
+                      <p className="text-base text-gray-600 leading-relaxed">
+                        {cancer.description}
+                      </p>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </div>
+          </section>
+
+
+          {/* Advanced Treatments Section */}
+          <section id="services" className="py-14 px-4 md:px-0 bg-white">
+            <div className="container mx-auto ">
+              <div className="text-center mb-10">
+                <h2 className="text-3xl font-bold text-gray-900 mb-3">
+                  Advanced Treatment Services
+                </h2>
+                <p className="text-lg text-gray-600">
+                  Precision medicine combining advanced surgical techniques and comprehensive support
+                </p>
+              </div>
+              <div className="grid md:grid-cols-2 gap-8">
+                <div className="space-y-3">
+                  {[
+                    "Targeted Therapy - Attacks specific cancer cells",
+                    "Robotic Surgery - Minimally invasive procedures",
+                    "Advanced Radiation Therapy - IMRT, IGRT, VMAT",
+                    "Precision Oncology - Personalized treatment plans",
+                    "Immunotherapy - Activates immune system naturally",
+                  ].map((service, index) => (
+                    <div key={index} className="flex bg-gray-50 p-2 rounded-xs items-start space-x-3">
+                      <CheckCircle className="h-5 w-5 text-[#74bf44] mt-0.5 flex-shrink-0" />
+                      <span className="text-gray-700 text-lg">{service}</span>
+                    </div>
+                  ))}
+                </div>
+                <div className="space-y-3">
+                  {[
+                    "Hormone Therapy - For hormone-dependent cancers",
+                    "Cryoablation - Non-surgical tumor destruction",
+                    "Stem Cell Transplant - Restores healthy blood cells",
+                    "Palliative Care - Pain management and support",
+                    "Molecular Profiling - Genetic tumor analysis",
+                  ].map((service, index) => (
+                    <div key={index} className="flex bg-gray-50 p-2 rounded-xs items-start space-x-3">
+                      <CheckCircle className="h-5 w-5 text-[#74bf44] mt-0.5 flex-shrink-0" />
+                      <span className="text-gray-700 text-lg">{service}</span>
                     </div>
                   ))}
                 </div>
               </div>
             </div>
-            {/* Right Column - Hospital Affiliations & Quick Info */}
-            <div className="lg:col-span-1 space-y-6">
-              <div className="bg-white rounded-xs p-5 border border-gray-100 shadow-xs">
-                <h3 className="text-2xl font-semibold text-gray-700 mb-4">Hospital Affiliations</h3>
-                <ul className="space-y-3">
-                  {doctor.hospitalAffiliations.map((hospital, index) => (
-                    <li key={index} className="flex items-start">
-                      <MapPin className="w-5 h-5 text-gray-600 mr-2 mt-0.5 flex-shrink-0" />
-                      <span className="text-gray-700 text-lg">{hospital}</span>
+          </section>
+
+          {/* International Patient Support */}
+          <section className="py-14 px-4 md:px-0 bg-gray-50">
+            <div className="container mx-auto">
+              <div className="text-center mb-10">
+                <h2 className="text-3xl font-bold text-gray-900 mb-3">
+                  International Patient Support
+                </h2>
+                <p className="text-lg text-gray-600">
+                  End-to-end care to make your treatment journey seamless and stress-free
+                </p>
+              </div>
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {[
+                  { icon: Users, title: "Dedicated Coordinators", desc: "Single point of contact for all needs" },
+                  { icon: MapPin, title: "Visa & Travel Support", desc: "Complete assistance with documentation" },
+                  { icon: Phone, title: "Language Services", desc: "Multilingual interpreters available" },
+                  { icon: Stethoscope, title: "Online Consultations", desc: "Expert review before traveling" },
+                  { icon: Shield, title: "Transparent Pricing", desc: "Detailed cost estimates upfront" },
+                  { icon: Heart, title: "Post-Treatment Care", desc: "Virtual follow-ups after returning home" },
+                ].map((support, index) => (
+                  <Card key={index} className="text-center bg-white border border-gray-100 shadow-xs hover:shadow-xs rounded-xs">
+                    <CardHeader className="p-0 pt-4">
+                     <div className="rounded-full border-gray-200 bg-gray-100 p-2  inline-block w-14 h-14 mx-auto">
+                       <support.icon className="h-10 w-10 text-gray-700 mx-auto mb-3 p-1" />
+                     </div>
+                      <CardTitle className="text-xl mb-1 text-gray-700">{support.title}</CardTitle>
+                    </CardHeader>
+                    <CardContent className="px-4 pb-4">
+                      <p className="text-lg text-gray-600">{support.desc}</p>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          {/* Contact Section */}
+          <section id="contact" className="py-0 px-4 md:px-0 bg-white">
+            <CtaSection />
+          </section>
+        </main>
+
+        {/* Sticky Video Sidebar */}
+        <aside className="hidden lg:block sticky top-20 right-0 w-80 h-[calc(100vh-80px)] overflow-y-auto bg-white border-l border-gray-200">
+          <div className="p-6 h-full flex flex-col">
+            <div className="mb-4">
+              <h3 className="text-2xl font-semibold text-gray-900 mb-2">
+                Cancer Treatment in India
+              </h3>
+              <p className="text-lg text-gray-600">
+                Watch our comprehensive guide to cancer treatment options and patient success stories.
+              </p>
+            </div>
+            <div className="relative flex-1 bg-gray-50 rounded-lg overflow-hidden">
+              {!isVideoPlaying ? (
+                <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
+                  <Button
+                    className="bg-gray-800 hover:bg-gray-900 text-white rounded-full w-16 h-16"
+                    onClick={() => setIsVideoPlaying(true)}
+                  >
+                    <Play className="h-6 w-6 ml-1" />
+                  </Button>
+                </div>
+              ) : (
+                <div className="w-full h-full bg-gray-50 flex items-center justify-center">
+                  <div className="text-center text-gray-400">
+                    <Brain className="h-12 w-12 mx-auto mb-2" />
+                    <p className="text-sm">Video Player</p>
+                    <p className="text-xs">Treatment Overview</p>
+                  </div>
+                </div>
+              )}
+            </div>
+            <div className="mt-6 space-y-4">
+              <div className="text-sm">
+                <h4 className="font-medium text-xl text-gray-900 mb-2">Key Benefits:</h4>
+                <ul className="space-y-1 text-gray-600">
+                  {["Cost-effective treatment", "World-class facilities", "Expert oncologists", "Comprehensive support"].map((benefit, idx) => (
+                    <li key={idx} className="flex text-lg items-center">
+                      <CheckCircle className="h-5 w-5 text-[#74BF44] mr-2" />
+                      {benefit}
                     </li>
                   ))}
                 </ul>
               </div>
-              <div className=" bg-white  rounded-xs p-5 border border-gray-100 shadow-xs">
-                <h3 className="text-xl font-semibold text-gray-800 mb-6 text-left">
-                  International Patient Journey 🌍
-                </h3>
-                <ol className="relative border-l-2 border-gray-200 space-y-6 pl-6">
-                  <li className="group">
-                    <div className="absolute -left-3 w-6 h-6 bg-gray-100 text-gray-700 rounded-full flex items-center justify-center text-lg font-medium ring-2 ring-gray-100 transition group-hover:scale-110">
-                      1
-                    </div>
-                    <p className="text-gray-700 text-lg font-medium">Share medical records & reports</p>
-                  </li>
-                  <li className="group">
-                    <div className="absolute -left-3 w-6 h-6 bg-gray-100 text-gray-700 rounded-full flex items-center justify-center text-lg font-medium ring-2 ring-gray-100 transition group-hover:scale-110">
-                      2
-                    </div>
-                    <p className="text-gray-700 text-lg font-medium">Receive treatment plan & visa letter</p>
-                  </li>
-                  <li className="group">
-                    <div className="absolute -left-3 w-6 h-6 bg-gray-100 text-gray-700 rounded-full flex items-center justify-center text-lg font-medium ring-2 ring-gray-100 transition group-hover:scale-110">
-                      3
-                    </div>
-                    <p className="text-gray-700 text-lg font-medium">Travel arrangements & arrival</p>
-                  </li>
-                  <li className="group">
-                    <div className="absolute -left-3 w-6 h-6 bg-gray-100 text-gray-700 rounded-full flex items-center justify-center text-lg font-medium ring-2 ring-gray-100 transition group-hover:scale-110">
-                      4
-                    </div>
-                    <p className="text-gray-700 text-lg font-medium">Treatment & recovery support</p>
-                  </li>
-                </ol>
-              </div>
-              <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl p-6 border border-gray-200">
-                <div className="text-center">
-                  <Heart className="w-8 h-8 text-gray-600 mx-auto mb-3" />
-                  <h3 className="text-lg font-bold text-gray-900 mb-2">Need Immediate Help?</h3>
-                  <p className="text-gray-700 text-lg mb-4">
-                    Our international patient coordinators are available 24/7 to assist you.
-                  </p>
-                  <button
-                    onClick={openModal}
-                    className="w-full px-4 py-3 bg-gray-600 text-white rounded-xl font-semibold hover:bg-gray-700 transition-colors"
-                  >
-                    <MessageCircle className="w-4 h-4 inline mr-2" />
-                    Contact Now
-                  </button>
-                </div>
-              </div>
+              <Button className="bg-[#E22026] cursor-pointer md:block hidden hover:bg-[#74BF44] text-white font-medium px-5 py-2 rounded-md shadow-md transition-all">
+                Get Free Consultation
+              </Button>
             </div>
           </div>
-        </div>
-      </section>
-      {/* Booking Modal */}
-      <ContactModal
-        isOpen={isModalOpen}
-        onClose={closeModal}
-      />
+        </aside>
+      </div>
     </div>
   );
-};
-
-export default DoctorProfile;
+}
