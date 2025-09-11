@@ -51,7 +51,7 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
       title,
       description,
       url,
-      siteName: 'Medivisor India',
+      siteName: 'Medivisor India Treatment',
       images: [{ url: image, width: 1200, height: 630, alt: title }],
       type: 'article',
     },

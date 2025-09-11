@@ -10,7 +10,7 @@ export const metadata: Metadata = {
     title: 'Hospital Network | Medivisor India',
     description: 'Discover our partner hospitals in India, delivering advanced medical care and world-class facilities for international patients.',
     url: 'https://www.medivisorindia.com/hospital-network',
-    siteName: 'Medivisor India',
+    siteName: 'Medivisor India Treatment',
     images: [
       {
         url: 'https://www.medivisorindia.com/medical-help-india.jpg',

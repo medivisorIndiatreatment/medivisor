@@ -10,7 +10,7 @@ export const metadata: Metadata = {
     title: 'Visa Process for Medical Travel | Medivisor India',
     description: 'Step-by-step guide for international patients to obtain a medical visa and travel to India for world-class treatment with Medivisor India.',
     url: 'https://www.medivisorindia.com/visa-process',
-    siteName: 'Medivisor India',
+    siteName: 'Medivisor India Treatment',
     images: [
       {
         url: 'https://www.medivisorindia.com/medical-help-india.jpg',

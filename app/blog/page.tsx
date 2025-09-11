@@ -10,7 +10,7 @@ export const metadata: Metadata = {
     title: 'Blog | Medivisor India',
     description: 'Stay updated with the latest blog posts, patient stories, and healthcare insights by Medivisor India.',
     url: 'https://www.medivisorindia.com/blog',
-    siteName: 'Medivisor India',
+    siteName: 'Medivisor India Treatment',
     images: [
       {
         url: 'https://www.medivisorindia.com/medical-help-india.jpg',

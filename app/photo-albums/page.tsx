@@ -10,7 +10,7 @@ export const metadata: Metadata = {
     title: 'Photo Albums | Medivisor India',
     description: 'Browse photo albums highlighting Medivisor India’s hospitals, events, and patient experiences.',
     url: 'https://www.medivisorindia.com/photo-albums',
-    siteName: 'Medivisor India',
+    siteName: 'Medivisor India Treatment',
     images: [
       {
         url: 'https://www.medivisorindia.com/medical-help-india.jpg',

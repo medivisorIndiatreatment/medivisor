@@ -10,7 +10,7 @@ export const metadata: Metadata = {
     title: 'Treatment Cost | Medivisor India',
     description: 'Transparent treatment cost overview for international patients. Learn about prices for surgeries, IVF, kidney transplant, cancer care, and heart treatments in India.',
     url: 'https://www.medivisorindia.com/treatment-cost',
-    siteName: 'Medivisor India',
+    siteName: 'Medivisor India Treatment',
     images: [
       {
         url: 'https://www.medivisorindia.com/medical-help-india.jpg',

@@ -10,7 +10,7 @@ export const metadata: Metadata = {
     title: 'Patient Testimonials | Medivisor India',
     description: 'Discover real experiences of international patients who trusted Medivisor India for their medical treatment in India.',
     url: 'https://www.medivisorindia.com/patient-testimonials',
-    siteName: 'Medivisor India',
+    siteName: 'Medivisor India Treatment',
     images: [
       {
         url: 'https://www.medivisorindia.com/medical-help-india.jpg',

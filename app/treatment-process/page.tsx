@@ -10,7 +10,7 @@ export const metadata: Metadata = {
     title: 'Treatment Process | Medivisor India',
     description: 'Step-by-step guide to Medivisor India’s treatment process for international patients, ensuring safe and effective medical care.',
     url: 'https://www.medivisorindia.com/treatment-process',
-    siteName: 'Medivisor India',
+    siteName: 'Medivisor India Treatment',
     images: [
       {
         url: 'https://www.medivisorindia.com/medical-help-india.jpg',

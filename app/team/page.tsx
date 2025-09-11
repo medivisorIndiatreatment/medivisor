@@ -11,7 +11,7 @@ export const metadata: Metadata = {
     title: 'Meet Our Expert Team | Medivisor India',
     description: 'Discover our dedicated team of doctors, surgeons, and healthcare professionals delivering advanced medical care for international patients.',
     url: 'https://www.medivisorindia.com/team',
-    siteName: 'Medivisor India',
+    siteName: 'Medivisor India Treatment',
     images: [
       {
         url: 'https://www.medivisorindia.com/medical-help-india.jpg',

@@ -10,7 +10,7 @@ export const metadata: Metadata = {
     title: 'Media Coverage & News | Medivisor India',
     description: 'Stay updated with press releases, news articles, and media mentions of Medivisor India.',
     url: 'https://www.medivisorindia.com/media-coverage',
-    siteName: 'Medivisor India',
+    siteName: 'Medivisor India Treatment',
     images: [
       {
         url: 'https://www.medivisorindia.com/medical-help-india.jpg',

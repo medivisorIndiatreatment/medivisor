@@ -10,7 +10,7 @@ export const metadata: Metadata = {
     title: 'Travel Guide for International Patients | Medivisor India',
     description: 'Plan your medical trip to India with Medivisor India’s travel guide for international patients, including tips on travel, accommodation, and local transport.',
     url: 'https://www.medivisorindia.com/travel-guide',
-    siteName: 'Medivisor India',
+    siteName: 'Medivisor India Treatment',
     images: [
       {
         url: 'https://www.medivisorindia.com/og-travel-guide.jpg',

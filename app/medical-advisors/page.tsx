@@ -10,7 +10,7 @@ export const metadata: Metadata = {
     title: 'Medical Advisors | Medivisor India',
     description: 'Meet Medivisor India’s experienced medical advisors who help international patients make informed decisions about advanced medical treatments.',
     url: 'https://www.medivisorindia.com/medical-advisors',
-    siteName: 'Medivisor India',
+    siteName: 'Medivisor India Treatment',
     images: [
       {
         url: 'https://www.medivisorindia.com/medical-help-india.jpg',
