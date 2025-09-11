@@ -16,7 +16,7 @@ const nextConfig = {
   async redirects() {
     return [
       {
-        source: "/single-post/:slug*", // match /single-post/ and everything after it
+        source: "/single-post/:slug*", // match /single-post/ and 
         destination: "/blog/:slug*",  // redirect to new blog route
         permanent: true, // use 308 redirect (SEO friendly)
       },
