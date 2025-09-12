@@ -5,6 +5,7 @@ import useEmblaCarousel from "embla-carousel-react"
 import "embla-carousel-react"
 import { ChevronLeft, ChevronRight, Users } from "lucide-react"
 import { getBestCoverImage, getWixScaledToFillImageUrl } from "@/lib/wixMedia"
+import Link from "next/link"
 
 const COLLECTION_ID = "Team1"
 
@@ -18,6 +19,7 @@ interface TeamMember {
   longDescription: string
   order: number
   title: string
+  slug: string
   rawData?: any
 }
 
@@ -123,6 +125,16 @@ export default function TeamSlider() {
 
     return `/placeholder.svg?height=240&width=240&query=team member portrait`
   }
+ const generateSlug = (name: string, id: string): string => {
+    const nameSlug = name
+        .toLowerCase()
+        .replace(/[^a-z0-9\s-]/g, "")
+        .replace(/\s+/g, "-")
+        .replace(/-+/g, "-")
+        .replace(/^-|-$/g, "")
+        .trim()
+    return nameSlug || id || "team-member"
+}
 
   const fetchTeamMembers = async () => {
     try {
@@ -139,18 +151,25 @@ export default function TeamSlider() {
         return []
       }
 
-      const teamMembersData: TeamMember[] = response.items.map((item: any) => ({
-        _id: item._id || item.ID,
-        name: item.Name || item.name || item.title || "Team Member",
-        role: item["Job Title"] || item.jobTitle || item.role || item.position || "Team Member",
-        image: processWixImageUrl(item),
-        bio: item["Long Description"] || item.longDescription || item.bio || item.description || "Dedicated team member.",
-        shortDescription: item["Short Description"] || item.shortDescription || item.excerpt || "",
-        longDescription: item["Long Description"] || item.longDescription || item.bio || item.description || "",
-        order: Number.parseInt(item.Order) || Number.parseInt(item.order) || 0,
-        title: item.title || item.link || item.profileUrl || item.website || "#",
-        rawData: item,
-      }))
+      const teamMembersData: TeamMember[] = response.items.map((item: any) => {
+        const memberName = item.Name || item.name || item.title || "Team Member"
+        const memberId = item._id || item.ID
+        const slug = generateSlug(memberName, memberId)
+
+        return {
+          _id: memberId,
+          name: memberName,
+          role: item["Job Title"] || item.jobTitle || item.role || item.position || "Team Member",
+          image: processWixImageUrl(item),
+          bio: item["Long Description"] || item.longDescription || item.bio || item.description || "Dedicated team member.",
+          shortDescription: item["Short Description"] || item.shortDescription || item.excerpt || "",
+          longDescription: item["Long Description"] || item.longDescription || item.bio || item.description || "",
+          order: Number.parseInt(item.Order) || Number.parseInt(item.order) || 0,
+          title: item.title || item.link || item.profileUrl || item.website || "#",
+          slug: slug,
+          rawData: item,
+        }
+      })
 
       return teamMembersData.sort((a, b) => a.order - b.order)
     } catch (error: any) {
@@ -196,10 +215,10 @@ export default function TeamSlider() {
 
   return (
     <section className="bg-gray-50 px-2 md:px-0 md:py-10 py-10">
-      <div className="container mx-auto ">
+      <div className="container mx-auto">
         <div className="flex justify-between items-center mb-3 md:mb-6">
           <div>
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900">Our Team</h2>
+            <h2 className="heading-lg">Our Team</h2>
           </div>
           <div className="flex gap-2">
             <button
@@ -226,7 +245,11 @@ export default function TeamSlider() {
                 key={member._id || index}
                 className="relative min-w-0 flex-grow-0 flex-shrink-0 basis-full pl-4 md:basis-1/2 lg:basis-1/4"
               >
-                <div className="bg-white rounded-xs border border-gray-200 shadow-xs hover:shadow-lg transition-all duration-300 overflow-hidden group flex flex-col h-full">
+                <Link
+                  href={`/team/${member.slug}`}
+                  passHref
+                  className="bg-white rounded-xs border border-gray-200 shadow-xs hover:shadow-lg transition-all duration-300 overflow-hidden group flex flex-col h-full"
+                >
                   <div className="relative w-full h-60">
                     <img
                       src={member.image || "/placeholder.svg"}
@@ -241,13 +264,13 @@ export default function TeamSlider() {
                     />
                   </div>
                   <div className="p-6 flex flex-col flex-grow">
-                    <h3 className="md:text-xl text-2xl font-semibold text-gray-900 mb-1">{member.name}</h3>
-                    <p className="text-base text-gray-600 font-medium mb-3 line-clamp-1">{member.role}</p>
-                    <p className="text-[19px] text-gray-600 leading-relaxed line-clamp-3 flex-grow">
+                    <h3 className="title-text">{member.name}</h3>
+                    <p className="description-1 py-2">{member.role}</p>
+                    <p className="description line-clamp-4">
                       {member.shortDescription || member.bio}
                     </p>
                   </div>
-                </div>
+                </Link>
               </div>
             ))}
           </div>

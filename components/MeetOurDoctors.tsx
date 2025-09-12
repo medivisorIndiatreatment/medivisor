@@ -206,7 +206,7 @@ export default function MeetOurDoctors() {
       <div className="container mx-auto ">
         <div className="flex justify-between items-center mb-3 md:mb-6">
           <div>
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-"> Medical Advisors</h2>
+            <h2 className="heading-lg"> Medical Advisors</h2>
             {error && (
               <div className="flex items-center gap-2 text-sm text-amber-600">
                 <AlertCircle className="w-4 h-4" />
@@ -251,8 +251,8 @@ export default function MeetOurDoctors() {
                 />
               </div>
               <div className="p-5">
-                <h3 className="text-2xl font-semibold text-gray-900 mb-1">{advisor.name}</h3>
-                <p className="md:text-base text-[19px] text-gray-600 mb-2">{advisor.specialty}</p>
+                <h3 className="title-text mb-1">{advisor.name}</h3>
+                <p className=" description">{advisor.specialty}</p>
                 <p className="text-lg md:text-sm font-medium text-gray-700">
                   <span className="font-bold"></span> {advisor.experience}
                 </p>
