@@ -16,7 +16,7 @@ export const metadata: Metadata = {
     siteName: 'Medivisor India Treatment',
     images: [
       {
-        url: 'https://medivisorindiatreatment.com/medical-help-india.jpg',
+        url: 'https://medivisorindiatreatment.com/Medivisor-logo.svg',
         width: 1200,
         height: 630,
         alt: 'About Medivisor India Treatment- Trusted Medical Partner',

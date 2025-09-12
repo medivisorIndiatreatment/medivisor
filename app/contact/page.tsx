@@ -18,7 +18,7 @@ export const metadata: Metadata = {
     type: "website",
     images: [
       {
-        url: "/medical-help-india.jpg",
+        url: "/Medivisor-logo.svg",
         width: 1200,
         height: 630,
         alt: "Contact Medivisor India",
@@ -31,7 +31,7 @@ export const metadata: Metadata = {
     description:
       "Connect with Medivisor India for seamless medical tourism assistance and global support for patients.",
     site: "@MedivisorIndiatreatment",
-    images: ["/medical-help-india.jpg"],
+    images: ["/Medivisor-logo.svg"],
   },
   robots: "index, follow",
   authors: [{ name: "Medivisor India" }],
