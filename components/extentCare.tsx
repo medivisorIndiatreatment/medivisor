@@ -240,7 +240,7 @@ export default function SocialActivityCarousel() {
           {/* Content Column - Displayed first on mobile, then on the left on desktop */}
           <div className="lg:col-span-5 space-y-3 md:space-y-5 lg:order-2 order-1 mb-5 lg:mt-0">
             <div className="space-y-2">
-             <h2 className="heading-lg">
+             <h2 className="heading-base">
                 Every Treatment Counts
               </h2>
               <p className="description">

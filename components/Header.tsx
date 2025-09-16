@@ -179,7 +179,7 @@ export default function Header() {
                           <li key={subItem.href}>
                             <Link
                               href={subItem.href}
-                              className="block px-4 py-2 text-lg md:text-sm text-gray-700 hover:bg-gray-100 hover:text-[#E22026] transition"
+                              className="block px-4 py-2 text-lg md:text-base text-gray-700 hover:bg-gray-100 hover:text-[#E22026] transition"
                               onClick={() => setIsMenuOpen(false)}
                             >
                               {subItem.label}

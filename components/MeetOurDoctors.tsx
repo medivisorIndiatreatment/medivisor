@@ -189,7 +189,7 @@ export default function MeetOurDoctors() {
             <div className="inline-flex items-center justify-center w-24 h-24 bg-gradient-to-br from-red-100 to-purple-100 rounded-full mb-8">
               <Users className="h-12 w-12 text-red-600" />
             </div>
-            <h2 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent mb-6">
+            <h2 className="heading-base">
               Our Medical Advisors
             </h2>
             <p className="text-lg text-gray-600">
@@ -204,9 +204,9 @@ export default function MeetOurDoctors() {
   return (
     <section className="bg-gray-50 md:py-10 md:px-0 px-2 py-10">
       <div className="container mx-auto ">
-        <div className="flex justify-between items-center mb-3 md:mb-6">
+        <div className="flex justify-between items-center mb-3 md:mb-3">
           <div>
-            <h2 className="heading-lg"> Medical Advisors</h2>
+            <h2 className="heading-base"> Medical Advisors</h2>
             {error && (
               <div className="flex items-center gap-2 text-sm text-amber-600">
                 <AlertCircle className="w-4 h-4" />

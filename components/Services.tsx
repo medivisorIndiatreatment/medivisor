@@ -373,9 +373,9 @@ export default function Services() {
     <>
       <section className="relative bg-white py-10 px-2 md:px-0 md:py-10" id="Services">
         <div className="container  mx-auto">
-          <div className="flex justify-between items-center mb-3 md:mb-6">
+          <div className="flex justify-between items-center mb-3 md:mb-3">
             <div>
-              <h2 className="text-3xl  md:text-4xl mb-2 font-bold text-left text-gray-900">Our Services</h2>
+              <h2 className="text-3xl  md:text-4xl font-bold text-left text-gray-900">Our Services</h2>
               {error && (
                 <div className="flex items-center gap-2 text-sm text-amber-600 mt-2">
                   <AlertCircle className="w-4 h-4" />

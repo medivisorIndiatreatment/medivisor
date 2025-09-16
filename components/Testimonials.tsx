@@ -94,7 +94,7 @@ export default function Testimonials() {
     <section className="px-2 md:px-0  md:py-10 py-4 bg-white" id="Stories">
       <div className="container text-center px-4 md:px-0 mx-auto">
         <div className="md:text-center text-left mb-3 md:mb-6 mt-8 md:mt-0 max-w-3xl mx-auto">
-          <h2 className="heading-lg">Patient Testimonials</h2>
+          <h2 className="heading-base mb-2">Patient Testimonials</h2>
           <p className="description">
          Discover the voices of 2,000+ international patients who found comfort, care, and a hassle-free treatment journey in India — all made possible with Medivisor by their side.
           </p>
@@ -117,7 +117,7 @@ export default function Testimonials() {
 
           <div>
             <div className="md:bg-white pb-1 md:border md:border-gray-100">
-              <h3 className="title-heading py-4">Inspiring Stories</h3>
+              <h3 className="title-heading py-5">Inspiring Stories</h3>
               <div ref={scrollContainerRef} className="space-y-4 text-left overflow-y-auto max-h-[444px] md:px-4 py-2">
                 {testimonials.map((testimonial, index) => (
                   <div
@@ -141,7 +141,7 @@ export default function Testimonials() {
               </div>
 
              
-                <div className="md:px-4 py-3 pt-5 border-t border-gray-100">
+                <div className="md:px-4 py-3 pt-5 md:border-t border-gray-100">
                   <button className="w-full px-4 py-2 bg-gray-100 text-gray-700 border border-gray-200 rounded-md  text-base font-medium">
                     <a href="/patient-testimonials" className="flex items-center justify-center gap-2">
                        More Videos

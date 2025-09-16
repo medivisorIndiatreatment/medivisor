@@ -67,17 +67,26 @@ body {
 .heading-lg {
   @apply text-3xl md:text-4xl font-bold text-gray-700 mb-4;
 }
+.heading-base {
+  @apply text-3xl md:text-4xl font-bold text-gray-700 ;
+}
+.heading-sm {
+  @apply text-2xl md:text-3xl font-bold text-gray-700 ;
+}
 .description {
   @apply text-[17px] text-gray-600 ;
+}
+.description-gray {
+  @apply text-[15px] text-gray-400 ;
 }
 .description-1 {
   @apply text-base text-gray-600 ;
 }
 .title-text {
-  @apply text-2xl md:text-xl font-semibold text-gray-600  leading-tight ;
+  @apply text-xl md:text-xl font-semibold text-gray-600  leading-tight ;
 }
 .title-heading {
-  @apply text-2xl md:text-2xl font-semibold text-gray-700  leading-tight ;
+  @apply text-xl md:text-2xl font-semibold text-gray-700  leading-tight ;
 }
   .bg-banner {
     background-image: url('/bannner.jpg');

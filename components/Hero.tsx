@@ -56,7 +56,7 @@ const HeroSection = () => {
           <div className="order-2 md:block hidden md:order-2 w-full max-w-md mx-auto md:col-span-5 bg-[#E22026] text-white backdrop-blur-sm md:shadow-xl rounded-md overflow-hidden z-40">
             <div className="p-4">
               <div className="flex items-start justify-between gap-2 mb-4">
-                <h3 className="font-semibold text-2xl md:text-2xl">
+                <h3 className="font-medium text-2xl md:text-3xl">
                   Comprehensive Medical Travel Services Under One Roof
                 </h3>
               </div>

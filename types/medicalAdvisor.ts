@@ -4,6 +4,7 @@ export interface MedicalAdvisor {
   title?: string;
   specialty?: string;
   image?: string;
+  photo?: string; 
   experience?: string;
   languages?: string;
   hospitals?: string;

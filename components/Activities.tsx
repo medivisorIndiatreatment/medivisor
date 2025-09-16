@@ -14,38 +14,39 @@ export default function Activities() {
   const nextRef = useRef<HTMLButtonElement | null>(null);
   const swiperRef = useRef<any>(null);
 
-  const activities = [
-    {
-      title: "Fiji Day Festivities",
-      description: "Cultural pride and joyous moments on Fiji's special day.",
-      image: "/activities/Fiji-Day.jpg",
-    },
-    {
-      title: "Festival of Colors – Holi",
-      description: "Vibrant celebrations of color, unity, and happiness.",
-      image: "/activities/holi.webp",
-    },
-    {
-      title: "Empowering Women on Women's Day",
-      description: "A day to honor strength, grace, and the achievements of women.",
-      image: "/activities/Womens-Day.jpg",
-    },
-    {
-      title: "Splash of Joy at the Water Park",
-      description: "Fun-filled water adventures and refreshing memories.",
-      image: "/activities/Water-Park.jpg",
-    },
-    {
-      title: "Spreading Love on Valentine's Day",
-      description: "Celebrating affection with heartfelt gestures and smiles.",
-      image: "/activities/Valentines-Day.jpg",
-    },
-    {
-      title: "Honoring Moms on Mother's Day",
-      description: "A tribute to love, care, and the strength of mothers.",
-      image: "/activities/Mothers-Day.jpg",
-    },
-  ];
+ const activities = [
+  {
+    title: "Fiji Day Festivities",
+    description: "Cultural pride and joy.",
+    image: "/activities/Fiji-Day.jpg",
+  },
+  {
+    title: "Festival of Colors",
+    description: "Vibrant unity and happiness.",
+    image: "/activities/holi.webp",
+  },
+  {
+    title: "Women's Day Tribute",
+    description: "Honoring strength and grace.",
+    image: "/activities/Womens-Day.jpg",
+  },
+  {
+    title: "Water Park Fun",
+    description: "Refreshing adventures for all.",
+    image: "/activities/Water-Park.jpg",
+  },
+  {
+    title: "Valentine's Day Love",
+    description: "Heartfelt moments and smiles.",
+    image: "/activities/Valentines-Day.jpg",
+  },
+  {
+    title: "Mother's Day Cheers",
+    description: "Celebrating love and care.",
+    image: "/activities/Mothers-Day.jpg",
+  },
+];
+
 
   useEffect(() => {
     if (
@@ -65,7 +66,7 @@ export default function Activities() {
       <div className="container mx-auto">
         {/* Heading */}
         <div className="md:text-center md:mb-8 mb-4 max-w-3xl mx-auto">
-          <h2 className="heading-lg">
+          <h2 className="heading-base mb-2">
             We Go Beyond Care —<br className="md:hidden block" /> We Celebrate Life
           </h2>
           <p className="description">

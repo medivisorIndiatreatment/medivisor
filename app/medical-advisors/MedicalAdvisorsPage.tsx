@@ -155,24 +155,29 @@ export default function MedicalAdvisorsPage() {
           <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
         </div>
         {/* Content */}
-        <div className="flex flex-grow flex-col space-y-0 px-5 mt-1 py-2 md:py-4">
+        <div className="flex flex-col px-5 py-2 md:py-4  border  border-gray-100">
           {/* Name */}
-          <h2 className="title-text">
+          <h2 className="title-text ">
             {advisor.name || "Medical Advisor"}
           </h2>
-          {/* Specialty & Experience */}
 
-          {/* Bio / Summary */}
+          {/* Specialty */}
           {advisor.specialty && (
-            <div className="flex items-center gap-0 ">
-
-              <span className="description-1 my-1">{advisor.specialty}</span>
+            <div className="flex items-center border-b border-gray-100 mb-1 pb-1">
+              <span className="description-1 text-gray-600">
+                {advisor.specialty}
+              </span>
             </div>
           )}
-          <p className="description line-clamp-2">
-            {advisor.experience}
-          </p>
+
+          {/* Experience / Bio */}
+          {advisor.experience && (
+            <p className="description text-gray-700 line-clamp-2">
+              {advisor.experience}
+            </p>
+          )}
         </div>
+
         {/* Footer CTA */}
         {/* <div className="flex items-center justify-end px-5 pb-4">
             <button className="text-sm font-semibold text-gray-800 dark:text-black text-primary transition duration-200 hover:underline">

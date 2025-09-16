@@ -342,9 +342,9 @@ export default function HospitalCarousel() {
       <section className="md:py-10 py-10 px-2 md:px-0 bg-white">
         <div className="container mx-auto ">
           {/* Header with Navigation Arrows */}
-          <div className="flex justify-between items-center mb-3 md:mb-6">
+          <div className="flex justify-between items-center mb-3 md:mb-3">
             <div className="flex-1">
-              <h2 className="heading-lg"> Hospital Partners</h2>
+              <h2 className="heading-base"> Hospital Partners</h2>
             </div>
 
 

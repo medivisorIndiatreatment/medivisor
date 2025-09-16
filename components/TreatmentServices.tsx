@@ -6,6 +6,7 @@ import { ChevronLeft, ChevronRight, BriefcaseMedical, AlertCircle } from "lucide
 import { getWixScaledToFillImageUrl } from "@/lib/wixMedia"
 import ContactModal from "@/components/ContactModal"
 import Autoplay from "embla-carousel-autoplay"
+  import { ArrowUpRight } from 'lucide-react';
 
 interface Service {
   _id?: string
@@ -157,7 +158,7 @@ export default function ServiceSection() {
         <div className="container mx-auto">
           <div className="flex justify-between items-center mb-4">
             <div>
-              <h2 className="md:text-4xl text-3xl font-bold text-gray-700">
+              <h2 className="heading-base">
                 Our Treatments
               </h2>
               {error && (
@@ -215,12 +216,16 @@ export default function ServiceSection() {
                       </h4>
                       <h3 className="description">
                         {service.treatmentName}
+
+
                         <span
                           onClick={() => setIsModalOpen(true)}
-                          className="description ml-2 hover:underline decoration-gray-400 cursor-pointer"
+                          className="description-gray ml-1 hover:underline decoration-gray-400 cursor-pointer inline-flex items-center gap-0"
                         >
                           Know More
+                          <ArrowUpRight className="w-4 h-4" />
                         </span>
+
                       </h3>
                       {service.description && (
                         <p className="text-sm text-gray-500 flex-grow">

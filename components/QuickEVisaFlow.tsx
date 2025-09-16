@@ -26,7 +26,7 @@ export default function PatientFlowSection() {
               <div className="sticky top-20 max-h-screen overflow-y-auto">
                 <div className="space-y-8">
                   <div className="text-left mb-2">
-                    <h2 className="heading-lg">Patient Journey Process</h2>
+                    <h2 className="heading-sm mb-3">Patient Journey Process</h2>
                     <p className="description">
                       Our comprehensive patient flow system ensures seamless care from arrival to discharge, with
                       dedicated medical staff supporting you at every step of your treatment journey.

@@ -216,9 +216,9 @@ export default function TeamSlider() {
   return (
     <section className="bg-gray-50 px-2 md:px-0 md:py-10 py-10">
       <div className="container mx-auto">
-        <div className="flex justify-between items-center mb-3 md:mb-6">
+        <div className="flex justify-between items-center mb-3 md:mb-3">
           <div>
-            <h2 className="heading-lg">Our Team</h2>
+            <h2 className="heading-base">Our Team</h2>
           </div>
           <div className="flex gap-2">
             <button
@@ -265,7 +265,7 @@ export default function TeamSlider() {
                   </div>
                   <div className="p-6 flex flex-col flex-grow">
                     <h3 className="title-text">{member.name}</h3>
-                    <p className="description-1 py-2">{member.role}</p>
+                    <p className="description-1 pb-2">{member.role}</p>
                     <p className="description line-clamp-4">
                       {member.shortDescription || member.bio}
                     </p>

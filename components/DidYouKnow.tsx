@@ -184,7 +184,7 @@ export default function DidYouKnowSection() {
 
           <div className="md:pt-6 pt-2 col-span-1 flex justify-center md:justify-start">
             <div className="max-w-2xl md:px-0 ">
-              <h3 className="heading-lg flex -ml-3 items-center gap-x-3">
+              <h3 className="heading-base mb-2 flex -ml-3 items-center gap-x-3">
                 <FaLightbulb className="text-red-500" />
                 Did You Know?
               </h3>

@@ -23,6 +23,7 @@ import Banner from "@/components/BannerService";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import CtaSection from '@/components/CtaSection';
 import WorkflowCompo from "@/components/QuickEVisaFlow"
+import PaitentSupport from '@/components/paitentSupport';
 const Treatment = () => { // Renamed the component to 'Treatment'
   const [activeStep, setActiveStep] = useState(1);
 
@@ -49,7 +50,7 @@ const Treatment = () => { // Renamed the component to 'Treatment'
         <TreatmentProcess />
 
         <WorkflowCompo />
-
+<PaitentSupport />
         <CtaSection />
       </div>
     </>

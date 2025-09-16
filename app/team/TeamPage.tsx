@@ -278,9 +278,9 @@ export default function TeamPage() {
             />
             <div className="min-h-screen bg-gradient-to-br from-gray-50 py-10 px-2 md:px-0 via-white to-red-50">
                 <div className="container mx-auto">
-                    <div className="text-center mb-10">
+                    <div className="text-center mb-6">
                         <h2 className="text-3xl md:text-4xl font-bold text-gray-800">Our Team</h2>
-                        <p className="mt-2 text-gray-600">Meet the professionals who make a difference.</p>
+                        
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
                         {teamMembers.map((member) => (

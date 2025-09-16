@@ -2,7 +2,6 @@
 
 import { useState } from "react"
 import { motion } from "framer-motion"
-import Image from "next/image"
 import {
   UserRoundIcon as UserRoundMedical,
   Hospital,
@@ -12,9 +11,8 @@ import {
   Stethoscope,
   MapPin,
   ThumbsUp,
-  CheckCircle,
-} from "lucide-react" // Import Lucide icons
-
+} from "lucide-react"
+import Image from "next/image"
 
 export default function WhyChooseUsSection() {
   const [activeCardIndex, setActiveCardIndex] = useState<number | null>(null)
@@ -22,11 +20,11 @@ export default function WhyChooseUsSection() {
 
   const stats = [
     {
-      icon: <UserRoundMedical className="text-black w-10 h-10" />, // Modern icon, solid black
+      icon: <UserRoundMedical className="text-gray-800 w-10 h-10" />,
       value: "2,000+",
       label: "Patients Cared For",
       description: "Global patient success stories with expert-led care.",
-      hoverIcon: <Smile className="text-black w-10 h-10" />, // Modern icon, solid black
+      hoverIcon: <Smile className="text-gray-800 w-10 h-10" />,
       content: {
         title: "Expert Medical Professionals",
         paragraph:
@@ -40,11 +38,11 @@ export default function WhyChooseUsSection() {
       },
     },
     {
-      icon: <Hospital className="text-black w-10 h-10" />, // Modern icon, solid black
+      icon: <Hospital className="text-gray-800 w-10 h-10" />,
       value: "100+",
       label: "Accredited Hospitals",
       description: "Partnered with world-class medical institutions.",
-      hoverIcon: <Stethoscope className="text-black w-10 h-10" />, // Modern icon, solid black
+      hoverIcon: <Stethoscope className="text-gray-800 w-10 h-10" />,
       content: {
         title: "Global Hospital Network",
         paragraph:
@@ -58,11 +56,11 @@ export default function WhyChooseUsSection() {
       },
     },
     {
-      icon: <Globe className="text-black w-10 h-10" />, // Modern icon, solid black
+      icon: <Globe className="text-gray-800 w-10 h-10" />,
       value: "15+",
       label: "Countries Served",
       description: "Supporting cross-border care and travel.",
-      hoverIcon: <MapPin className="text-black w-10 h-10" />, // Modern icon, solid black
+      hoverIcon: <MapPin className="text-gray-800 w-10 h-10" />,
       content: {
         title: "Cross-Border Patient Assistance",
         paragraph:
@@ -76,11 +74,11 @@ export default function WhyChooseUsSection() {
       },
     },
     {
-      icon: <Heart className="text-black w-10 h-10" />, // Modern icon, solid black
+      icon: <Heart className="text-gray-800 w-10 h-10" />,
       value: "95%",
       label: "Satisfaction Rate",
       description: "Top-rated experiences by real patients.",
-      hoverIcon: <ThumbsUp className="text-black w-10 h-10" />, // Modern icon, solid black
+      hoverIcon: <ThumbsUp className="text-gray-800 w-10 h-10" />,
       content: {
         title: "Real Results. Real Trust.",
         paragraph:
@@ -108,35 +106,31 @@ export default function WhyChooseUsSection() {
     activeCardIndex !== null
       ? stats[activeCardIndex].content
       : lastHoveredIndex !== null
-        ? stats[lastHoveredIndex].content
-        : defaultContent
+      ? stats[lastHoveredIndex].content
+      : defaultContent
 
   return (
-    <section className="relative py-10 bg-gray-100 px-2 md:px-0 overflow-hidden">
-      {/* Overlay for readability */}
-      <div className="absolute inset-0 bg-white opacity-60"></div>
-
-      <div className="container mx-auto relative z-10">
-        {/* Section Heading */}
-        {/* <motion.div
-          className="text-center mb-8"
+    <section className="relative py-16 bg-gray-50 px-4 md:px-6">
+      <div className="container mx-auto  relative z-10">
+        {/* Heading */}
+        <motion.div
+          className="text-center mb-14"
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
         >
-          <h2 className="text-3xl md:text-4xl mb-10 font-bold text-center md:mb-2 text-gray-900">
-            Why Choose Medivisor?
+          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+            Why Choose <span className="text-gray-700">Medivisor?</span>
           </h2>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
             Discover why patients across the globe trust us for international medical care.
           </p>
-        </motion.div> */}
+        </motion.div>
 
         {/* Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 ">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
           {stats.map((stat, index) => {
-            const isCurrentlyHovered = activeCardIndex === index
-
+            const isHovered = activeCardIndex === index
             return (
               <motion.div
                 key={index}
@@ -145,29 +139,27 @@ export default function WhyChooseUsSection() {
                   setLastHoveredIndex(index)
                 }}
                 onMouseLeave={() => setActiveCardIndex(null)}
-                className={`
-                  bg-white rounded-xs p-6 text-center border border-gray-100 transition-all duration-300 ease-in-out cursor-pointer
-                  min-h-[200px] flex flex-col items-center justify-center relative overflow-hidden
-                  ${isCurrentlyHovered ? "border-2 border-gray-100 shadow-xs" : "border border-gray-100"}
-                `}
-                initial={{ opacity: 0, y: 30 }}
+                className={`relative bg-white rounded-xs p-6 text-center border transition-all duration-300 ease-in-out cursor-pointer shadow-xs hover:shadow-xs
+                  ${isHovered ? "border-gray-300" : "border-gray-200"}`}
+                initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4, delay: index * 0.1 }}
+             
               >
-                {/* Background glow/overlay on hover */}
-               
-                <div className="mb-4 z-10 transition-transform duration-300">
-                  {isCurrentlyHovered ? stat.hoverIcon : stat.icon}
-                </div>
-                <h3 className="heading-lg">{stat.value}</h3>
-                <p className="title-text">{stat.label}</p>
-                <p className="md:px-3 px-4 description mt-2">{stat.description}</p>
+                <motion.div
+                  className="mb-4 mx-auto text-center flex justify-center"
+                  animate={{ scale: isHovered ? 1.15 : 1 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  {isHovered ? stat.hoverIcon : stat.icon}
+                </motion.div>
+                <h3 className="title-text">{stat.value}</h3>
+                <p className="description mt-1">{stat.label}</p>
+                <p className="description-1 mt-">{stat.description}</p>
               </motion.div>
             )
           })}
         </div>
-
-
       </div>
     </section>
   )

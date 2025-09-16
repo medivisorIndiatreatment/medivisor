@@ -50,7 +50,7 @@ export default function PaitentSupport() {
         <div className="md:grid lg:grid-cols-12 md:gap-12 items-center flex flex-col-reverse">
           {/* Content Side */}
           <div className="space-y-3 mdLspacey-6 col-span-5 md:order-1 order-2 mb-2 md:mb-0">
-            <h2 className="heading-lg">
+            <h2 className="heading-base">
               We Stand by Our Patients Every Step of the Way
             </h2>
 

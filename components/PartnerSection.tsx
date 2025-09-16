@@ -98,7 +98,7 @@ export default function PartnerSection() {
 
           {/* Fixed Content Section - Right Side */}
           <div className="order-2 col-span-12 md:col-span-5 md:order-1 md:text-left">
-            <h2 className="heading-lg">Become a Partner</h2>
+            <h2 className="heading-base mb-2">Become a Partner</h2>
             <p className="description">
               Take a closer look around, and you'll see countless patients in desperate need of the right treatment. By
               joining us, you can play a vital role in guiding them toward the care they truly deserve. Your efforts won't

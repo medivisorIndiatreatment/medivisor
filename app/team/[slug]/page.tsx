@@ -358,7 +358,7 @@ export default function TeamMemberPage() {
                 />
               </div>
               <div className="p-4">
-                <h1 className="heading-lg">{teamMember.name}</h1>
+                <h1 className="title-heading">{teamMember.name}</h1>
                 <p className="description">{teamMember.role}</p>
 
                 {/* Social Links */}

@@ -23,7 +23,7 @@ const ModernHelpSection = () => {
           <div className="max-w-4xl py-6 md:py-10 mx-auto text-center">
             {/* Main CTA Content */}
             <div className="mb-10">
-              <h2 className="text-3xl sm:text-3xl md:text-4xl font-bold text-white leading-snug mb-4">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white leading-snug mb-4">
                 Ready to Transform Your Healthcare Experience?
               </h2>
               <p className="text-[19px] md:text-xl text-gray-100 leading-relaxed max-w-2xl mx-auto">

@@ -92,8 +92,8 @@ export default function TreatmentProcessPage() {
                   {/* Text Content */}
                   <div className="flex-1 w-full px-1 sm:px-3 md:px-0 space-y-3 md:space-y-5 relative z-10">
                     {/* Heading with Step Number */}
-                    <h2 className="heading-lg flex items-center gap-3 ">
-                      <span className="text-gray-700 bg-white rounded-full w-10 h-10 flex items-center justify-center text-lg sm:text-xl font-bold shadow-md">
+                    <h2 className="heading-sm flex items-center gap-3 ">
+                      <span className="text-gray-700 bg-white rounded-full w-9 h-9 flex items-center justify-center text-sm sm:text-xl font-bold shadow-md">
                         {step.id}
                       </span>
                       {step.title}

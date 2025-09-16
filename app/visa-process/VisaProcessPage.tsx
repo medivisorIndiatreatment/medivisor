@@ -84,14 +84,15 @@ export default function VisaPage() {
     <>
       <Banner
         topSpanText="Visa Made Simple"
-        title="Caring Support for Patients & Their Families"
-        description="When your health is the priority, visa paperwork shouldn’t slow you down. At Medivisor, we simplify the entire process—guiding you step by step to ensure a smooth, stress-free experience so you can focus on what truly matters: your care and recovery. Follow our 3 simple steps to get your visa quickly, easily, and without any stress."
-        buttonText="Start Visa Process"
+        title="Stress-Free Medical Visa Assistance"
+        description="Getting a visa for your medical treatment can be stressful—but it doesn’t have to be. At Medivisor, we handle all the paperwork, guide you through each step, and make sure your journey is smooth and worry-free. Focus on your health, and let us take care of the rest."
+        buttonText="Start Your Visa Process"
         buttonLink="#visa-support"
         bannerBgImage="/visa-banner.png"
         mainImageSrc="/about-main.png"
-        mainImageAlt="Compassionate Visa Assistance for Medical Travel"
+        mainImageAlt="Friendly assistance for medical travel visas"
       />
+
 
       <section className="min-h-screen bg-white">
         <div>
@@ -123,8 +124,8 @@ export default function VisaPage() {
                         </div>
 
                         {/* Text Section */}
-                        <div className="flex-1 space-y-4 w-full">
-                          <h2 className="heading-lg">
+                        <div className="flex-1 space-y-2 w-full">
+                          <h2 className="heading-sm">
                             Step {index + 1}: {document.title}
                           </h2>
                           <p className="description">{document.description}</p>
@@ -161,7 +162,7 @@ export default function VisaPage() {
                   <div>
                     <div className="text-center md:text-left bg-gray-50 rounded-xs p-6 sm:p-8 md:p-10 h-full flex flex-col justify-center shadow-xs">
                       <Download className="w-10 h-10 sm:w-12 sm:h-12 text-[#E22026] mb-4 mx-auto md:mx-0" />
-                      <h3 className="title-heading mb-4">
+                      <h3 className="text-xl sm:text-xl md:text-2xl font-semibold text-gray-700 mb-2">
                         Download e-Visa Application Form
                       </h3>
                       <p className="text-[19px] md:text-lg text-gray-600 mb-6 leading-relaxed">
@@ -182,7 +183,7 @@ export default function VisaPage() {
                         <div className="pb-4 flex justify-center md:justify-start">
                           <AlertTriangle className="w-10 h-10 sm:w-12 sm:h-12 text-white" />
                         </div>
-                        <h4 className="text-2xl sm:text-xl md:text-2xl font-semibold text-white mb-6">
+                        <h4 className="text-xl sm:text-xl md:text-2xl font-semibold text-white mb-6">
                           Visa Extension Information
                         </h4>
 
@@ -227,7 +228,7 @@ export default function VisaPage() {
             {/* Important Information */}
             <div className="py-10 bg-gray-50 px-4 sm:px-6 md:px-0">
               <div className="container mx-auto">
-                <h3 className="heading-lg text-center pb-4">
+                <h3 className="heading-base text-center pb-4">
                   Important Information
                 </h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
