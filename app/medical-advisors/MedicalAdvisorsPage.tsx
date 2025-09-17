@@ -198,6 +198,7 @@ export default function MedicalAdvisorsPage() {
         title="Our Esteemed Medical Advisors"
         description="
 At Medivisor India Treatment, our esteemed medical advisors combine global expertise with compassionate care. They are here to guide you at every step, making your treatment journey smooth, transparent, and stress-free. Explore the specialists below and discover the doctors who bring world-class healthcare closer to you."
+        buttonText="Explore Advisors"
         buttonLink="/medical-advisors/#advisor-gallery" // Updated anchor
 
         bannerBgImage="/placeholder.svg?height=800&width=1200" // Placeholder for a relevant image

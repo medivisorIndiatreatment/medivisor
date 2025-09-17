@@ -1,28 +1,19 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
-import Link from "next/link";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import { wixClient } from "@/lib/wixClient";
 import ContactModal from "@/components/ContactModal";
 import { getBestCoverImage } from "@/lib/wixMedia";
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import {
-  Stethoscope,
   Loader2,
   AlertTriangle,
   Award,
-  ArrowRight,
   Mail,
   MessageCircle,
+  ArrowUpRight,
 } from "lucide-react";
 
 // Assume these components exist in your project
@@ -34,12 +25,6 @@ interface Treatment {
   hospitalName: string;
   treatmentName: string;
   image: string;
-  ID?: string;
-  createdDate?: string;
-  updatedDate?: string;
-  owner?: string;
-  richContent?: Record<string, any> | null;
-  enquireNow?: string;
 }
 
 const TREATMENTS_COLLECTION_ID = "PersonalizedTreatmentQuotation";
@@ -56,40 +41,31 @@ const TreatmentCard = ({
   // Use getBestCoverImage to get a proper Wix Media URL
   const imageUrl: string =
     treatment.image && getBestCoverImage(treatment.image)
-      ? getBestCoverImage(treatment.image) as string
+      ? (getBestCoverImage(treatment.image) as string)
       : "/placeholder.svg?height=224&width=400&text=Image Not Found";
 
   return (
-    <Card className="bg-white rounded-xs shadow-xs overflow-hidden transform transition-transform duration-300 border-gray-100 ">
-   
-        <Image
-          src={imageUrl}
-          alt={treatment.hospitalName}
-          width={400}
-          height={204}
-          className="w-full h-48 object-cover"
-        />
-        <CardHeader className="p-4">
-          <div className="flex items-center text-primary-500 mb-2">
-            <Badge variant="secondary" className="bg-gray-50 rounded-xs text-sm font-medium p-1 text-gray-600">
-              {treatment.hospitalName}
-            </Badge>
-          </div>
-          <CardTitle className="text-xl font-normal md:font-medium text-gray-700 ">
-            {treatment.treatmentName}
-          </CardTitle>
-        </CardHeader>
-    
-      <CardFooter className="flex p-4 justify-between items-center pt-1">
-        <Button
-          variant="outline"
-          className="border-gray-200 cursor-pointer text-sm rounded-xs text-gray-600 hover:bg-gray-50"
-          onClick={onOpenModal}
-        >
-          Read More
-          <ArrowRight className="ml-2 h-4 w-4" />
-        </Button>
-      </CardFooter>
+    <Card className="bg-white rounded-xs shadow-xs overflow-hidden transform transition-transform duration-300 border-gray-100">
+      <Image
+        src={imageUrl}
+        alt={treatment.hospitalName}
+        width={400}
+        height={204}
+        className="w-full h-48 object-cover"
+      />
+      <div className="p-4 flex flex-col flex-1">
+        <h4 className="title-text mb-2">{treatment.hospitalName}</h4>
+        <h3 className="description">
+          {treatment.treatmentName}
+          <span
+            onClick={onOpenModal}
+            className="description-gray ml-1 hover:underline decoration-gray-400 cursor-pointer inline-flex items-center gap-0"
+          >
+            Know More
+            <ArrowUpRight className="w-4 h-4" />
+          </span>
+        </h3>
+      </div>
     </Card>
   );
 };
@@ -165,7 +141,7 @@ export default function TreatmentsPage() {
         />
         <section className="bg-gray-100 px-2 md:px-0 py-10">
           <div className="container mx-auto ">
-            <Card className="md:bg-white/80 md:shadow-xs shadow-none md:w-2/3 md:px-6 px-0 mx-auto md:p-7  md:backdrop-blur-sm border-0 ">
+            <Card className="md:bg-white/80 md:shadow-xs shadow-none md:w-2/3 md:px-6 px-0 mx-auto md:p-7 md:backdrop-blur-sm border-0">
               <CardContent className="space-y-6 px-0 md:px-3">
                 <div className="description max-w-none">
                   <p className="description">
@@ -192,21 +168,21 @@ export default function TreatmentsPage() {
                     your individual needs and preferences.
                   </p>
                 </div>
-
                 <div className="grid md:grid-cols-2 gap-6 mt-8">
                   <Card className="border border-gray-200 shadow-xs bg-white md:bg-gray-50/50">
                     <CardContent className="md:p-6 p-3">
                       <div className="flex items-center gap-3 mb-1 md:mb-4">
-                        <Mail className="md:h-5 w-6 h-6 md:w-5 text-gray-700" />
-                        <h3 className="title-text">
-                          Email Your Reports
-                        </h3>
+                        <Mail className="md:h-5 w-6 h-6 md:w-5 text-green-500" />
+                        <h3 className="title-text">Email Your Reports</h3>
                       </div>
-                      <p className="description  mb-4">
-                        Send your medical reports and health history for a
-                        detailed cost estimate.
+                      <p className="description mb-4">
+                        Send your medical reports and health history for a detailed cost estimate.
                       </p>
-                      <Button asChild className="w-full bg-[#74c044] text-white">
+                      <Button
+                        asChild
+                        variant="outline"
+                        className="w-full border-[#74c044] text-green-600 border-xs hover:bg-green-50 bg-transparent"
+                      >
                         <a href="mailto:info@medivisorhealth.com">
                           <Mail className="h-4 w-4 mr-2" />
                           Email Reports
@@ -219,18 +195,15 @@ export default function TreatmentsPage() {
                     <CardContent className="md:p-6 p-3">
                       <div className="flex items-center gap-3 mb-1 md:mb-4">
                         <MessageCircle className="md:h-5 w-6 h-6 md:w-5 text-green-500" />
-                        <h3 className="title-text">
-                          WhatsApp / Viber
-                        </h3>
+                        <h3 className="title-text">WhatsApp / Viber</h3>
                       </div>
-                      <p className="description  mb-4">
-                        Quick consultation via WhatsApp or Viber for immediate
-                        assistance.
+                      <p className="description mb-4">
+                        Quick consultation via WhatsApp or Viber for immediate assistance.
                       </p>
                       <Button
                         asChild
                         variant="outline"
-                        className="w-full border-[#74c044] text-green-600 hover:bg-green-50 bg-transparent"
+                        className="w-full border-[#74c044] text-green-600 border-xs hover:bg-green-50 bg-transparent"
                       >
                         <a
                           href="https://wa.me/919643015697"
@@ -244,11 +217,11 @@ export default function TreatmentsPage() {
                     </CardContent>
                   </Card>
                 </div>
+
               </CardContent>
             </Card>
           </div>
         </section>
-
         <section id="treatments-gallery" className=" px-2 py-10">
           <div className="space-y-6 container mx-auto">
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
@@ -309,7 +282,6 @@ export default function TreatmentsPage() {
             )}
           </div>
         </section>
-
         <Ctasection />
       </div>
       <ContactModal isOpen={isModalOpen} onClose={closeModal} />
