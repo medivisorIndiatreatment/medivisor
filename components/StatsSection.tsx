@@ -114,7 +114,7 @@ export default function WhyChooseUsSection() {
       <div className="container mx-auto  relative z-10">
         {/* Heading */}
         <motion.div
-          className="text-center mb-14"
+          className="text-center md:mb-7 mb-14"
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}

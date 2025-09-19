@@ -59,6 +59,7 @@ export default function Header() {
         { href: '/visa-process', label: 'Visa Process' },
         { href: '/travel-guide', label: 'Travel Guide' },
         { href: '/faqs', label: 'FAQs' },
+        { href: '/why-medivisor', label: 'Why Medivisor' },
       ],
     },
     {

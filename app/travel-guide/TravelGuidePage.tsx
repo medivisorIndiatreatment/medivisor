@@ -16,7 +16,7 @@ export default function TravelGuidePage() {
     { icon: <Stethoscope className="w-6 h-6" />, title: "Medical Consultation", description: "Consult your local doctor, and if coming for surgery, stop taking aspirin and other blood thinners one day before departure." },
     { icon: <CheckCircle className="w-6 h-6" />, title: "Medical Reports", description: "Bring all medical reports and any medical imaging CDs (angiogram, MRI, CT)." },
     { icon: <Stethoscope className="w-6 h-6" />, title: "Health Monitoring", description: "Carry a glucometer and strips if needed to check sugar levels regularly; alternatively, purchase them in India." },
-    { icon: <CheckCircle className="w-6 h-6" />, title: "Identification", description: "Send photos of the travelers via Viber (+919643015697) or email (info@medivisorhealth.com) for easy identification at the airport." },
+    { icon: <CheckCircle className="w-6 h-6" />, title: "Identification", description: "Send photos of the travelers via Viber (+918340780250) or email (info@medivisorhealth.com) for easy identification at the airport." },
   ]
 
   const transitTips = [

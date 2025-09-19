@@ -139,6 +139,7 @@ export default function TreatmentsPage() {
           mainImageSrc="/about-main.png"
           mainImageAlt="Affordable Medical Treatment Costs in India"
         />
+        
         <section className="bg-gray-100 px-2 md:px-0 py-10">
           <div className="container mx-auto ">
             <Card className="md:bg-white/80 md:shadow-xs shadow-none md:w-2/3 md:px-6 px-0 mx-auto md:p-7 md:backdrop-blur-sm border-0">
@@ -159,10 +160,10 @@ export default function TreatmentsPage() {
                     . Alternatively, you can share the same information with us
                     via Viber or WhatsApp at{" "}
                     <a
-                      href="tel:+919643015697"
+                      href="tel:+918340780250"
                       className="font-semibold"
                     >
-                      +91-9643015697
+                      +91-8340780250
                     </a>
                     . The information will allow us to tailor a quotation to
                     your individual needs and preferences.
@@ -206,7 +207,7 @@ export default function TreatmentsPage() {
                         className="w-full border-[#74c044] text-green-600 border-xs hover:bg-green-50 bg-transparent"
                       >
                         <a
-                          href="https://wa.me/919643015697"
+                          href="https://wa.me/918340780250"
                           target="_blank"
                           rel="noopener noreferrer"
                         >

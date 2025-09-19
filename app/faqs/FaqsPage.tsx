@@ -248,17 +248,15 @@ export default function FAQPage() {
       {/* Header Section */}
       <Banner
         topSpanText="FAQs"
-        title="Understand Your Treatment Costs Before You Begin"
-        description="
-See a clear breakdown of medical expenses at top hospitals in India. Our Medivisor advisors help you understand pricing, insurance, and affordable care options—so you can focus on your health, not the details."
+        title="Get Clarity Before You Begin"
+        description="Discover clear answers to all your questions about treatment costs, insurance coverage, and hospital charges.
+Our Medivisor India experts guide you with transparent cost breakdowns and affordable care options—so you can focus on your health, while we handle the details."
         buttonText="Enquire Now"
         buttonLink="/contact"
         bannerBgImage="/faq-banner.png"
         mainImageSrc="/about-main.png"
         mainImageAlt="Expert Medical Cost Advisors at Medivisor India"
       />
-
-
       {/* Main Content */}
       <div className=" container mx-auto  py-10">
         <div className="flex flex-col lg:flex-row gap-4 md:gap-8">
