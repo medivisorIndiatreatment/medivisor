@@ -110,7 +110,7 @@ export default function WhyChooseUsSection() {
       : defaultContent
 
   return (
-    <section className="relative py-16 bg-gray-50 px-4 md:px-6">
+    <section className="relative py-16 bg-gray-50 px-4 md:px-0">
       <div className="container mx-auto  relative z-10">
         {/* Heading */}
         <motion.div

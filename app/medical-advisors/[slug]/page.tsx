@@ -1,3 +1,5 @@
+
+
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { wixServerClient } from "@/lib/wixServer";
@@ -456,3 +458,4 @@ export default async function DoctorDetailPage({ params }: PageProps) {
         </main>
     );
 }
+

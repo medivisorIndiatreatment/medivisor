@@ -248,9 +248,8 @@ export default function FAQPage() {
       {/* Header Section */}
       <Banner
         topSpanText="FAQs"
-        title="Get Clarity Before You Begin"
-        description="Discover clear answers to all your questions about treatment costs, insurance coverage, and hospital charges.
-Our Medivisor India experts guide you with transparent cost breakdowns and affordable care options—so you can focus on your health, while we handle the details."
+        title="All You Need to Know Before Your Treatment in India"
+        description="Have Questions? We know you may have queries about travelling to India for medical treatment. To support you, we’ve put together a list of Frequently Asked Questions (FAQs) covering everything from hospital options and treatment planning to travel, accommodation, and post-treatment care. Most of the answers you need can be found below — helping you prepare with confidence and peace of mind. If your specific question isn’t listed, please don’t worry. Simply contact our team, and we’ll be happy to guide you step by step."
         buttonText="Enquire Now"
         buttonLink="/contact"
         bannerBgImage="/faq-banner.png"

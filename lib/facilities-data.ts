@@ -3,6 +3,7 @@ export const db = {
     {
       id: "hosp_max",
       name: "Max Healthcare",
+      type: "Multi Specialty",
       tagline: "Where Excellence Meets Compassion",
       description:
         "Max Healthcare is one of India's largest and most comprehensive healthcare networks, providing advanced treatments with world-class facilities and a patient-first approach.",
@@ -14,6 +15,7 @@ export const db = {
       insurancePartners: ["Star Health", "Max Bupa", "ICICI Lombard", "HDFC ERGO"],
       rating: 4.6,
       reviewCount: 4500,
+      establishedYear: 2001,
       website: "https://www.maxhealthcare.in",
       contactEmail: "info@maxhealthcare.in",
       socialLinks: {
@@ -27,9 +29,10 @@ export const db = {
     {
       id: "hosp_apollo",
       name: "Apollo Hospitals",
+      type: "Multi Specialty",
       tagline: "Trusted Care. World-Class Expertise.",
       description:
-        "Apollo Hospitals is Asia’s foremost integrated healthcare provider, pioneering advanced medical solutions and bringing high-quality healthcare closer to people.",
+        "Apollo Hospitals is Asia's foremost integrated healthcare provider, pioneering advanced medical solutions and bringing high-quality healthcare closer to people.",
       logo: "/media/apollo-logo.png",
       branches: ["branch_apollo_delhi", "branch_apollo_chennai", "branch_apollo_bangalore", "branch_apollo_hyderabad", "branch_apollo_kolkata"],
       departments: ["Cardiology", "Oncology", "Nephrology", "Dermatology", "Gastroenterology", "Orthopaedics"],
@@ -38,6 +41,7 @@ export const db = {
       insurancePartners: ["HDFC ERGO", "Care Health", "Bajaj Allianz", "Tata AIG"],
       rating: 4.8,
       reviewCount: 6200,
+      establishedYear: 1983,
       website: "https://www.apollohospitals.com",
       contactEmail: "care@apollohospitals.com",
       socialLinks: {
@@ -51,6 +55,7 @@ export const db = {
     {
       id: "hosp_fortis",
       name: "Fortis Healthcare",
+      type: "Multi Specialty",
       tagline: "Caring for your life, your way.",
       description:
         "Fortis is a leading integrated healthcare provider with a wide network of hospitals across India, offering tertiary and quaternary care with a commitment to clinical excellence.",
@@ -62,6 +67,7 @@ export const db = {
       insurancePartners: ["Apollo Munich", "Religare Health", "ICICI Lombard", "Bajaj Allianz"],
       rating: 4.5,
       reviewCount: 5100,
+      establishedYear: 2001,
       website: "https://www.fortishealthcare.com",
       contactEmail: "info@fortishealthcare.com",
       socialLinks: {
@@ -74,6 +80,7 @@ export const db = {
     {
       id: "hosp_medanta",
       name: "Medanta - The Medicity",
+      type: "Multi Specialty",
       tagline: "Where Healthcare is a Mission",
       description:
         "Founded by renowned cardiac surgeon Dr. Naresh Trehan, Medanta is a multi-super specialty hospital with a focus on cutting-edge technology, research, and patient-centric care.",
@@ -85,6 +92,7 @@ export const db = {
       insurancePartners: ["Max Bupa", "HDFC ERGO", "Star Health", "Kotak Mahindra"],
       rating: 4.6,
       reviewCount: 4800,
+      establishedYear: 2009,
       website: "https://www.medanta.org",
       contactEmail: "info@medanta.org",
       socialLinks: {
@@ -97,6 +105,7 @@ export const db = {
     {
       id: "hosp_manipal",
       name: "Manipal Hospitals",
+      type: "Multi Specialty",
       tagline: "Your Health, Our Priority",
       description:
         "Manipal Hospitals is a leading healthcare group in India, recognized for its clinical excellence, patient-centric services, and innovative medical practices.",
@@ -108,6 +117,7 @@ export const db = {
       insurancePartners: ["Bajaj Allianz", "Star Health", "Max Bupa", "Future Generali"],
       rating: 4.5,
       reviewCount: 3900,
+      establishedYear: 1953,
       website: "https://www.manipalhospitals.com",
       contactEmail: "info@manipalhospitals.com",
       socialLinks: {
@@ -134,6 +144,9 @@ export const db = {
       departments: ["Cardiology", "Orthopedics", "Neurosciences", "Oncology"],
       treatments: ["treat_angioplasty", "treat_knee_replacement", "treat_spine_surgery", "treat_cancer_therapy"],
       doctors: ["dr_balbir_singh", "dr_sanjay_sachdeva", "dr_amit_sharma", "dr_rekha_rao", "dr_harit_chaturvedi"],
+      bedCount: 395,
+      establishedYear: 2006,
+      totalDoctors: 125,
       mapLinks: { googleMaps: "http://googleusercontent.com/maps.google.com/max-saket" },
       images: ["/media/max-saket-1.jpg", "/media/max-saket-2.jpg"],
       parkingAvailable: true,
@@ -157,6 +170,9 @@ export const db = {
       departments: ["Oncology", "Gastroenterology", "Nephrology", "Urology"],
       treatments: ["treat_kidney_transplant", "treat_colonoscopy", "treat_chemotherapy", "treat_robotic_surgery_prostate"],
       doctors: ["dr_sanjeev_gogna", "dr_subhash_gupta", "dr_manish_gupta", "dr_harsh_jain", "dr_r_k_chopra"],
+      bedCount: 323,
+      establishedYear: 2009,
+      totalDoctors: 98,
       mapLinks: { googleMaps: "http://googleusercontent.com/maps.google.com/max-shalimar-bagh" },
       images: ["/media/max-shalimar-bagh-1.jpg"],
       parkingAvailable: true,
@@ -180,6 +196,9 @@ export const db = {
       departments: ["Cardiology", "Oncology", "Neurosciences", "Gastroenterology", "Orthopaedics"],
       treatments: ["treat_cabg", "treat_liver_transplant", "treat_brain_tumor_surgery"],
       doctors: ["dr_subhash_mishra", "dr_anupam_singh", "dr_prashant_jain", "dr_nupur_sharma", "dr_manish_aggarwal"],
+      bedCount: 710,
+      establishedYear: 1996,
+      totalDoctors: 215,
       mapLinks: { googleMaps: "http://googleusercontent.com/maps.google.com/apollo-delhi" },
       images: ["/media/apollo-delhi-1.jpg"],
       parkingAvailable: true,
@@ -203,6 +222,9 @@ export const db = {
       departments: ["Cardiology", "Oncology", "Gastroenterology", "Nephrology"],
       treatments: ["treat_cardiac_stenting", "treat_kidney_transplant", "treat_liver_transplant"],
       doctors: ["dr_anita_ramesh", "dr_r_krishnamurthy", "dr_s_krishnamoorthy", "dr_sudha_rao", "dr_vasantha_devi"],
+      bedCount: 550,
+      establishedYear: 1983,
+      totalDoctors: 165,
       mapLinks: { googleMaps: "http://googleusercontent.com/maps.google.com/apollo-chennai" },
       images: ["/media/apollo-chennai-1.jpg"],
       parkingAvailable: true,
@@ -226,6 +248,9 @@ export const db = {
       departments: ["Cardiac Sciences", "Oncology", "Orthopaedics", "Neurosciences", "Liver Transplant"],
       treatments: ["treat_heart_bypass", "treat_liver_transplant_fmri", "treat_joint_replacement"],
       doctors: ["dr_subhash_agarwal", "dr_rahul_bhargava", "dr_s_k_aggarwal", "dr_gagan_mathur", "dr_anurag_garg"],
+      bedCount: 1000,
+      establishedYear: 2014,
+      totalDoctors: 285,
       mapLinks: { googleMaps: "http://googleusercontent.com/maps.google.com/fortis-fmri" },
       images: ["/media/fortis-fmri-1.jpg"],
       parkingAvailable: true,
@@ -249,6 +274,9 @@ export const db = {
       departments: ["Cardiology", "Oncology", "Orthopaedics", "Organ Transplant"],
       treatments: ["treat_heart_bypass", "treat_kidney_transplant", "treat_joint_replacement"],
       doctors: ["dr_anvay_mulay", "dr_ramakanta_panda", "dr_b_k_mishra", "dr_suresh_rao", "dr_vivek_mishra"],
+      bedCount: 315,
+      establishedYear: 2007,
+      totalDoctors: 78,
       mapLinks: { googleMaps: "http://googleusercontent.com/maps.google.com/fortis-mumbai" },
       images: ["/media/fortis-mumbai-1.jpg"],
       parkingAvailable: true,
@@ -272,6 +300,9 @@ export const db = {
       departments: ["Cardiac Sciences", "Neurosciences", "Orthopaedics", "Oncology"],
       treatments: ["treat_heart_bypass_medanta", "treat_spine_surgery", "treat_robotic_joint_replacement"],
       doctors: ["dr_naresh_trehan", "dr_v_p_singh", "dr_ashok_seth", "dr_rajiv_jain", "dr_kushal_gupta"],
+      bedCount: 1250,
+      establishedYear: 2009,
+      totalDoctors: 350,
       mapLinks: { googleMaps: "http://googleusercontent.com/maps.google.com/medanta-gurgaon" },
       images: ["/media/medanta-gurgaon-1.jpg", "/media/medanta-gurgaon-2.jpg"],
       parkingAvailable: true,
@@ -295,6 +326,9 @@ export const db = {
       departments: ["Cardiology", "Nephrology", "Oncology", "Orthopaedics"],
       treatments: ["treat_kidney_transplant", "treat_cardiac_stenting", "treat_oncology_treatment"],
       doctors: ["dr_sathish_chandra", "dr_sanjay_rao", "dr_b_t_krishna", "dr_ashok_kumar", "dr_s_r_gupta"],
+      bedCount: 650,
+      establishedYear: 1991,
+      totalDoctors: 185,
       mapLinks: { googleMaps: "http://googleusercontent.com/maps.google.com/manipal-bangalore" },
       images: ["/media/manipal-bangalore-1.jpg"],
       parkingAvailable: true,

@@ -407,7 +407,7 @@ export function DoctorDetail({ doctor }: DoctorDetailProps) {
                     <div className="flex items-center gap-2 text-muted-foreground">
                       <MapPin className="w-4 h-4" />
                       <span>
-                        {branch.address}, {branch.city}, {branch.state} - {branch.pincode}
+                        {branch.address}, {branch.city}, {branch.state}
                       </span>
                     </div>
 
@@ -419,7 +419,7 @@ export function DoctorDetail({ doctor }: DoctorDetailProps) {
                     <div className="flex items-center gap-2 text-muted-foreground">
                       <Clock className="w-4 h-4" />
                       <span>
-                        {branch.operatingHours.open} - {branch.operatingHours.close}
+                        Weekdays: {branch.operatingHours.weekdays} | Weekends: {branch.operatingHours.weekends} | Emergency: {branch.operatingHours.emergency}
                       </span>
                     </div>
 
