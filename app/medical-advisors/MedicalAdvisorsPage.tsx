@@ -1,6 +1,3 @@
-
-
-
 "use client"
 import Overview from "@/components/Overview"
 import { useState, useEffect } from "react"
@@ -132,7 +129,7 @@ export default function MedicalAdvisorsPage() {
 
   // Advisor Card Component (Renamed from MomentCard)
   const AdvisorCard = ({ advisor }: { advisor: MedicalAdvisor }) => {
-    const imageUrl = getBestCoverImage(advisor) // Directly use the photo field
+    const imageUrl = advisor.photo ? getBestCoverImage(advisor.photo, { width: 400, height: 400 }) : null
 
     return (
 

@@ -291,7 +291,8 @@ export default function MediviosHospitalPartners() {
         description="Medivisor India Treatment partners with trusted hospitals across India — from multi-specialty centers to super-specialty institutes. With advanced facilities and expert doctors, you get the right care at the right place. Check below to explore our hospital network."
         // 🚨 Update the button's action to open the modal
         buttonText="Find a Hospital"
-        buttonOnClick={openModal} // Use buttonOnClick prop to open modal
+        buttonLink="#hospital-partners"
+        // Use buttonOnClick prop to open modal
         bannerBgImage="/hospital-network-bg.jpeg"
         mainImageSrc="/about-main.png"
         mainImageAlt="Medivisor India Treatment Hospital Network"

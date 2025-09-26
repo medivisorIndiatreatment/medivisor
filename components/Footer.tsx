@@ -96,7 +96,7 @@ export default function Footer() {
               <FaFacebookF size={24} />
             </a>
             <a
-              href="https://www.youtube.com/@MedivisorIndiatreatmenttreatment"
+              href="https://www.youtube.com/@MedivisorIndiatreatment"
               title="YouTube"
               className="text-white hover:text-[#74BF44] transition-colors"
             >

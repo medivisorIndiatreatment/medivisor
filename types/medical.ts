@@ -20,6 +20,7 @@ export interface MedicalAdvisor {
   type: "doctor"
 }
 
+
 export interface Hospital {
   _id: string
   Name: string
