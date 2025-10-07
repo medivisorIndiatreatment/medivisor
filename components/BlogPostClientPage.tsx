@@ -125,6 +125,27 @@ function formatDate(dateString: string | undefined): string {
   })
 }
 
+// Function to generate meta description from content
+function generateMetaDescription(content: string | RicosContent | undefined, excerpt?: string): string {
+  if (excerpt && excerpt.trim().length > 0) {
+    return excerpt.trim()
+  }
+
+  let text = ''
+  if (typeof content === 'string') {
+    text = content.replace(/<[^>]*>/g, '').trim()
+  } else if (content?.nodes) {
+    text = extractTextFromRicos(content.nodes).trim()
+  }
+
+  // Limit to 160 characters for SEO
+  if (text.length > 160) {
+    return text.substring(0, 157) + '...'
+  }
+
+  return text || 'Read this informative blog post to learn more.'
+}
+
 interface BlogPostProps {
   slug: string
 }
@@ -136,6 +157,141 @@ export default function BlogPost({ slug }: BlogPostProps) {
   const [error, setError] = useState<string | null>(null)
   const [isBookmarked, setIsBookmarked] = useState(false)
   const [isLiked, setIsLiked] = useState(false)
+
+  // Update SEO meta tags
+  useEffect(() => {
+    if (!post) return
+
+    // Update document title
+    document.title = `${post.title} | Your Blog Name`
+
+    // Update meta description
+    const metaDescription = document.querySelector('meta[name="description"]')
+    const description = generateMetaDescription(post.richContent || post.contentText || post.content, post.excerpt)
+    
+    if (metaDescription) {
+      metaDescription.setAttribute('content', description)
+    } else {
+      const newMetaDescription = document.createElement('meta')
+      newMetaDescription.name = 'description'
+      newMetaDescription.content = description
+      document.head.appendChild(newMetaDescription)
+    }
+
+    // Update Open Graph tags
+    const ogTitle = document.querySelector('meta[property="og:title"]')
+    if (ogTitle) {
+      ogTitle.setAttribute('content', post.title)
+    } else {
+      const newOgTitle = document.createElement('meta')
+      newOgTitle.setAttribute('property', 'og:title')
+      newOgTitle.content = post.title
+      document.head.appendChild(newOgTitle)
+    }
+
+    const ogDescription = document.querySelector('meta[property="og:description"]')
+    if (ogDescription) {
+      ogDescription.setAttribute('content', description)
+    } else {
+      const newOgDescription = document.createElement('meta')
+      newOgDescription.setAttribute('property', 'og:description')
+      newOgDescription.content = description
+      document.head.appendChild(newOgDescription)
+    }
+
+    const ogUrl = document.querySelector('meta[property="og:url"]')
+    if (ogUrl) {
+      ogUrl.setAttribute('content', window.location.href)
+    } else {
+      const newOgUrl = document.createElement('meta')
+      newOgUrl.setAttribute('property', 'og:url')
+      newOgUrl.content = window.location.href
+      document.head.appendChild(newOgUrl)
+    }
+
+    // Update Twitter Card tags
+    const twitterTitle = document.querySelector('meta[name="twitter:title"]')
+    if (twitterTitle) {
+      twitterTitle.setAttribute('content', post.title)
+    } else {
+      const newTwitterTitle = document.createElement('meta')
+      newTwitterTitle.name = 'twitter:title'
+      newTwitterTitle.content = post.title
+      document.head.appendChild(newTwitterTitle)
+    }
+
+    const twitterDescription = document.querySelector('meta[name="twitter:description"]')
+    if (twitterDescription) {
+      twitterDescription.setAttribute('content', description)
+    } else {
+      const newTwitterDescription = document.createElement('meta')
+      newTwitterDescription.name = 'twitter:description'
+      newTwitterDescription.content = description
+      document.head.appendChild(newTwitterDescription)
+    }
+
+    // Set canonical URL
+    let canonicalUrl = document.querySelector('link[rel="canonical"]')
+    if (!canonicalUrl) {
+      canonicalUrl = document.createElement('link')
+      canonicalUrl.setAttribute('rel', 'canonical')
+      document.head.appendChild(canonicalUrl)
+    }
+    canonicalUrl.setAttribute('href', window.location.href)
+
+    // Cleanup function to reset meta tags when component unmounts
+    return () => {
+      document.title = 'Your Blog Name' // Reset to default title
+    }
+  }, [post])
+
+  // Update Open Graph and Twitter images when image URL is available
+  useEffect(() => {
+    if (!post) return
+
+    const imageUrl = getWixImageUrl(post.media?.wixMedia?.image || post.coverMedia?.image)
+    if (!imageUrl) return
+
+    // Update Open Graph image
+    const ogImage = document.querySelector('meta[property="og:image"]')
+    if (ogImage) {
+      ogImage.setAttribute('content', imageUrl)
+    } else {
+      const newOgImage = document.createElement('meta')
+      newOgImage.setAttribute('property', 'og:image')
+      newOgImage.content = imageUrl
+      document.head.appendChild(newOgImage)
+    }
+
+    // Update Twitter image
+    const twitterImage = document.querySelector('meta[name="twitter:image"]')
+    if (twitterImage) {
+      twitterImage.setAttribute('content', imageUrl)
+    } else {
+      const newTwitterImage = document.createElement('meta')
+      newTwitterImage.name = 'twitter:image'
+      newTwitterImage.content = imageUrl
+      document.head.appendChild(newTwitterImage)
+    }
+
+    // Set image dimensions if available
+    const ogImageWidth = document.querySelector('meta[property="og:image:width"]')
+    const ogImageHeight = document.querySelector('meta[property="og:image:height"]')
+    
+    if (!ogImageWidth) {
+      const newOgImageWidth = document.createElement('meta')
+      newOgImageWidth.setAttribute('property', 'og:image:width')
+      newOgImageWidth.content = '1200'
+      document.head.appendChild(newOgImageWidth)
+    }
+    
+    if (!ogImageHeight) {
+      const newOgImageHeight = document.createElement('meta')
+      newOgImageHeight.setAttribute('property', 'og:image:height')
+      newOgImageHeight.content = '630'
+      document.head.appendChild(newOgImageHeight)
+    }
+  }, [post])
 
   useEffect(() => {
     const fetchPostData = async () => {
@@ -377,6 +533,38 @@ export default function BlogPost({ slug }: BlogPostProps) {
 
   return (
     <div className="min-h-screen bg-gradient-to-br px-4 md:px-0 py-4 md:py-10 from-gray-50 to-white">
+      {/* Structured Data for SEO */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "BlogPosting",
+            "headline": post.title,
+            "description": generateMetaDescription(post.richContent || post.contentText || post.content, post.excerpt),
+            "image": imageUrl ? [imageUrl] : [],
+            "datePublished": post.firstPublishedDate,
+            "dateModified": post.lastPublishedDate || post.firstPublishedDate,
+            "author": {
+              "@type": "Organization",
+              "name": "Your Organization Name"
+            },
+            "publisher": {
+              "@type": "Organization",
+              "name": "Your Organization Name",
+              "logo": {
+                "@type": "ImageObject",
+                "url": "https://yourwebsite.com/logo.png"
+              }
+            },
+            "mainEntityOfPage": {
+              "@type": "WebPage",
+              "@id": window.location.href
+            }
+          })
+        }}
+      />
+      
       <main className="container mx-auto">
         <div className="mx-auto">
           {/* Breadcrumb */}
@@ -399,6 +587,38 @@ export default function BlogPost({ slug }: BlogPostProps) {
                       <h1 className="text-2xl md:text-3xl font-medium text-gray-700 mb-6 leading-tight">
                         {post.title}
                       </h1>
+                      
+                      {/* Post Meta Information */}
+                      <div className="flex flex-wrap items-center gap-4 text-sm text-gray-500 mb-6">
+                        <div className="flex items-center gap-1">
+                          <Calendar className="w-4 h-4" />
+                          <time dateTime={post.firstPublishedDate}>
+                            {formatDate(post.firstPublishedDate)}
+                          </time>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <Clock className="w-4 h-4" />
+                          <span>{readTime}</span>
+                        </div>
+                        {post.viewCount !== undefined && (
+                          <div className="flex items-center gap-1">
+                            <Eye className="w-4 h-4" />
+                            <span>{post.viewCount} views</span>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Featured Image */}
+                      {imageUrl && (
+                        <div className="mb-8 rounded-lg overflow-hidden">
+                          <img
+                            src={imageUrl}
+                            alt={post.title}
+                            className="w-full h-auto object-cover"
+                            loading="eager"
+                          />
+                        </div>
+                      )}
                     </header>
 
                     {/* Article Content */}
@@ -417,6 +637,53 @@ export default function BlogPost({ slug }: BlogPostProps) {
                           <p className="text-gray-600 italic text-lg">No content available for this post.</p>
                         </div>
                       )}
+                    </div>
+
+                    {/* Social Sharing */}
+                    <div className="mt-8 pt-6 border-t border-gray-200">
+                      <div className="flex flex-wrap items-center justify-between gap-4">
+                        <div className="flex items-center gap-2">
+                          <span className="text-sm text-gray-600">Share this post:</span>
+                          <div className="flex gap-2">
+                            <button
+                              onClick={handleShare}
+                              className="p-2 text-gray-600 hover:text-blue-600 transition-colors"
+                              aria-label="Share"
+                            >
+                              <Share2 className="w-5 h-5" />
+                            </button>
+                            <button
+                              onClick={handleCopyLink}
+                              className="p-2 text-gray-600 hover:text-gray-800 transition-colors"
+                              aria-label="Copy link"
+                            >
+                              <Copy className="w-5 h-5" />
+                            </button>
+                          </div>
+                        </div>
+                        
+                        <div className="flex items-center gap-4">
+                          <button
+                            onClick={() => setIsBookmarked(!isBookmarked)}
+                            className={`p-2 transition-colors ${
+                              isBookmarked ? 'text-blue-600' : 'text-gray-600 hover:text-blue-600'
+                            }`}
+                            aria-label={isBookmarked ? "Remove bookmark" : "Bookmark"}
+                          >
+                            <Bookmark className="w-5 h-5" fill={isBookmarked ? "currentColor" : "none"} />
+                          </button>
+                          
+                          <button
+                            onClick={() => setIsLiked(!isLiked)}
+                            className={`p-2 transition-colors ${
+                              isLiked ? 'text-red-600' : 'text-gray-600 hover:text-red-600'
+                            }`}
+                            aria-label={isLiked ? "Unlike" : "Like"}
+                          >
+                            <Heart className="w-5 h-5" fill={isLiked ? "currentColor" : "none"} />
+                          </button>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </article>
