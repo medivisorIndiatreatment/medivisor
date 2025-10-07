@@ -80,6 +80,24 @@ function getWixImageUrl(wixUrl: string | undefined): string | null {
   }
 }
 
+// Function to get optimized Wix Image URL for social sharing
+function getOptimizedWixImageUrl(wixUrl: string | undefined, width: number = 1200, height: number = 630): string | null {
+  if (!wixUrl || !wixUrl.startsWith('wix:image://')) {
+    return null
+  }
+  try {
+    const { url } = media.getImageUrl(wixUrl, {
+      width,
+      height,
+      fit: 'fill'
+    })
+    return url
+  } catch (error) {
+    console.error('Error getting optimized Wix image URL:', error)
+    return null
+  }
+}
+
 // Function to get YouTube embed URL
 function getYouTubeEmbedUrl(youtubeUrl: string | undefined): string | null {
   if (!youtubeUrl) return null
@@ -148,7 +166,9 @@ function generateMetaDescription(content: string | RicosContent | undefined, exc
 
 // Function to get optimized share image URL
 function getShareImageUrl(wixUrl: string | undefined, fallbackImage?: string): string {
-  const imageUrl = getWixImageUrl(wixUrl) || fallbackImage
+  // Try to get optimized image for social sharing
+  const optimizedImageUrl = getOptimizedWixImageUrl(wixUrl, 1200, 630)
+  const imageUrl = optimizedImageUrl || getWixImageUrl(wixUrl) || fallbackImage
   
   if (!imageUrl) {
     // Return a default share image if no image is available
@@ -170,13 +190,13 @@ export default function BlogPost({ slug }: BlogPostProps) {
   const [isBookmarked, setIsBookmarked] = useState(false)
   const [isLiked, setIsLiked] = useState(false)
 
-  // Update SEO meta tags
+  // Update SEO meta tags on client side (for dynamic updates)
   useEffect(() => {
     if (!post) return
 
     const shareImageUrl = getShareImageUrl(
       post.media?.wixMedia?.image || post.coverMedia?.image,
-      '/default-share-image.jpg' // Your default share image
+      '/default-share-image.jpg'
     )
     const description = generateMetaDescription(post.richContent || post.contentText || post.content, post.excerpt)
     const currentUrl = window.location.href
@@ -217,12 +237,15 @@ export default function BlogPost({ slug }: BlogPostProps) {
     updateMetaTag('og:image:width', '1200', 'property')
     updateMetaTag('og:image:height', '630', 'property')
     updateMetaTag('og:image:alt', post.title, 'property')
+    updateMetaTag('og:image:type', 'image/jpeg', 'property')
     updateMetaTag('og:url', currentUrl, 'property')
     updateMetaTag('og:type', 'article', 'property')
     updateMetaTag('og:site_name', 'Your Blog Name', 'property')
     
     // Article specific OG tags
-    updateMetaTag('article:published_time', post.firstPublishedDate || '', 'property')
+    if (post.firstPublishedDate) {
+      updateMetaTag('article:published_time', post.firstPublishedDate, 'property')
+    }
     if (post.lastPublishedDate) {
       updateMetaTag('article:modified_time', post.lastPublishedDate, 'property')
     }
@@ -242,11 +265,6 @@ export default function BlogPost({ slug }: BlogPostProps) {
     updateMetaTag('twitter:image:alt', post.title)
     updateMetaTag('twitter:url', currentUrl)
     updateMetaTag('twitter:site', '@yourtwitterhandle') // Replace with your Twitter handle
-
-    // WhatsApp specific meta tags
-    updateMetaTag('twitter:app:name:iphone', 'WhatsApp')
-    updateMetaTag('twitter:app:name:ipad', 'WhatsApp')
-    updateMetaTag('twitter:app:name:googleplay', 'WhatsApp')
 
     // Additional social media meta tags
     updateMetaTag('image', shareImageUrl) // Fallback for some platforms
@@ -284,13 +302,14 @@ export default function BlogPost({ slug }: BlogPostProps) {
           if (typeof wixClient.posts.getPostBySlug === 'function') {
             console.log('Trying getPostBySlug...')
             const response = await wixClient.posts.getPostBySlug(slug, {
-              fieldsets: ['CONTENT_TEXT', 'URL', 'RICH_CONTENT'],
+              fieldsets: ['CONTENT_TEXT', 'URL', 'RICH_CONTENT', 'TAGS', 'COVER_MEDIA', 'MEDIA'],
             })
 
             if (response.post) {
               fetchedPost = response.post as Post
               console.log('Successfully fetched post using getPostBySlug')
-              console.log('Rich content:', fetchedPost.richContent)
+              console.log('Cover media:', fetchedPost.coverMedia)
+              console.log('Media:', fetchedPost.media)
             }
           }
         } catch (getBySlugError) {

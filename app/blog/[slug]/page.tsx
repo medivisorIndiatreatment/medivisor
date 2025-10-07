@@ -21,9 +21,29 @@ function getWixImageUrl(wixUrl: string | undefined): string | null {
   }
 }
 
+// Function to get optimized Wix Image URL for social sharing
+function getOptimizedWixImageUrl(wixUrl: string | undefined, width: number = 1200, height: number = 630): string | null {
+  if (!wixUrl || !wixUrl.startsWith('wix:image://')) {
+    return null;
+  }
+  try {
+    const { url } = media.getImageUrl(wixUrl, {
+      width,
+      height,
+      fit: 'fill'
+    });
+    return url;
+  } catch (error) {
+    console.error('Error getting optimized Wix image URL:', error);
+    return null;
+  }
+}
+
 // Function to generate optimized share image URL
 function getOptimizedShareImage(wixUrl: string | undefined): string {
-  const imageUrl = getWixImageUrl(wixUrl);
+  // Try to get optimized image for social sharing first
+  const optimizedImageUrl = getOptimizedWixImageUrl(wixUrl, 1200, 630);
+  const imageUrl = optimizedImageUrl || getWixImageUrl(wixUrl);
   
   if (imageUrl) {
     return imageUrl;
@@ -116,97 +136,105 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
 
   const title = blog.title || "Medivisor India Blog";
   const description = generateMetaDescription(blog.richContent || blog.contentText || blog.content, blog.excerpt);
-  const imageUrl = getOptimizedShareImage(blog.coverMedia?.image || blog.media?.wixMedia?.image);
-  const url = `https://medivisorindiatreatment.com/blog/${blog.slug}/`;
-  const keywords = (blog.tags || []).join(", ") || "medical treatment, healthcare, patient stories, Medivisor India";
-  const publishedTime = blog.firstPublishedDate || blog.lastPublishedDate;
-  const modifiedTime = blog.lastPublishedDate || blog.firstPublishedDate;
+  const imageUrl = getOptimizedShareImage(blog.media?.wixMedia?.image || blog.coverMedia?.image);
+  const url = `https://medivisorindiatreatment.com/blog/${params.slug}`;
 
   return {
     title: `${title} | Medivisor India`,
     description,
-    keywords,
     alternates: {
       canonical: url,
     },
     openGraph: {
-      title: `${title} | Medivisor India`,
+      title,
       description,
       url,
-      siteName: "Medivisor India Treatment",
+      siteName: "Medivisor India",
       images: [
         {
           url: imageUrl,
           width: 1200,
           height: 630,
           alt: title,
+          type: 'image/jpeg',
         },
       ],
+      locale: "en_US",
       type: "article",
-      publishedTime: publishedTime,
-      modifiedTime: modifiedTime,
+      publishedTime: blog.firstPublishedDate,
+      modifiedTime: blog.lastPublishedDate || blog.firstPublishedDate,
       authors: ["Medivisor India"],
-      tags: blog.tags || [],
     },
     twitter: {
       card: "summary_large_image",
-      title: `${title} | Medivisor India`,
+      title,
       description,
       images: [imageUrl],
-      site: "@MedivisorIndia",
-      creator: "@MedivisorIndia",
+      site: "@medivisorindia", // Replace with your actual Twitter handle
+      creator: "@medivisorindia", // Replace with your actual Twitter handle
     },
+    robots: {
+      index: true,
+      follow: true,
+      googleBot: {
+        index: true,
+        follow: true,
+        'max-video-preview': -1,
+        'max-image-preview': 'large',
+        'max-snippet': -1,
+      },
+    },
+    // Additional meta tags for better SEO
+    keywords: blog.tags?.join(', ') || "medical treatment, healthcare, India, patient journey",
     authors: [{ name: "Medivisor India" }],
     publisher: "Medivisor India",
-    robots: "index, follow, max-image-preview:large",
-    metadataBase: new URL("https://medivisorindiatreatment.com"),
-    
-    // Additional SEO meta tags
-    other: {
-      "og:image:width": "1200",
-      "og:image:height": "630",
-      "og:image:alt": title,
-      "og:image:type": "image/jpeg",
-      "twitter:image:alt": title,
-      "article:published_time": publishedTime,
-      "article:modified_time": modifiedTime,
-      "article:author": "Medivisor India",
-      ...(blog.tags && blog.tags.length > 0 && {
-        "article:tag": blog.tags.join(", "),
-      }),
-    },
+    category: "healthcare",
+    // Article specific meta tags
+    ...(blog.firstPublishedDate && {
+      publishedTime: blog.firstPublishedDate,
+    }),
+    ...(blog.lastPublishedDate && {
+      modifiedTime: blog.lastPublishedDate,
+    }),
+    // Add article tags if available
+    ...(blog.tags && blog.tags.length > 0 && {
+      tags: blog.tags,
+    }),
   };
 }
 
-// ✅ Generate static params for better performance
+// ✅ Generate Static Params for SSG
 export async function generateStaticParams() {
   try {
     if (!wixClient.posts) return [];
 
     let posts = [];
     
-    if (typeof wixClient.posts.listPosts === "function") {
-      const response = await wixClient.posts.listPosts({
-        paging: { limit: 100 },
-      });
-      posts = response.posts || [];
-    } else if (typeof wixClient.posts.queryPosts === "function") {
+    // Try queryPosts first
+    if (typeof wixClient.posts.queryPosts === "function") {
       const response = await wixClient.posts.queryPosts()
-        .limit(100)
+        .limit(50)
         .find();
       posts = response.items || [];
+    } 
+    // Fallback to listPosts
+    else if (typeof wixClient.posts.listPosts === "function") {
+      const response = await wixClient.posts.listPosts({
+        paging: { limit: 50 },
+      });
+      posts = response.posts || [];
     }
 
     return posts.map((post: any) => ({
       slug: post.slug,
     }));
-  } catch (error) {
-    console.error("Error generating static params:", error);
+  } catch (err) {
+    console.error("Error generating static params:", err);
     return [];
   }
 }
 
-// ✅ Page Component
-export default function BlogPostPage({ params }: { params: { slug: string } }) {
+// ✅ Blog Post Page Component
+export default function BlogPostPage({ params }: Params) {
   return <BlogPost slug={params.slug} />;
 }
