@@ -30,7 +30,7 @@ function getOptimizedWixImageUrl(wixUrl: string | undefined, width: number = 120
     const { url } = media.getImageUrl(wixUrl, {
       width,
       height,
-      fit: 'fill'
+      fit: 'cover'
     })
     return url
   } catch (error) {
@@ -39,18 +39,15 @@ function getOptimizedWixImageUrl(wixUrl: string | undefined, width: number = 120
   }
 }
 
-// Function to generate optimized share image URL
-function getOptimizedShareImage(wixUrl: string | undefined): string {
+// Function to generate optimized share image URL - PRIORITIZE FEATURED IMAGE
+function getOptimizedShareImage(wixUrl: string | undefined): string | null {
+  if (!wixUrl) return null
+  
   // Try to get optimized image for social sharing first
   const optimizedImageUrl = getOptimizedWixImageUrl(wixUrl, 1200, 630)
   const imageUrl = optimizedImageUrl || getWixImageUrl(wixUrl)
   
-  if (imageUrl) {
-    return imageUrl
-  }
-  
-  // Fallback to default share image
-  return "https://medivisorindiatreatment.com/default-share-image.jpg"
+  return imageUrl
 }
 
 // Function to extract text from content for meta description
@@ -146,8 +143,14 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
 
   const title = blog.title || "Medivisor India Blog"
   const description = generateMetaDescription(blog.richContent || blog.contentText || blog.content, blog.excerpt)
-  const imageUrl = getOptimizedShareImage(blog.media?.wixMedia?.image || blog.coverMedia?.image)
+  
+  // Get the featured image URL - prioritize coverMedia first, then media
+  const featuredImageUrl = getOptimizedShareImage(blog.coverMedia?.image || blog.media?.wixMedia?.image)
+  
   const url = `https://medivisorindiatreatment.com/blog/${params.slug}`
+  
+  // Your organization logo for structured data (only used in structured data, not OG image)
+  const logoUrl = "https://medivisorindiatreatment.com/logo.png"
 
   // Article specific meta tags
   const articleMeta: any = {}
@@ -161,6 +164,18 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
     articleMeta.tags = blog.tags
   }
 
+  // Prepare images array for Open Graph
+  const ogImages = []
+  if (featuredImageUrl) {
+    ogImages.push({
+      url: featuredImageUrl,
+      width: 1200,
+      height: 630,
+      alt: title,
+      type: 'image/jpeg',
+    })
+  }
+
   return {
     title: `${title} | Medivisor India`,
     description,
@@ -171,28 +186,20 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
       title,
       description,
       url,
-      siteName: "Medivisor India",
-      images: [
-        {
-          url: imageUrl,
-          width: 1200,
-          height: 630,
-          alt: title,
-          type: 'image/jpeg',
-        },
-      ],
+      siteName: "Medivisor India Treatment",
+      images: ogImages,
       locale: "en_US",
       type: "article",
       ...articleMeta,
       authors: ["Medivisor India"],
     },
     twitter: {
-      card: "summary_large_image",
+      card: featuredImageUrl ? "summary_large_image" : "summary",
       title,
       description,
-      images: [imageUrl],
-      site: "@medivisorindiatreatment",
-      creator: "@medivisorindiatreatment",
+      images: featuredImageUrl ? [featuredImageUrl] : [],
+      site: "@medivisorindia",
+      creator: "@medivisorindia",
     },
     robots: {
       index: true,

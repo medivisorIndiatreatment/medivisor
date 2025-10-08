@@ -89,7 +89,7 @@ function getOptimizedWixImageUrl(wixUrl: string | undefined, width: number = 120
     const { url } = media.getImageUrl(wixUrl, {
       width,
       height,
-      fit: 'fill'
+      fit: 'cover'
     })
     return url
   } catch (error) {
@@ -141,20 +141,6 @@ function formatDate(dateString: string | undefined): string {
     month: 'long',
     day: 'numeric',
   })
-}
-
-// Function to get optimized share image URL
-function getShareImageUrl(wixUrl: string | undefined): string {
-  // Try to get optimized image for social sharing
-  const optimizedImageUrl = getOptimizedWixImageUrl(wixUrl, 1200, 630)
-  const imageUrl = optimizedImageUrl || getWixImageUrl(wixUrl)
-  
-  if (!imageUrl) {
-    // Return a default share image if no image is available
-    return '/default-share-image.jpg'
-  }
-  
-  return imageUrl
 }
 
 interface BlogPostProps {
@@ -215,6 +201,8 @@ export default function BlogPost({ slug }: BlogPostProps) {
             if (response.post) {
               fetchedPost = response.post as Post
               console.log('Successfully fetched post using getPostBySlug')
+              console.log('Post cover media:', fetchedPost.coverMedia)
+              console.log('Post media:', fetchedPost.media)
             }
           }
         } catch (getBySlugError) {
@@ -312,7 +300,6 @@ export default function BlogPost({ slug }: BlogPostProps) {
   }, [slug])
 
   const handleShare = async (platform?: string) => {
-    const shareImageUrl = getShareImageUrl(post?.media?.wixMedia?.image || post?.coverMedia?.image)
     const shareUrl = window.location.href
     const shareTitle = post?.title || ''
     const shareText = post?.excerpt || ''
@@ -493,6 +480,18 @@ export default function BlogPost({ slug }: BlogPostProps) {
                           </div>
                         )}
                       </div>
+
+                      {/* Featured Image */}
+                      {imageUrl && (
+                        <div className="mb-8 rounded-lg overflow-hidden">
+                          <img
+                            src={imageUrl}
+                            alt={post.title}
+                            className="w-full h-auto object-cover"
+                            loading="eager"
+                          />
+                        </div>
+                      )}
                     </header>
 
                     {/* Article Content */}
@@ -506,7 +505,7 @@ export default function BlogPost({ slug }: BlogPostProps) {
                       ) : (
                         <div className="text-center py-12">
                           <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                            {/* <span className="text-2xl">統</span> */}
+                            <span className="text-2xl">📝</span>
                           </div>
                           <p className="text-gray-600 italic text-lg">No content available for this post.</p>
                         </div>
