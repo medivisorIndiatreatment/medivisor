@@ -1,144 +1,90 @@
 "use client"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import type { Hospital } from "@/types/hospital"
+import { getWixScaledToFillImageUrl, getWixImageUrl } from "@/lib/wixMedia"
+import { HospitalIcon, Phone, Globe, Mail } from "lucide-react"
+import { BranchesPreview } from "@/components/seach-page/branches"
 
-import useSWR from "swr"
-import { useMemo, useState } from "react"
-
-type City = {
-  _id: string
-  name: string
-  state?: { _id: string; name: string } | null
-  country?: { _id: string; name: string } | null
+type Props = {
+  hospital: Hospital
 }
 
-type Branch = {
-  _id: string
-  branchName: string
-  address?: string
-  primaryLocation?: City | 'jdjdh'
+function getImageUrl(h: Hospital, width = 800, height = 500): string | null {
+  // Prefer main Hospital Image then fallback to Logo
+  const main = h.image || h.logo
+  if (!main) return null
+  return getWixScaledToFillImageUrl(main, width, height) || getWixImageUrl(main)
 }
 
-type Hospital = {
-  _id: string
-  name: string
-  slug?: string
-  logo?: string
-  description?: string
-  branches: Branch[]
-  branchCount: number
-}
-
-const fetcher = (url: string) => fetch(url).then((r) => r.json())
-
-export default function HospitalSearch() {
-  const [search, setSearch] = useState("")
-  const [cityId, setCityId] = useState("")
-
-  const { data: citiesRes } = useSWR<{ data: City[] }>("/api/cities?limit=1000", fetcher)
-  const cities = citiesRes?.data ?? []
-
-  const qs = useMemo(() => {
-    const params = new URLSearchParams()
-    if (search) params.set("search", search)
-    if (cityId) params.set("cityId", cityId)
-    params.set("limit", "50")
-    return params.toString()
-  }, [search, cityId])
-
-  const { data: hospitalsRes, isLoading } = useSWR<{ data: Hospital[] }>(`/api/hospitals?${qs}`, fetcher)
-
-  const hospitals = hospitalsRes?.data ?? []
+export function HospitalCard({ hospital }: Props) {
+  const cover = getImageUrl(hospital, 800, 500)
 
   return (
-    <section className="flex flex-col gap-4">
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="flex flex-col gap-2">
-          <label className="text-sm">Search by hospital name</label>
-          <input
-            className="h-10 w-full rounded-md border bg-background px-3 text-sm"
-            placeholder="e.g., City Care Hospital"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            aria-label="Hospital name search"
-          />
+    <Card className="overflow-hidden border-border bg-background text-foreground">
+      {cover ? (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          src={cover || "/placeholder.svg"}
+          alt={hospital.name}
+          className="h-48 w-full object-cover"
+          loading="lazy"
+        />
+      ) : (
+        <div className="h-48 w-full grid place-items-center bg-muted">
+          <HospitalIcon className="h-8 w-8 text-muted-foreground" />
+          <span className="sr-only">No image</span>
         </div>
+      )}
 
-        <div className="flex flex-col gap-2">
-          <label className="text-sm">City</label>
-          <select
-            className="h-10 w-full rounded-md border bg-background px-3 text-sm"
-            value={cityId}
-            onChange={(e) => setCityId(e.target.value)}
-            aria-label="City filter"
-          >
-            <option value="">All cities</option>
-            {cities.map((c) => (
-              <option key={c._id} value={c._id}>
-                {c.name}
-                {c.state?.name ? `, ${c.state.name}` : ""}
-              </option>
-            ))}
-          </select>
-        </div>
+      <CardHeader className="space-y-1">
+        <CardTitle className="text-balance">{hospital.name}</CardTitle>
+        {hospital.city && <p className="text-sm text-muted-foreground">{hospital.city}</p>}
+      </CardHeader>
 
-        <div className="flex items-end">
-          <button
-            type="button"
-            onClick={() => {
-              setSearch("")
-              setCityId("")
-            }}
-            className="inline-flex h-10 items-center justify-center rounded-md border px-4 text-sm"
-            aria-label="Reset filters"
-          >
-            Reset
-          </button>
-        </div>
-      </div>
-
-      <div className="mt-4">
-        {isLoading ? (
-          <div className="text-sm text-muted-foreground">Loading hospitals…</div>
-        ) : hospitals.length === 0 ? (
-          <div className="text-sm text-muted-foreground">No hospitals found.</div>
-        ) : (
-          <ul className="grid grid-cols-1 gap-4">
-            {hospitals.map((h) => (
-              <li key={h._id} className="rounded-lg border p-4">
-                <div className="flex items-start justify-between gap-3">
-                  <div>
-                    <h3 className="text-lg font-medium">{h.name}</h3>
-                    {h.description ? (
-                      <p className="text-sm text-muted-foreground mt-1 line-clamp-2">{h.description}</p>
-                    ) : null}
-                  </div>
-                  {typeof h.branchCount === "number" ? (
-                    <span className="text-xs rounded bg-secondary px-2 py-1">
-                      {h.branchCount} branch{h.branchCount === 1 ? "" : "es"}
-                    </span>
-                  ) : null}
-                </div>
-
-                {h.branches?.length ? (
-                  <div className="mt-3">
-                    <h4 className="text-sm font-semibold">Branches</h4>
-                    <div className="mt-2 grid grid-cols-1 gap-2">
-                      {h.branches.map((b) => (
-                        <div key={b._id} className="rounded border p-2">
-                          <div className="text-sm font-medium">{b.branchName}</div>
-                          <div className="text-xs text-muted-foreground">
-                            {typeof b.primaryLocation === 'object' && b.primaryLocation?.name ? b.primaryLocation?.name : "Unknown City"}
-                          </div>
-                          {b.address ? <div className="text-xs text-muted-foreground">{b.address}</div> : null}
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                ) : null}
-              </li>
-            ))}
-          </ul>
+      <CardContent className="space-y-2 text-sm">
+        {hospital.accreditation && (
+          <p>
+            <span className="font-medium">Accreditation:</span>{" "}
+            <span className="text-muted-foreground">{hospital.accreditation}</span>
+          </p>
         )}
-      </div>
-    </section>
+        {hospital.beds && (
+          <p>
+            <span className="font-medium">Beds:</span> <span className="text-muted-foreground">{hospital.beds}</span>
+          </p>
+        )}
+        {hospital.emergencyServices !== undefined && hospital.emergencyServices !== null && (
+          <p>
+            <span className="font-medium">Emergency:</span>{" "}
+            <span className="text-muted-foreground">{String(hospital.emergencyServices)}</span>
+          </p>
+        )}
+
+        <div className="flex flex-wrap gap-3 pt-2 text-muted-foreground">
+          {hospital.contactNumber && (
+            <a href={`tel:${hospital.contactNumber}`} className="inline-flex items-center gap-1 hover:text-foreground">
+              <Phone className="h-4 w-4" /> {hospital.contactNumber}
+            </a>
+          )}
+          {hospital.email && (
+            <a href={`mailto:${hospital.email}`} className="inline-flex items-center gap-1 hover:text-foreground">
+              <Mail className="h-4 w-4" /> Email
+            </a>
+          )}
+          {hospital.website && (
+            <a
+              href={hospital.website}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1 hover:text-foreground"
+            >
+              <Globe className="h-4 w-4" /> Website
+            </a>
+          )}
+        </div>
+
+        {hospital._id && <BranchesPreview hospitalId={hospital._id} hospitalSlug={hospital.slug} className="pt-2" />}
+      </CardContent>
+    </Card>
   )
 }

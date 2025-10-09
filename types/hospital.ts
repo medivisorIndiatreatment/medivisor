@@ -1,68 +1,81 @@
-// types/hospital.ts
+// Hospital types
 export interface Hospital {
   _id: string
+  slug?: string | null
   name: string
-  hospitalName: string
-  logo: string
-  description: string
-  branches: HospitalBranch[]
-  specialtiesTags: string[] | null
-  slug: string
-  establishedDate: string | null
-  bannerImage: string
-  gallery: string[] | null
-  branchCount: number
-  createdDate: string
-  updatedDate: string
+  image?: string | null // Wix image url (wix:image://...)
+  logo?: string | null // Wix image url (wix:image://...)
+  yearEstablished?: string | number | null
+  accreditation?: string | null
+  beds?: number | string | null
+  emergencyServices?: boolean | string | null
+  description?: string | null
+  website?: string | null
+  email?: string | null
+  contactNumber?: string | null
+  countryId?: string | null
+  city?: string | null
+  branches?: string[] | number[] | null // list of branch IDs
+  branchesCount?: number | null
 }
 
-export interface HospitalBranch {
-  HospitalList_branches: never[]
+export interface HospitalWithBranchPreview extends Hospital {
+  branchesPreview?: Branch[] | null
+}
+
+// Branch types
+export interface Branch {
   _id: string
-  branchName: string
-  address: string
-  phone: string
-  pinCode: string
-  email: string
-  branchImageUrl: string
-  slug: string
-  mapEmbedUrl: string
-  primaryLocation: | primaryLocation[]
-  doctors: Doctor[]
-  createdDate: string
-  updatedDate: string
+  slug?: string | null
+  name?: string | null
+  image?: string | null
+  address?: string | null
+  city?: string | null
+  state?: string | null
+  country?: string | null
+  phone?: string | null
+  email?: string | null
+  totalBeds?: number | string | null
+  icuBeds?: number | string | null
+  doctorIds?: string[] | null // list of doctor IDs
+  doctors?: Doctor[] | null
 }
 
-export interface primaryLocation {
-  _id: string
-  CityName: string
-  state?: {
-    _id: string
-    name: string
-  }
-  country?: {
-    _id: string
-    name: string
-  }
-}
-
+// Doctor types
 export interface Doctor {
   _id: string
+  slug?: string | null
   name: string
-  specialization: string
-  experience: string | null
-  imageUrl: string
-  slug: string
-  designation: string
-  contactPhone: string
-  contactEmail: string
-  doctorPageUrl: string
-  createdDate: string
-  updatedDate: string
+  profileImage?: string 
+  specialization?: string | null
+  qualification?: string | null
+  experienceYears?: number | string | null
+  designation?: string | null
+  languagesSpoken?: string | null
+  about?: string | null
+  hospitalBranchIds?: string[] | null
+  cityId?: string | null
+  stateId?: string | null
+  countryId?: string | null
+  branchesMasterDoctor?: string[] | null
 }
 
-export interface FilterOption {
+// API responses
+export interface DoctorsApiResponse {
+  items: Doctor[]
+}
+
+export interface CitiesApiResponse {
+  items: City[]
+}
+
+// City types
+export interface City {
   _id: string
   name: string
-  type: 'city' | 'state' | 'country'
+  state?: string | null
+  createdDate?: string | null
+  updatedDate?: string | null
+  owner?: string | null
+  hospitalMasterCity?: string[] | null // reference to hospitals
 }

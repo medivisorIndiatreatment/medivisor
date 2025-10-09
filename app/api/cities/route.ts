@@ -1,54 +1,37 @@
-import type { NextRequest } from "next/server"
-import { wixServerClient } from "@/lib/wixServer"
-import { COLLECTION_IDS, mapCityData, DEFAULT_LIMIT } from "@/lib/wix-mappers"
+import { type NextRequest, NextResponse } from "next/server"
+import { wixClient, createClient } from "@/lib/wixClient"
+import type { CitiesApiResponse, City } from "@/types/hospital"
 
-export async function GET(request: NextRequest) {
+const CITIES_COLLECTION = "CityMaster"
+
+export async function GET(_req: NextRequest) {
+  const client = createClient?.() || wixClient
   try {
-    const { searchParams } = new URL(request.url)
-    const limit = Math.min(Number(searchParams.get("limit") || DEFAULT_LIMIT), 1000)
-    const skip = Number(searchParams.get("skip") || 0)
-    const search = searchParams.get("search") || ""
+    const res = await client.items.query(CITIES_COLLECTION).limit(200).find({ consistentRead: true })
 
-    let query = wixServerClient.items.query(COLLECTION_IDS.CITIES).include("state", "country").limit(limit).skip(skip)
+    const items: City[] =
+      (res.items || []).map((c: any) => ({
+        _id: c._id,
+        name: c["city name"] || c["City Name"] || c.cityName || "Unknown",
 
-    if (search) {
-      query = query.contains("city name", search)
-    }
+        // Multi-reference to state: map _id from each reference, or fallback
+        state: Array.isArray(c.state)
+          ? c.state.map((s: any) => (typeof s === "object" && s._id ? s._id : s)).filter(Boolean).join(", ")
+          : typeof c.state === "object" && c.state?._id
+          ? c.state._id
+          : c.state || c.title || null,
+        // Multi-reference to hospitals: map _id from each reference
+        hospitalMasterCity: Array.isArray(c.HospitalMaster_city)
+          ? c.HospitalMaster_city
+              .map((h: any) => (typeof h === "object" && h._id ? h._id : h))
+              .filter(Boolean)
+          : [],
+      })) ?? []
 
-    const res = await query.find({ consistentRead: true })
-    const mapped = (res.items || []).map(mapCityData).filter(Boolean)
-
-    return Response.json(
-      { data: mapped, totalCount: mapped.length, success: true },
-      {
-        status: 200,
-        headers: {
-          "Access-Control-Allow-Origin": "*",
-          "Content-Type": "application/json",
-        },
-      },
-    )
+    const payload: CitiesApiResponse = { items }
+    return NextResponse.json(payload)
   } catch (error: any) {
-    return Response.json(
-      { error: "Failed to fetch cities", message: error.message, data: [], totalCount: 0, success: false },
-      {
-        status: 500,
-        headers: {
-          "Access-Control-Allow-Origin": "*",
-          "Content-Type": "application/json",
-        },
-      },
-    )
+    console.log("[v0] /api/cities error:", error?.message || error)
+    return NextResponse.json({ error: true, message: error?.message || "Unknown error" }, { status: 500 })
   }
-}
-
-export async function OPTIONS() {
-  return new Response(null, {
-    status: 200,
-    headers: {
-      "Access-Control-Allow-Origin": "*",
-      "Access-Control-Allow-Methods": "GET, OPTIONS",
-      "Access-Control-Allow-Headers": "Content-Type, Authorization",
-    },
-  })
 }
