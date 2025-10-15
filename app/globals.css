@@ -88,6 +88,9 @@ body {
 .description-1 {
   @apply text-base text-[#241d1f] ;
 }
+.description-2 {
+  @apply text-sm text-[#241d1f] ;
+}
 .title-text {
   @apply text-xl md:text-xl font-semibold text-[#241d1f]  leading-tight ;
 }

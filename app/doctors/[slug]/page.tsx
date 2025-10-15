@@ -1,629 +1,638 @@
-// app/doctors/[slug]/page.tsx
-import { wixServerClient } from '@/lib/wixServer'
-import { notFound } from 'next/navigation'
-import Image from 'next/image'
-import { Stethoscope, CalendarDays, MapPin, Phone, Mail, Globe, Award, Clock, DollarSign, Star } from 'lucide-react'
-import Link from 'next/link'
-import { getWixScaledToFillImageUrl } from "@/lib/wixMedia"
-import RelatedItemsCarousel from '@/components/related-carousel'
+// File: app/doctors/[slug]/page.tsx
 
-// ============ Type Definitions ============
-interface Doctor {
-  _id: string
-  slug: string
-  name: string
-  title: string
-  specializations: string[]
-  qualifications: string[]
-  experience: number
-  consultationFee: number
-  rating: number
-  totalReviews: number
-  about: string
-  education: Education[]
-  experienceHistory: Experience[]
-  languages: string[]
-  contactEmail: string
-  contactPhone: string
-  website: string
-  isActive: boolean
-  hospitalAffiliations: string[]
-  awards: string[]
-  profilePicture: string
-  coverImage: string
-  address: string
-  city: string
-  state: string
-  country: string
-  availability: string
-}
+"use client"
 
-interface Education {
-  degree: string
-  institution: string
-  year: string
-}
+import { useState, useEffect, useCallback } from "react"
+import Image from "next/image"
+import type { HospitalWithBranchPreview } from "@/types/hospital"
+import {
+  Building2,
+  Calendar,
+  Bed,
+  Award,
+  Stethoscope,
+  Scissors,
+  ChevronLeft,
+  ChevronRight,
+  Home,
+  Hospital,
+  Users,
+  Phone,
+  Mail,
+  Clock
+} from "lucide-react"
+import Link from "next/link"
+import useEmblaCarousel from "embla-carousel-react"
+import classNames from "classnames"
+import ContactForm from "@/components/ContactForm"
 
-interface Experience {
-  position: string
-  hospital: string
-  duration: string
-  description: string
-}
-
-interface Hospital {
-  _id: string;
-  slug: string;
-  name: string;
-  image: string;
-}
-
-interface Treatment {
-  _id: string;
-  slug: string;
-  name: string;
-  category: string;
-  image: string;
-}
-
-interface Props {
-  params: {
-    slug: string
+// Helper function to extract the main hospital image URL from rich content
+const getHospitalImage = (richContent: any): string | null => {
+  if (typeof richContent === 'string') return richContent
+  if (!richContent || !richContent.nodes) return null
+  const imageNode = richContent.nodes.find((node: any) => node.type === 'IMAGE')
+  if (imageNode?.imageData?.image?.src?.id) {
+    const id = imageNode.imageData.image.src.id
+    return `https://static.wixstatic.com/media/${id}`
   }
+  return null
 }
 
-// ============ Data Fetching Functions ============
-async function getDoctorBySlug(slug: string): Promise<Doctor | null> {
-  try {
-    const res = await wixServerClient.items.query('Doctor')
-      .eq('slug', slug)
-      .limit(1)
-      .find({ consistentRead: true })
-
-    if (res.items.length === 0) {
-      return null
-    }
-
-    const item = res.items[0]
-
-    // Helper functions to parse data
-    const parseArrayLike = (input: unknown): string[] => {
-      if (!input) return []
-      if (Array.isArray(input))
-        return input
-          .map(String)
-          .map((s) => s.trim())
-          .filter(Boolean)
-      const s = String(input)
-      return s
-        .split(/[,|]/g)
-        .map((x) => x.trim())
-        .filter(Boolean)
-    }
-
-    const toNumberSafe = (v: unknown, fallback = 0): number => {
-      const n = typeof v === 'number' ? v : Number.parseFloat(String(v))
-      return Number.isFinite(n) ? n : fallback
-    }
-
-    const parseEducation = (input: unknown): Education[] => {
-      if (!input) return []
-      try {
-        if (typeof input === 'string') {
-          return JSON.parse(input)
-        }
-        if (Array.isArray(input)) {
-          return input.map(edu => ({
-            degree: edu.degree || '',
-            institution: edu.institution || '',
-            year: edu.year || ''
-          }))
-        }
-        return []
-      } catch {
-        return []
-      }
-    }
-
-    const parseExperience = (input: unknown): Experience[] => {
-      if (!input) return []
-      try {
-        if (typeof input === 'string') {
-          return JSON.parse(input)
-        }
-        if (Array.isArray(input)) {
-          return input.map(exp => ({
-            position: exp.position || '',
-            hospital: exp.hospital || '',
-            duration: exp.duration || '',
-            description: exp.description || ''
-          }))
-        }
-        return []
-      } catch {
-        return []
-      }
-    }
-
-    // Map data according to CSV column names
-    const doctor: Doctor = {
-      _id: item._id || item.ID || '',
-      slug: item.slug || '',
-      name: item.name || 'Dr. Unknown',
-      title: item.title || '',
-      specializations: parseArrayLike(item.specializations),
-      qualifications: parseArrayLike(item.qualifications),
-      experience: toNumberSafe(item.experience, 0),
-      consultationFee: toNumberSafe(item.consultationFee, 0),
-      rating: toNumberSafe(item.rating, 0),
-      totalReviews: toNumberSafe(item.totalReviews, 0),
-      about: item.about || item.description || '',
-      education: parseEducation(item.education),
-      experienceHistory: parseExperience(item.experienceHistory),
-      languages: parseArrayLike(item.languages),
-      contactEmail: item.contactEmail || '',
-      contactPhone: item.contactPhone || '',
-      website: item.website || '#',
-      isActive: Boolean(item.isActive),
-      hospitalAffiliations: parseArrayLike(item.hospitalAffiliations),
-      awards: parseArrayLike(item.awards),
-      profilePicture: item.profilePicture || '',
-      coverImage: item.coverImage || '',
-      address: item.address || '',
-      city: item.city || '',
-      state: item.state || '',
-      country: item.country || '',
-      availability: item.availability || 'Available'
-    }
-
-    return doctor
-  } catch (error) {
-    console.error('Error fetching doctor:', error)
-    return null
+// Helper function to extract doctor image URL from rich content
+const getDoctorImage = (richContent: any): string | null => {
+  if (typeof richContent === 'string') return richContent
+  if (!richContent || !richContent.nodes) return null
+  const imageNode = richContent.nodes.find((node: any) => node.type === 'IMAGE')
+  if (imageNode?.imageData?.image?.src?.id) {
+    const id = imageNode.imageData.image.src.id
+    return `https://static.wixstatic.com/media/${id}`
   }
+  return null
 }
 
-async function getRelatedData(specializations: string[], currentSlug: string) {
-  try {
-    // If no specializations, return empty arrays
-    if (!specializations || specializations.length === 0) {
-      return {
-        hospitals: [],
-        doctors: [],
-        treatments: []
-      }
-    }
-
-    // Take only the first 2 specializations to avoid URL too long issues
-    const specializationsQuery = specializations.slice(0, 2).join(",")
-    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
-
-    console.log('Fetching related data for specializations:', specializationsQuery)
-
-    const [hospitalsRes, doctorsRes, treatmentsRes] = await Promise.allSettled([
-      fetch(`${baseUrl}/api/search?type=hospital&specialties=${encodeURIComponent(specializationsQuery)}`, {
-        cache: 'no-store'
-      }),
-      fetch(`${baseUrl}/api/search?type=doctor&specialties=${encodeURIComponent(specializationsQuery)}`, {
-        cache: 'no-store'
-      }),
-      fetch(`${baseUrl}/api/search?type=treatment&specialties=${encodeURIComponent(specializationsQuery)}`, {
-        cache: 'no-store'
-      })
-    ]);
-
-    // Helper function to process fetch responses
-    const processResponse = async (result: PromiseSettledResult<Response>, type: string) => {
-      if (result.status === 'fulfilled' && result.value.ok) {
-        try {
-          const data = await result.value.json()
-          console.log(`Fetched ${type}:`, data.items?.length || 0)
-          return data.items || []
-        } catch (error) {
-          console.error(`Error parsing ${type} response:`, error)
-          return []
-        }
-      } else {
-        console.error(`Error fetching ${type}:`, result.status === 'rejected' ? result.reason : result.value.statusText)
-        return []
-      }
-    }
-
-    const relatedHospitals = await processResponse(hospitalsRes, 'hospitals')
-    const relatedDoctors = await processResponse(doctorsRes, 'doctors')
-    const relatedTreatments = await processResponse(treatmentsRes, 'treatments')
-
-    // Filter out current doctor and limit results
-    const filteredDoctors = relatedDoctors
-      .filter((d: Doctor) => d.slug !== currentSlug)
-      .slice(0, 8)
-    const filteredHospitals = relatedHospitals.slice(0, 8)
-    const filteredTreatments = relatedTreatments.slice(0, 8)
-
-    console.log('Final related data:', {
-      doctors: filteredDoctors.length,
-      hospitals: filteredHospitals.length,
-      treatments: filteredTreatments.length
-    })
-
-    return {
-      doctors: filteredDoctors,
-      hospitals: filteredHospitals,
-      treatments: filteredTreatments
-    }
-  } catch (error) {
-    console.error('Error in getRelatedData:', error)
-    return {
-      doctors: [],
-      hospitals: [],
-      treatments: []
-    }
+// Helper function to extract treatment image URL from rich content
+const getTreatmentImage = (richContent: any): string | null => {
+  if (typeof richContent === 'string') return richContent
+  if (!richContent || !richContent.nodes) return null
+  const imageNode = richContent.nodes.find((node: any) => node.type === 'IMAGE')
+  if (imageNode?.imageData?.image?.src?.id) {
+    const id = imageNode.imageData.image.src.id
+    return `https://static.wixstatic.com/media/${id}`
   }
+  return null
 }
 
-// ============ Page and Metadata Generation ============
-export async function generateMetadata({ params }: Props) {
-  const doctor = await getDoctorBySlug(params.slug)
-
-  if (!doctor) {
-    return {
-      title: 'Doctor Not Found'
-    }
-  }
-
-  return {
-    title: `${doctor.name} - ${doctor.title || 'Doctor'} Details`,
-    description: doctor.about.substring(0, 160),
-  }
+// Helper function to generate a URL-friendly slug
+const generateSlug = (name: string): string => {
+  return name
+    .toLowerCase()
+    .trim()
+    .replace(/[^\w\s-]/g, '')
+    .replace(/\s+/g, '-')
+    .replace(/-+/g, '-')
 }
 
-// ============ Rating Stars Component ============
-function RatingStars({ rating }: { rating: number }) {
+// Breadcrumb Component
+const Breadcrumb = ({ hospitalName, branchName, doctorName, hospitalSlug }: { hospitalName: string; branchName: string; doctorName: string; hospitalSlug: string }) => (
+  <nav className="bg-white border-b border-gray-100 py-4">
+    <div className="container mx-auto px-4">
+      <div className="flex items-center gap-1 text-sm text-gray-600">
+        <Link href="/" className="flex items-center gap-1 hover:text-gray-800 transition-colors">
+          <Home className="w-4 h-4" />
+          Home
+        </Link>
+        <span>/</span>
+        <Link href="/hospitals" className="hover:text-gray-800 transition-colors">
+          Hospitals
+        </Link>
+        <span>/</span>
+        <Link
+          href={`/hospitals/${hospitalSlug}`}
+          className="hover:text-gray-800 transition-colors"
+        >
+          {hospitalName}
+        </Link>
+        <span>/</span>
+        <Link
+          href={`/hospitals/${hospitalSlug}/branches/${generateSlug(branchName)}`}
+          className="hover:text-gray-800 transition-colors"
+        >
+          {branchName}
+        </Link>
+        <span>/</span>
+        <span className="text-gray-800 font-medium">{doctorName}</span>
+      </div>
+    </div>
+  </nav>
+)
+
+// Similar Hospitals Carousel Component
+const SimilarHospitalsCarousel = ({ hospitals, currentHospitalId }: { hospitals: any[], currentHospitalId: string }) => {
+  const similarHospitals = hospitals
+    .filter(h => h._id !== currentHospitalId)
+    .slice(0, 6)
+
+  if (similarHospitals.length === 0) return null
+
+  const [emblaRef, emblaApi] = useEmblaCarousel({
+    loop: false,
+    align: 'start',
+    slidesToScroll: 1,
+    containScroll: 'trimSnaps'
+  })
+
+  const scrollPrev = useCallback(() => emblaApi && emblaApi.scrollPrev(), [emblaApi])
+  const scrollNext = useCallback(() => emblaApi && emblaApi.scrollNext(), [emblaApi])
+
+  const itemsPerView = 3
+  const visibleSlidesClass = `min-w-0 w-80`
+
   return (
-    <div className="flex items-center gap-1">
-      {[1, 2, 3, 4, 5].map((star) => (
-        <Star
-          key={star}
-          size={16}
-          className={star <= rating ? "text-yellow-400 fill-yellow-400" : "text-gray-300"}
+    <section className="bg-white rounded-xs shadow-xs p-4 border border-gray-100">
+      <div className="flex justify-between items-center mb-4">
+        <h3 className="text-2xl font-semibold text-gray-800 flex items-center gap-3">
+          <Hospital className="w-6 h-6 text-gray-600" />
+          Similar Hospitals <span className="text-gray-500 font-normal">({similarHospitals.length})</span>
+        </h3>
+        {similarHospitals.length > itemsPerView && (
+          <div className="flex gap-2">
+            <button
+              onClick={scrollPrev}
+              className="bg-white rounded-xs p-3 shadow-xs border border-gray-100 hover:bg-gray-50 transition-all duration-200 hover:shadow-md"
+              aria-label="Previous slide"
+            >
+              <ChevronLeft className="w-5 h-5 text-gray-600" />
+            </button>
+            <button
+              onClick={scrollNext}
+              className="bg-white rounded-xs p-3 shadow-xs border border-gray-100 hover:bg-gray-50 transition-all duration-200 hover:shadow-md"
+              aria-label="Next slide"
+            >
+              <ChevronRight className="w-5 h-5 text-gray-600" />
+            </button>
+          </div>
+        )}
+      </div>
+      <div className="overflow-hidden" ref={emblaRef}>
+        <div className="flex gap-6">
+          {similarHospitals.map((hospital) => {
+            const hospitalImage = getHospitalImage(hospital.image)
+            const hospitalSlug = hospital.slug || generateSlug(hospital.name)
+            return (
+              <div key={hospital._id} className={classNames("flex-shrink-0 bg-white rounded-xs p-0 border border-gray-100 shadow-xs hover:shadow-lg transition-all duration-300 hover:-translate-y-1", visibleSlidesClass)}>
+                <HospitalCard hospital={hospital} hospitalImage={hospitalImage} hospitalSlug={hospitalSlug} />
+              </div>
+            )
+          })}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+// Hospital Card Component
+const HospitalCard = ({ hospital, hospitalImage, hospitalSlug }: { hospital: any, hospitalImage: string | null, hospitalSlug: string }) => (
+  <Link href={`/hospitals/${hospitalSlug}`} className="block group">
+    <div className="relative w-full h-48 mb-0 rounded-t-xs overflow-hidden bg-gray-100">
+      {hospitalImage ? (
+        <Image
+          src={hospitalImage}
+          alt={hospital.name}
+          fill
+          className="object-cover w-full group-hover:scale-105 transition-transform duration-300"
         />
-      ))}
-      <span className="ml-2 text-sm text-[#241d1f]">({rating.toFixed(1)})</span>
+      ) : (
+        <div className="w-full h-full flex items-center justify-center">
+          <Hospital className="w-12 h-12 text-gray-400" />
+        </div>
+      )}
+      <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+    </div>
+    <div className="flex-1 min-w-0 p-6">
+      <h5 className="font-semibold text-gray-800 text-lg mb-2 line-clamp-1">{hospital.name}</h5>
+      <p className="text-gray-600 font-medium mb-2 line-clamp-1">{hospital.accreditation || 'Leading Healthcare Provider'}</p>
+      <p className="text-gray-500 text-sm mb-2 line-clamp-1">{hospital.beds || 'N/A'} Beds</p>
+      {hospital.description && <p className="text-gray-500 text-sm line-clamp-1">{hospital.description}</p>}
+    </div>
+  </Link>
+)
+
+// Skeleton Components
+const HeroSkeleton = () => (
+  <section className="relative w-full h-[70vh]">
+    <div className="w-full h-full bg-gradient-to-br from-gray-200 to-gray-300 animate-pulse" />
+    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/30 to-transparent" />
+    <div className="absolute bottom-0 left-0 w-full z-10 px-6 pb-12 text-white">
+      <div className="container mx-auto space-y-4">
+        <div className="space-y-2">
+          <div className="h-10 w-3/4 bg-white/20 rounded animate-pulse" />
+          <div className="h-6 w-1/2 bg-white/20 rounded animate-pulse" />
+        </div>
+      </div>
+    </div>
+  </section>
+)
+
+const OverviewSkeleton = () => (
+  <section className="bg-white rounded-xs shadow-xs p-4 border border-gray-100">
+    <div className="h-8 w-48 bg-gray-200 rounded animate-pulse mb-6" />
+    <div className="space-y-4">
+      <div className="h-20 w-full bg-gray-300 rounded-xs animate-pulse" />
+      <div className="h-12 w-3/4 bg-gray-300 rounded animate-pulse" />
+      <div className="h-4 w-1/2 bg-gray-300 rounded animate-pulse" />
+    </div>
+  </section>
+)
+
+const CarouselSkeleton = ({ type }: { type: 'treatments' | 'hospitals' }) => {
+  const itemsPerView = 3
+  const visibleSlidesClass = `min-w-0 w-80`
+
+  return (
+    <section className="bg-white rounded-xs shadow-xs p-4 border border-gray-100">
+      <div className="flex justify-between items-center mb-4">
+        <div className="flex items-center gap-3">
+          <div className="w-6 h-6 bg-gray-300 rounded animate-pulse" />
+          <div className="h-8 w-48 bg-gray-200 rounded animate-pulse" />
+          <div className="h-6 w-12 bg-gray-200 rounded animate-pulse ml-2" />
+        </div>
+        <div className="flex gap-2">
+          <div className="bg-white rounded-xs p-3 shadow-xs border border-gray-100 animate-pulse" />
+          <div className="bg-white rounded-xs p-3 shadow-xs border border-gray-100 animate-pulse" />
+        </div>
+      </div>
+      <div className="overflow-hidden">
+        <div className="flex gap-6">
+          {Array.from({ length: Math.max(itemsPerView + 1, 6) }).map((_, i) => (
+            <div key={i} className={classNames("flex-shrink-0 bg-white rounded-xs p-0 border border-gray-100 shadow-xs animate-pulse", visibleSlidesClass)}>
+              <div className="relative w-full h-48 mb-0 rounded-t-xs overflow-hidden bg-gray-100" />
+              <div className="p-6 space-y-3">
+                <div className="h-6 bg-gray-300 rounded" />
+                <div className="h-5 bg-gray-300 rounded w-3/4" />
+                <div className="h-4 bg-gray-300 rounded w-1/2" />
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+const SidebarSkeleton = () => (
+  <aside className="lg:col-span-3 space-y-8">
+    <div className="bg-white sticky top-24 rounded-xs shadow-xs p-6 border border-gray-100">
+      <div className="h-6 w-32 bg-gray-200 rounded animate-pulse mb-6" />
+      <div className="space-y-4">
+        {Array.from({ length: 3 }).map((_, i) => (
+          <div key={i} className="h-16 bg-gray-300 rounded-xs animate-pulse" />
+        ))}
+      </div>
+    </div>
+  </aside>
+)
+
+// Embla Carousel Component for Treatments
+const EmblaCarouselTreatments = ({
+  items,
+  title,
+  Icon
+}: {
+  items: any[],
+  title: string,
+  Icon: any
+}) => {
+  const [emblaRef, emblaApi] = useEmblaCarousel({
+    loop: false,
+    align: 'start',
+    slidesToScroll: 1,
+    containScroll: 'trimSnaps'
+  })
+
+  const scrollPrev = useCallback(() => emblaApi && emblaApi.scrollPrev(), [emblaApi])
+  const scrollNext = useCallback(() => emblaApi && emblaApi.scrollNext(), [emblaApi])
+
+  const itemsPerView = 3
+  const visibleSlidesClass = `min-w-0 w-80`
+
+  return (
+    <div className="relative">
+      <div className="flex justify-between items-center mb-4">
+        <h3 className="text-2xl font-semibold text-gray-800 flex items-center gap-3">
+          <Icon className="w-6 h-6 text-gray-600" />
+          {title} <span className="text-gray-500 font-normal">({items.length})</span>
+        </h3>
+        {items.length > itemsPerView && (
+          <div className="flex gap-2">
+            <button
+              onClick={scrollPrev}
+              className="bg-white rounded-xs p-3 shadow-xs border border-gray-100 hover:bg-gray-50 transition-all duration-200 hover:shadow-md"
+              aria-label="Previous slide"
+            >
+              <ChevronLeft className="w-5 h-5 text-gray-600" />
+            </button>
+            <button
+              onClick={scrollNext}
+              className="bg-white rounded-xs p-3 shadow-xs border border-gray-100 hover:bg-gray-50 transition-all duration-200 hover:shadow-md"
+              aria-label="Next slide"
+            >
+              <ChevronRight className="w-5 h-5 text-gray-600" />
+            </button>
+          </div>
+        )}
+      </div>
+      <div className="overflow-hidden" ref={emblaRef}>
+        <div className="flex gap-6">
+          {items.map((item, index) => (
+            <div key={item._id || index} className={classNames("flex-shrink-0 bg-white rounded-xs p-0 border border-gray-100 shadow-xs hover:shadow-lg transition-all duration-300 hover:-translate-y-1", visibleSlidesClass)}>
+              <TreatmentCard item={item} />
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   )
 }
 
-// ============ Main Component ============
-export default async function DoctorPage({ params }: Props) {
-  const doctor = await getDoctorBySlug(params.slug)
-
-  if (!doctor) {
-    notFound()
-  }
-
-  const coverImageSrc = doctor.coverImage ? getWixScaledToFillImageUrl(doctor.coverImage, 2000, 1000) : null
-  const profileImageSrc = doctor.profilePicture ? getWixScaledToFillImageUrl(doctor.profilePicture, 400, 400) : null
-  const relatedData = await getRelatedData(doctor.specializations, params.slug)
+// Treatment Card Component
+const TreatmentCard = ({ item }: { item: any }) => {
+  const treatmentImage = getTreatmentImage(item.treatmentImage)
+  const treatmentSlug = item.slug || generateSlug(item.name)
 
   return (
-    <div className="min-h-screen bg-gray-50 py-0">
-      <section className="relative w-full">
-        {/* Full-width background image */}
-        {coverImageSrc ? (
-          <div className="absolute inset-0 h-full w-full">
-            <Image
-              src={coverImageSrc}
-              alt={`${doctor.name} - Cover`}
-              fill
-              className="object-fill"
-              priority
-            />
-          </div>
+    <Link
+      href={`/treatment/${treatmentSlug}`}
+      className="group h-full flex flex-col hover:no-underline"
+    >
+      <div className="relative flex-1 min-h-48 rounded-t-xs overflow-hidden bg-gray-100">
+        {treatmentImage ? (
+          <Image
+            src={treatmentImage}
+            alt={item.name}
+            fill
+            className="object-cover w-full group-hover:scale-105 transition-transform duration-300"
+          />
         ) : (
-          <div className="absolute inset-0 h-[420px] md:h-[560px] bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
-            <Stethoscope size={72} className="text-blue-400" />
+          <div className="w-full h-full flex items-center justify-center">
+            <Scissors className="w-12 h-12 text-gray-400" />
           </div>
         )}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+      </div>
+      <div className="p-6 flex-1 flex flex-col justify-between">
+        <div className="space-y-3">
+          <h5 className="font-semibold text-gray-800 text-lg line-clamp-1 group-hover:text-blue-600 transition-colors duration-200">{item.name}</h5>
+          <p className="text-gray-600 font-medium line-clamp-1">{item.category || 'Specialized Treatment'}</p>
+          <p className="text-gray-500 text-sm line-clamp-2">{item.description || "Comprehensive medical treatment for optimal recovery."}</p>
+        </div>
+        {item.cost && (
+          <div className="mt-4 pt-4 border-t border-gray-100">
+            <p className="text-blue-600 font-semibold text-sm">Starting from ${item.cost}</p>
+          </div>
+        )}
+      </div>
+    </Link>
+  )
+}
 
-        {/* Dark overlay */}
-        <div className="absolute inset-0 h-[420px] md:h-[560px] bg-gradient-to-r from-black/80 via-black/60 to-black/10" />
+// Main Doctor Detail Component
+export default function DoctorDetail({ params }: { params: Promise<{ slug: string }> }) {
+  const [doctor, setDoctor] = useState<any>(null)
+  const [branch, setBranch] = useState<any>(null)
+  const [hospital, setHospital] = useState<HospitalWithBranchPreview | null>(null)
+  const [allHospitals, setAllHospitals] = useState<any[]>([])
+  const [relatedTreatments, setRelatedTreatments] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
-        {/* Content */}
-        <div className="relative z-10 h-[420px] md:h-[560px] flex items-end pb-10">
-          <div className="px-6 md:px-16 lg:px-20 w-full max-w-4xl text-white">
-            {/* Back link */}
-            <div className="mb-6">
-              <Link
-                href="/doctors"
-                className="inline-flex items-center text-white/80 hover:text-white transition-colors duration-200"
-              >
-                ← Back to Doctors
-              </Link>
+  useEffect(() => {
+    const fetchDoctorData = async () => {
+      setLoading(true)
+      setError(null)
+      try {
+        const resolvedParams = await params
+        const doctorSlug = resolvedParams.slug
+
+        console.log('Fetching doctor with slug:', doctorSlug)
+
+        const res = await fetch('/api/hospitals')
+        if (!res.ok) throw new Error("Failed to fetch hospitals")
+        const data = await res.json()
+
+        if (data.items && data.items.length > 0) {
+          let foundDoctor = null
+          let foundBranch = null
+          let foundHospital = null
+          let treatments: any[] = []
+
+          // Search through all hospitals -> branches -> doctors
+          for (const hospitalItem of data.items) {
+            const hospitalSlug = generateSlug(hospitalItem.name)
+            if (hospitalItem.branches && hospitalItem.branches.length > 0) {
+              for (const branchItem of hospitalItem.branches) {
+                const branchNameSlug = generateSlug(branchItem.name)
+                if (branchItem.doctors && branchItem.doctors.length > 0) {
+                  for (const doctorItem of branchItem.doctors) {
+                    const doctorNameSlug = generateSlug(doctorItem.name)
+                    // For simplicity, match on doctor slug only; in production, use combined slug like `${hospitalSlug}-${branchNameSlug}-${doctorNameSlug}`
+                    if (doctorNameSlug === doctorSlug) {
+                      foundDoctor = doctorItem
+                      foundBranch = branchItem
+                      foundHospital = hospitalItem
+                      treatments = branchItem.treatments || []
+                      break
+                    }
+                  }
+                }
+                if (foundDoctor) break
+              }
+            }
+            if (foundDoctor) break
+          }
+
+          if (foundDoctor && foundHospital && foundBranch) {
+            console.log('Found doctor:', foundDoctor.name)
+            console.log('In branch:', foundBranch.name)
+            console.log('In hospital:', foundHospital.name)
+            setDoctor(foundDoctor)
+            setBranch(foundBranch)
+            setHospital(foundHospital)
+            setRelatedTreatments(treatments)
+            setAllHospitals(data.items)
+          } else {
+            throw new Error("Doctor not found")
+          }
+        } else {
+          throw new Error("No hospitals available")
+        }
+      } catch (err) {
+        console.error('Error fetching doctor:', err)
+        setError(err instanceof Error ? err.message : "Failed to load doctor details")
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchDoctorData()
+  }, [params])
+
+  // Loading State with Skeleton
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <HeroSkeleton />
+        <Breadcrumb hospitalName="Hospital Name" branchName="Branch Name" doctorName="Doctor Name" hospitalSlug="" />
+        <section className="py-12 relative z-10">
+          <div className="container mx-auto px-4">
+            <div className="grid lg:grid-cols-12 gap-4">
+              <main className="lg:col-span-9 space-y-8">
+                <OverviewSkeleton />
+                <CarouselSkeleton type="treatments" />
+                <CarouselSkeleton type="hospitals" />
+              </main>
+              <SidebarSkeleton />
             </div>
+          </div>
+        </section>
+      </div>
+    )
+  }
 
-            {/* Doctor Profile and Info */}
-            <div className="flex flex-col lg:flex-row items-start gap-8">
-              {/* Profile Picture */}
-              <div className="flex-shrink-0">
-                {profileImageSrc ? (
-                  <div className="relative w-32 h-32 md:w-40 md:h-40 rounded-full overflow-hidden border-4 border-white/20">
-                    <Image
-                      src={profileImageSrc}
-                      alt={doctor.name}
-                      fill
-                      className="object-cover"
-                    />
-                  </div>
-                ) : (
-                  <div className="w-32 h-32 md:w-40 md:h-40 rounded-full bg-white/20 flex items-center justify-center">
-                    <Stethoscope size={48} className="text-white/60" />
-                  </div>
-                )}
-              </div>
+  // Error State
+  if (error || !doctor || !hospital || !branch) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 p-6 relative">
+        <Breadcrumb hospitalName="Hospital Name" branchName="Branch Name" doctorName="Doctor Name" hospitalSlug="" />
+        <div className="text-center space-y-6 max-w-md p-4 bg-white rounded-xs shadow-xs border border-gray-100">
+          <Stethoscope className="w-16 h-16 text-gray-400 mx-auto" />
+          <h2 className="text-2xl font-semibold text-gray-800">Doctor Not Found</h2>
+          <p className="text-gray-600 leading-relaxed">{error || "The requested doctor could not be found. Please check the URL or try searching again."}</p>
+          <Link
+            href="/hospitals"
+            className="inline-block w-full bg-gray-800 text-white px-6 py-3 rounded-xs hover:bg-gray-900 transition-all font-semibold shadow-xs hover:shadow-md"
+          >
+            Go to Hospital Search
+          </Link>
+        </div>
+      </div>
+    )
+  }
 
-              {/* Doctor Info */}
-              <div className="flex-1">
-                {/* Badges */}
-                <div className="flex items-center gap-3 mb-4">
-                  {doctor.title && (
-                    <span className="bg-blue-600 text-white text-base font-medium px-3 py-1 rounded-xs">
-                      {doctor.title}
-                    </span>
-                  )}
-                  {doctor.rating > 0 && (
-                    <div className="inline-flex items-center bg-yellow-400/20 px-3 py-1 rounded-xs">
-                      <RatingStars rating={doctor.rating} />
-                    </div>
-                  )}
-                  {doctor.availability && (
-                    <span className={`px-3 py-1 rounded-xs text-sm font-medium ${
-                      doctor.availability.toLowerCase().includes('available') 
-                        ? 'bg-green-600 text-white' 
-                        : 'bg-red-600 text-white'
-                    }`}>
-                      {doctor.availability}
-                    </span>
-                  )}
-                </div>
+  // Derived Data
+  const doctorImage = getDoctorImage(doctor.profileImage)
+  const hospitalImage = getHospitalImage(hospital.image)
+  const heroImage = doctorImage || hospitalImage
+  const hospitalSlug = hospital.slug || generateSlug(hospital.name)
+  const branchSlug = generateSlug(branch.name)
 
-                {/* Name */}
-                <h1 className="text-4xl md:text-5xl font-bold mb-2">
-                  {doctor.name}
-                </h1>
-
-                {/* Specializations */}
-                {doctor.specializations.length > 0 && (
-                  <p className="text-xl text-blue-200 mb-4">
-                    {doctor.specializations.join(', ')}
-                  </p>
-                )}
-
-                {/* Qualifications */}
-                {doctor.qualifications.length > 0 && (
-                  <p className="text-lg text-gray-300 mb-6">
-                    {doctor.qualifications.join(', ')}
-                  </p>
-                )}
-
-                {/* Key Stats */}
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-2xl">
-                  <div className="bg-white/10 backdrop-blur-sm p-3 rounded-xs">
-                    <div className="text-2xl font-semibold text-white">
-                      {doctor.experience}+
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <CalendarDays size={18} className="text-gray-200" />
-                      <div className="text-lg text-gray-100">Years Exp</div>
-                    </div>
-                  </div>
-
-                  <div className="bg-white/10 backdrop-blur-sm p-3 rounded-xs">
-                    <div className="text-2xl font-semibold text-white">
-                      {doctor.totalReviews}+
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Star size={18} className="text-gray-200" />
-                      <div className="text-lg text-gray-100">Reviews</div>
-                    </div>
-                  </div>
-
-                  <div className="bg-white/10 backdrop-blur-sm p-3 rounded-xs">
-                    <div className="text-2xl font-semibold text-white">
-                      ${doctor.consultationFee}
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <DollarSign size={18} className="text-gray-200" />
-                      <div className="text-lg text-gray-100">Consultation</div>
-                    </div>
-                  </div>
-
-                  <div className="bg-white/10 backdrop-blur-sm p-3 rounded-xs">
-                    <div className="text-2xl font-semibold text-white">
-                      {doctor.languages.length}
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Globe size={18} className="text-gray-200" />
-                      <div className="text-lg text-gray-100">Languages</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
+  return (
+    <div className="min-h-screen bg-gray-50">
+      {/* Hero Header */}
+      <section className="relative w-full h-[70vh]">
+        {heroImage ? (
+          <Image
+            src={heroImage}
+            alt={`${doctor.name} profile`}
+            fill
+            priority
+            className="object-cover object-center"
+          />
+        ) : (
+          <div className="w-full h-full bg-gradient-to-br from-gray-200 to-gray-300" />
+        )}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/30 to-transparent" />
+        <div className="absolute bottom-0 left-0 w-full z-10 px-6 pb-12 text-white">
+          <div className="container mx-auto space-y-4">
+            <h1 className="text-3xl md:text-4xl lg:text-5xl font-semibold leading-tight">
+               {doctor.name}
+            </h1>
+            <p className="text-lg max-w-2xl leading-relaxed text-gray-200">
+              {doctor.specialization} - {doctor.qualification} at {hospital.name} {branch.name}
+            </p>
+            <div className="flex flex-wrap gap-3 mt-4">
+              {doctor.designation && (
+                <span className="flex items-center gap-2 bg-blue-500/20 backdrop-blur-sm px-4 py-2 rounded-xs text-sm font-medium border border-blue-500/30">
+                  <Users className="w-4 h-4" />
+                  {doctor.designation}
+                </span>
+              )}
+              {branch.emergencyContact && (
+                <span className="flex items-center gap-2 bg-red-500/20 backdrop-blur-sm px-4 py-2 rounded-xs text-sm font-medium border border-red-500/30">
+                  <Clock className="w-4 h-4" />
+                  24/7 Emergency: {branch.emergencyContact}
+                </span>
+              )}
             </div>
           </div>
         </div>
       </section>
-
-      <div className="container mx-auto px-4 py-10 lg:px-0">
-        {/* Main Content Grid */}
-        <div className="grid grid-cols-1 mt-10 lg:grid-cols-3 gap-8">
-          {/* Left Column - Details */}
-          <div className="lg:col-span-2 space-y-6">
-            {/* About Doctor */}
-            <section className="bg-white rounded-xs shadow-xs border border-gray-100 p-8">
-              <h2 className="text-2xl font-bold text-gray-900 mb-4">About Dr. {doctor.name.split(' ').pop()}</h2>
-              <p className="text-[#241d1f] leading-relaxed">
-                {doctor.about || "No description available."}
-              </p>
-            </section>
-
-            {/* Specializations */}
-            {doctor.specializations.length > 0 && (
-              <section className="bg-white rounded-xs shadow-xs border border-gray-100 p-8">
-                <h2 className="text-2xl font-bold text-gray-900 mb-4">Specializations</h2>
-                <div className="flex flex-wrap gap-3">
-                  {doctor.specializations.map((specialization, index) => (
-                    <span
-                      key={index}
-                      className="bg-blue-50 text-blue-700 px-4 py-2 rounded-xs font-medium border border-blue-200"
-                    >
-                      {specialization}
-                    </span>
-                  ))}
-                </div>
-              </section>
-            )}
-
-            {/* Education */}
-            {doctor.education.length > 0 && (
-              <section className="bg-white rounded-xs shadow-xs border border-gray-100 p-8">
-                <h2 className="text-2xl font-bold text-gray-900 mb-4">Education</h2>
-                <div className="space-y-4">
-                  {doctor.education.map((edu, index) => (
-                    <div key={index} className="border-l-4 border-blue-500 pl-4 py-1">
-                      <h3 className="font-semibold text-gray-900">{edu.degree}</h3>
-                      <p className="text-[#241d1f]">{edu.institution}</p>
-                      {edu.year && <p className="text-gray-500 text-sm">{edu.year}</p>}
-                    </div>
-                  ))}
-                </div>
-              </section>
-            )}
-
-            {/* Experience */}
-            {doctor.experienceHistory.length > 0 && (
-              <section className="bg-white rounded-xs shadow-xs border border-gray-100 p-8">
-                <h2 className="text-2xl font-bold text-gray-900 mb-4">Work Experience</h2>
-                <div className="space-y-6">
-                  {doctor.experienceHistory.map((exp, index) => (
-                    <div key={index} className="border-l-4 border-green-500 pl-4 py-2">
-                      <h3 className="font-semibold text-gray-900">{exp.position}</h3>
-                      <p className="text-[#241d1f] font-medium">{exp.hospital}</p>
-                      <p className="text-gray-500 text-sm">{exp.duration}</p>
-                      {exp.description && <p className="text-[#241d1f] mt-2">{exp.description}</p>}
-                    </div>
-                  ))}
-                </div>
-              </section>
-            )}
-          </div>
-
-          {/* Right Column - Sidebar */}
-          <div className="space-y-6">
-            {/* Contact Information */}
-            <section className="bg-white rounded-xs shadow-xs border border-gray-100 p-6">
-              <h2 className="text-xl font-bold text-gray-900 mb-4">Contact Information</h2>
-              <div className="space-y-4">
-                {(doctor.address || doctor.city || doctor.state || doctor.country) && (
-                  <div className="flex items-start gap-3">
-                    <MapPin size={20} className="text-gray-400 mt-0.5 flex-shrink-0" />
-                    <div>
-                      <p className="text-[#241d1f]">
-                        {[doctor.address, doctor.city, doctor.state, doctor.country]
-                          .filter(Boolean)
-                          .join(', ')}
-                      </p>
-                    </div>
-                  </div>
-                )}
-
-                {doctor.contactPhone && (
-                  <div className="flex items-center gap-3">
-                    <Phone size={20} className="text-gray-400 flex-shrink-0" />
-                    <a href={`tel:${doctor.contactPhone}`} className="text-blue-600 hover:text-blue-800">
-                      {doctor.contactPhone}
-                    </a>
-                  </div>
-                )}
-
-                {doctor.contactEmail && (
-                  <div className="flex items-center gap-3">
-                    <Mail size={20} className="text-gray-400 flex-shrink-0" />
-                    <a href={`mailto:${doctor.contactEmail}`} className="text-blue-600 hover:text-blue-800">
-                      {doctor.contactEmail}
-                    </a>
-                  </div>
-                )}
-
-                {doctor.website && doctor.website !== "#" && (
-                  <div className="flex items-center gap-3">
-                    <Globe size={20} className="text-gray-400 flex-shrink-0" />
-                    <a 
-                      href={doctor.website} 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className="text-blue-600 hover:text-blue-800"
-                    >
-                      Visit Website
-                    </a>
-                  </div>
-                )}
-              </div>
-            </section>
-
-            {/* Languages */}
-            {doctor.languages.length > 0 && (
-              <section className="bg-white rounded-xs shadow-xs border border-gray-100 p-6">
-                <h2 className="text-xl font-bold text-gray-900 mb-4">Languages Spoken</h2>
-                <div className="flex flex-wrap gap-2">
-                  {doctor.languages.map((language, index) => (
-                    <span
-                      key={index}
-                      className="bg-green-50 text-green-700 px-3 py-1 rounded text-sm font-medium"
-                    >
-                      {language}
-                    </span>
-                  ))}
-                </div>
-              </section>
-            )}
-
-            {/* Hospital Affiliations */}
-            {doctor.hospitalAffiliations.length > 0 && (
-              <section className="bg-white rounded-xs shadow-xs border border-gray-100 p-6">
-                <h2 className="text-xl font-bold text-gray-900 mb-4">Hospital Affiliations</h2>
-                <div className="space-y-2">
-                  {doctor.hospitalAffiliations.map((hospital, index) => (
-                    <div key={index} className="flex items-center gap-2">
-                      <Building size={16} className="text-gray-400" />
-                      <span className="text-[#241d1f]">{hospital}</span>
-                    </div>
-                  ))}
-                </div>
-              </section>
-            )}
-
-            {/* Awards */}
-            {doctor.awards.length > 0 && (
-              <section className="bg-white rounded-xs shadow-xs border border-gray-100 p-6">
-                <h2 className="text-xl font-bold text-gray-900 mb-4">Awards & Recognition</h2>
+      <Breadcrumb hospitalName={hospital.name} branchName={branch.name} doctorName={doctor.name} hospitalSlug={hospitalSlug} />
+      {/* Main Content */}
+      <section className="py-10 relative z-10">
+        <div className="container mx-auto px-4">
+          <div className="grid lg:grid-cols-12 gap-4">
+            <main className="lg:col-span-9 space-y-4">
+              {/* Doctor Overview */}
+              <section className="bg-white rounded-xs shadow-xs p-4 border border-gray-100">
+                <h2 className="text-2xl font-semibold text-gray-800 mb-3">Doctor Profile</h2>
                 <div className="space-y-3">
-                  {doctor.awards.map((award, index) => (
-                    <div key={index} className="flex items-center gap-3">
-                      <Award size={16} className="text-yellow-500 flex-shrink-0" />
-                      <span className="text-[#241d1f]">{award}</span>
+                  {doctor.description && (
+                    <div className="prose prose-lg max-w-none">
+                      <p className="text-gray-700 leading-relaxed">{doctor.description}</p>
                     </div>
-                  ))}
+                  )}
+                  <div className="grid md:grid-cols-2 gap-4">
+                    {doctor.specialization && (
+                      <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-xs border border-gray-100">
+                        <div className="w-3 h-3 bg-blue-600 rounded-full flex-shrink-0"></div>
+                        <div>
+                          <p className="font-medium text-gray-800">Specialization</p>
+                          <p className="text-gray-600">{doctor.specialization}</p>
+                        </div>
+                      </div>
+                    )}
+                    {doctor.qualification && (
+                      <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-xs border border-gray-100">
+                        <Award className="w-5 h-5 text-gray-600 flex-shrink-0" />
+                        <div>
+                          <p className="font-medium text-gray-800">Qualification</p>
+                          <p className="text-gray-600">{doctor.qualification}</p>
+                        </div>
+                      </div>
+                    )}
+                    {doctor.designation && (
+                      <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-xs border border-gray-100">
+                        <Users className="w-5 h-5 text-gray-600 flex-shrink-0" />
+                        <div>
+                          <p className="font-medium text-gray-800">Designation</p>
+                          <p className="text-gray-600">{doctor.designation}</p>
+                        </div>
+                      </div>
+                    )}
+                    {doctor.experience && (
+                      <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-xs border border-gray-100">
+                        <Calendar className="w-5 h-5 text-gray-600 flex-shrink-0" />
+                        <div>
+                          <p className="font-medium text-gray-800">Experience</p>
+                          <p className="text-gray-600">{doctor.experience} years</p>
+                        </div>
+                      </div>
+                    )}
+                    {doctor.contactNumber && (
+                      <div className="flex items-center gap-3 p-4 bg-blue-50 rounded-xs border border-blue-200">
+                        <Phone className="w-5 h-5 text-blue-600 flex-shrink-0" />
+                        <div>
+                          <p className="font-medium text-gray-800">Contact</p>
+                          <p className="text-blue-600 font-semibold">{doctor.contactNumber}</p>
+                        </div>
+                      </div>
+                    )}
+                  </div>
                 </div>
               </section>
-            )}
+
+              {/* Related Treatments Section */}
+              {relatedTreatments && relatedTreatments.length > 0 && (
+                <section className="bg-white rounded-xs shadow-xs p-4 border border-gray-100">
+                  <EmblaCarouselTreatments
+                    items={relatedTreatments}
+                    title="Treatments Offered"
+                    Icon={Scissors}
+                  />
+                </section>
+              )}
+
+              {/* Similar Hospitals Section */}
+              <SimilarHospitalsCarousel hospitals={allHospitals} currentHospitalId={hospital._id} />
+            </main>
+
+            {/* Sidebar */}
+            <aside className="lg:col-span-3 space-y-8">
+              <ContactForm />
+            </aside>
           </div>
         </div>
-
-        {/* Related Items Carousel */}
-        <div className='mt-16 mb-10'>
-          <RelatedItemsCarousel relatedData={relatedData} />
-        </div>
-      </div>
+      </section>
     </div>
   )
 }
