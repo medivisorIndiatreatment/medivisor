@@ -103,7 +103,7 @@ export default function Page() {
               </p>
             </div>
 
-            <div className="md:grid md:gap-6">
+            <div className="md:grid space-y-3 md:space-y-0 md:gap-6">
               {schedule.map((loc) => {
                 const flag = flagForLabel(loc.label);
                 return (
@@ -156,7 +156,7 @@ export default function Page() {
             </div>
           </div>
 
-           <div className=" col-span-6 z-10">
+           <div className=" col-span-6 md:mt-0 mt-5 z-10">
               <Registration />
             </div>
         </div>
