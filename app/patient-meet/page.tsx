@@ -27,23 +27,23 @@ function flagForLabel(label: string) {
 export default function Page() {
   return (
     <section className="w-full bg-white">
-      <div className="relative bg-[#fffef7]  overflow-hidden">
-        <div className="container mx-auto px-6 lg:px-12 grid md:grid-cols-2 items-center gap-12">
+      <div className="relative px-2 bg-[#fffef7]  overflow-hidden">
+        <div className="container mx-auto px-6 lg:px-12 grid md:grid-cols-2 items-center md:gap-12">
 
           {/* Left - Image */}
-          <div className="relative group w-full h-full">
-            <div className="  w-full h-[80vh] l">
+          <div className="relative order-2 md:order-1 group w-full h-full">
+            <div className="  w-full h-[50vh] md:h-[80vh] l">
               <img
                 src="/teams/sushant-sir.png"
                 alt="Mr. Kumar Sushant - Director, Medivisor India Treatment"
-                className="w-full h-full absolute bottom-0 object-cover "
+                className="w-full h-full absolute bottom-0 object-cover md:object-cover "
               />
             </div>
 
           </div>
 
           {/* Right - Content */}
-          <div className="space-y-2 py-10">
+          <div className="space-y-2 md:order-2 order-1 py-10">
             {/* Badge */}
             {/* <span className="inline-block bg-red-100 text-red-600 font-semibold text-xs uppercase tracking-widest px-4 py-1 rounded-full shadow-sm">
               Meet Our Director
@@ -51,8 +51,8 @@ export default function Page() {
 
             {/* Heading */}
             <div>
-              <h2 className="text-5xl sm:text-6xl font-semibold tracking-tight text-gray-900">
-                 Pacific Patient Meet 
+              <h2 className="text-3xl sm:text-6xl font-semibold tracking-tight text-gray-900">
+                Pacific Patient Meet
               </h2>
               <p className="heading-sm my-4 font-medium">
                 Nov 18 – 26, 2025
@@ -86,7 +86,7 @@ export default function Page() {
                     alt={`${item.country} Flag`}
                     className="w-32 h-auto  mb-0"
                   />
-                  <p className="font-semibold text-gray-800 text-sm mt-3 text-center">
+                  <p className="font-semibold text-gray-800 text-xs md:text-sm mt-3 text-center">
                     {item.country}
                   </p>
                   <p className="font-semibold text-gray-800 text-xs text-center">
@@ -107,13 +107,13 @@ export default function Page() {
 
       <Partners />
       <section className="bg-gray-50 py-10">
-        <div className="container mx-auto px-6 lg:px-12">
-          <div className="grid grid-cols-1 md:grid-cols-12 items-center gap-10">
+        <div className="container mx-auto px-2 lg:px-12">
+          <div className="grid grid-cols-1 md:grid-cols-12 items-center md:gap-10">
             {/* Left Image */}
 
 
             {/* Right Content */}
-            <div className="col-span-5 space-y-6 p-6">
+            <div className="col-span-5 md:mb-0  order-2 md:order-1 mb-5 space-y-6 px-2 md:p-6">
               {/* Intro */}
               <div className="text-gray-700 leading-relaxed text-base">
                 For those suffering from infertility, cancer, heart disease, joint pain, spine problems, or kidney disease in
@@ -128,16 +128,16 @@ export default function Page() {
               {/* Heading */}
               <div className="bg-[#74c044]/10 p-4">
                 <div className="text-2xl mb-3 font-bold text-gray-900 border-l-4 border-[#74c044] pl-3">
-                What You’ll Learn
-              </div>
+                  What You’ll Learn
+                </div>
 
-              {/* Bullet List */}
-              <ul className="space-y-1 ml-4 text-gray-700">
-                <li className="list-disc">Treatment options available for your medical condition</li>
-                <li className="list-disc">Estimated treatment cost in India</li>
-                <li className="list-disc">Travel, visa, and hospital arrangements</li>
-                <li className="list-disc">How Medivisor supports you throughout your journey to recovery</li>
-              </ul>
+                {/* Bullet List */}
+                <ul className="space-y-1 ml-4 text-gray-700">
+                  <li className="list-disc">Treatment options available for your medical condition</li>
+                  <li className="list-disc">Estimated treatment cost in India</li>
+                  <li className="list-disc">Travel, visa, and hospital arrangements</li>
+                  <li className="list-disc">How Medivisor supports you throughout your journey to recovery</li>
+                </ul>
               </div>
 
               {/* Register Box */}
@@ -151,11 +151,11 @@ export default function Page() {
               </div> */}
             </div>
 
-            <div className="relative col-span-7" data-aos="fade-right" data-aos-duration="1000">
+            <div className="relative col-span-7  order-1 mb-5 md:order-2" data-aos="fade-right" data-aos-duration="1000">
               <div className="lg:sticky lg:top-24">
                 <div className="rounded-md overflow-hidden border border-gray-200 shadow-xl">
                   <iframe
-                    className="w-full min-h-[200px] md:min-h-[450px] rounded-md"
+                    className="w-full min-h-[300px] md:min-h-[450px] rounded-md"
                     src="https://www.youtube.com/embed/94RNiXZj8_8?autoplay=1&rel=0&modestbranding=1&showinfo=0"
                     title="Medivisor Overview"
                     loading="lazy"
@@ -304,7 +304,7 @@ export default function Page() {
       </main>
 
       {/* ===================== BLOG SECTION ===================== */}
-      <div className="mt-10 bg-gray-50 py-10">
+      <div className="md:mt-10 bg-gray-50 py-10">
         <BlogCarousel />
       </div>
     </section>
