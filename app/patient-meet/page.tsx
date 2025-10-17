@@ -12,9 +12,9 @@ function flagForLabel(label: string) {
   if (L.includes("png") || L.includes("papua")) {
     return { src: "/icon/flag/png.png", alt: "Flag of Papua New Guinea" };
   }
-  
+
   if (L.includes("solomon")) {
-    return { src: "/icon/flag/solomon.png", alt: "Flag of Solomon Islands" };
+    return { src: "/icon/flag/solomon-flag.png", alt: "Flag of Solomon Islands" };
   }
   if (L.includes("vanuatu")) {
     return { src: "/icon/flag/vanuatu.png", alt: "Flag of Vanuatu" };
@@ -74,7 +74,7 @@ export default function Page() {
             <div className="flex flex-wrap justify-between gap-4 pt-4">
               {[
                 { flag: "/icon/flag/png.png", country: "PNG", city: "Port Moresby", date: "Nov 18–19" },
-                { flag: "/icon/flag/solomon.png", country: "Solomon Islands", city: "Honiara", date: "Nov 20–21" },
+                { flag: "/icon/flag/solomon-flag.png", country: "Solomon Islands", city: "Honiara", date: "Nov 20–21" },
                 { flag: "/icon/flag/vanuatu.png", country: "Vanuatu", city: "Port Vila", date: "Nov 23–24" },
                 { flag: "/icon/flag/fiji.png", country: "Fiji", city: "Lautoka & Suva", date: "Nov 25–26" },
               ].map((item, i) => (
