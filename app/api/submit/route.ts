@@ -14,10 +14,10 @@ function generateHtmlEmail(data: {
   email: string;
   message?: string;
   countryName?: string;
-  countryCode?: string;
+  // countryCode?: string;
   whatsapp?: string;
 }): string {
-  const { name, email, message, countryName, countryCode, whatsapp } = data;
+  const { name, email, message, countryName,  whatsapp } = data;
 
   return `
     <div style="font-family: Arial, sans-serif; color: #333; line-height: 1.5;">
@@ -35,7 +35,7 @@ function generateHtmlEmail(data: {
           <td style="padding: 5px;">${email}</td>
         </tr>
         ${countryName ? `<tr><td style="font-weight: bold; padding: 5px;">Country:</td><td style="padding: 5px;">${countryName}</td></tr>` : ""}
-        ${countryCode ? `<tr><td style="font-weight: bold; padding: 5px;">Country Code:</td><td style="padding: 5px;">${countryCode}</td></tr>` : ""}
+       
         ${whatsapp ? `<tr><td style="font-weight: bold; padding: 5px;">WhatsApp:</td><td style="padding: 5px;">${whatsapp}</td></tr>` : ""}
       </table>
 
@@ -60,7 +60,6 @@ export async function POST(req: Request) {
       email = "",
       message,
       countryName,
-      countryCode,
       whatsapp,
     } = body || {};
 
@@ -84,7 +83,7 @@ export async function POST(req: Request) {
       email,
       message,
       countryName,
-      countryCode,
+     
       whatsapp,
     });
 

@@ -153,7 +153,7 @@ export default function ModernRegistrationForm({ className }: { className?: stri
         name: form.name.trim(),
         email: form.email.trim(),
         countryName: selectedLocation.label,
-        countryCode: "+61",
+       
         whatsapp: form.phone.replace(/\D/g, ""),
         message: `Appointment Request - ${selectedLocation.label} on ${formatDateFriendly(form.date)} at ${selectedTimeSlot?.displayTime} (${selectedDate?.venue}). ${form.notes ? `Notes: ${form.notes}` : ""}`,
       }
@@ -403,7 +403,7 @@ export default function ModernRegistrationForm({ className }: { className?: stri
         {/* Notes */}
         <div className="md:col-span-2 grid gap-2">
           <label htmlFor="notes" className="text-sm font-medium text-gray-900">
-           Message 
+            Message
           </label>
           <textarea
             id="notes"
