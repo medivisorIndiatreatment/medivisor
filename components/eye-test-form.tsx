@@ -44,7 +44,7 @@ export default function ModernRegistrationForm({ className }: { className?: stri
     name: "",
     email: "",
     phone: "",
-    country: "png", // Default to first location
+    country: "fji-eye", // Default to Fiji Eye Test
     date: "",
     timeSlot: "",
     notes: "",
@@ -153,9 +153,8 @@ export default function ModernRegistrationForm({ className }: { className?: stri
         name: form.name.trim(),
         email: form.email.trim(),
         countryName: selectedLocation.label,
-       
         whatsapp: form.phone.replace(/\D/g, ""),
-        message: `Appointment Request - ${selectedLocation.label} on ${formatDateFriendly(form.date)} at ${selectedTimeSlot?.displayTime} (${selectedDate?.venue}). ${form.notes ? `Notes: ${form.notes}` : ""}`,
+        message: `Eye Test Appointment - ${selectedLocation.label} on ${formatDateFriendly(form.date)} at ${selectedTimeSlot?.displayTime} (${selectedDate?.venue}). ${form.notes ? `Notes: ${form.notes}` : ""}`,
       }
 
       const res = await fetch("/api/submit", {
@@ -223,9 +222,9 @@ export default function ModernRegistrationForm({ className }: { className?: stri
       {/* Header */}
       <div className="text-center space-y-2">
         <h2 id="registration-title" className="text-2xl font-semibold text-gray-900">
-          Secure Your Appointment
+          Book Your Eye Consultation
         </h2>
-        <p className="text-gray-600 text-sm">Fill out the form below to book your consultation slot.</p>
+        <p className="text-gray-600 text-sm">Fill out the form below to book your eye test consultation slot.</p>
       </div>
 
       {/* Form Fields */}
@@ -295,7 +294,7 @@ export default function ModernRegistrationForm({ className }: { className?: stri
               "h-12 rounded-xs border text-sm bg-white px-2 outline-none focus:ring-2 focus:ring-blue-500 transition-colors",
               errors.phone ? "border-red-500 focus:ring-red-500" : "border-gray-300 focus:ring-blue-500",
             )}
-            placeholder="+61 400 000 000"
+            placeholder="+679 123 4567"
             autoComplete="tel"
             aria-describedby={errors.phone ? "phone-error" : undefined}
           />
@@ -306,10 +305,10 @@ export default function ModernRegistrationForm({ className }: { className?: stri
           )}
         </div>
 
-        {/* Location */}
+        {/* Location - Only Fiji Eye Test available */}
         <div className="grid gap-2">
           <label htmlFor="country" className="text-sm font-medium text-gray-900">
-            Country *
+             Country *
           </label>
           <select
             id="country"
@@ -353,7 +352,7 @@ export default function ModernRegistrationForm({ className }: { className?: stri
             </option>
             {availableDates.map((dateObj, index) => (
               <option key={`${dateObj.date}-${index}`} value={dateObj.date}>
-                {formatDisplayDate(dateObj.date)}
+                {formatDisplayDate(dateObj.date)} - {dateObj.venue}
               </option>
             ))}
           </select>
@@ -398,19 +397,17 @@ export default function ModernRegistrationForm({ className }: { className?: stri
           )}
         </div>
 
-
-
         {/* Notes */}
         <div className="md:col-span-2 grid gap-2">
           <label htmlFor="notes" className="text-sm font-medium text-gray-900">
-            Message
+            Eye Concerns / Additional Information
           </label>
           <textarea
             id="notes"
             value={form.notes}
             onChange={(e) => onChange("notes", e.target.value)}
             className="min-h-[150px] rounded-xs border border-gray-300 text-sm bg-white px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500 transition-colors resize-vertical"
-            placeholder="Briefly describe your concern or any additional information..."
+            placeholder="Briefly describe your eye concerns (e.g., blurry vision, cataract, glaucoma, retina issues, etc.) or any additional information..."
           />
         </div>
       </div>
@@ -439,7 +436,7 @@ export default function ModernRegistrationForm({ className }: { className?: stri
           "h-12 w-full rounded-xs font-semibold transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-offset-2",
           loading
             ? "bg-gray-400 text-white"
-            : "bg-gray-100 text-gray-800 hover:bg-gray-200 ",
+            : "bg-[#74c044] text-white hover:bg-[#5da035] focus:ring-[#74c044]",
         )}
       >
         {loading ? (
@@ -460,12 +457,12 @@ export default function ModernRegistrationForm({ className }: { className?: stri
             Processing...
           </span>
         ) : (
-          "Register Now "
+          "Book Eye  Consultation Now"
         )}
       </button>
 
       <p className="text-xs text-center text-gray-500">
-        By submitting, you agree to our terms and consent to be contacted regarding your appointment.
+        By submitting, you agree to our terms and consent to be contacted regarding your eye test appointment.
       </p>
     </form>
   )

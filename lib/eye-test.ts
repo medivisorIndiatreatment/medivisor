@@ -1,78 +1,145 @@
-// lib/schedule.ts
+// schedule.ts
+export type LocationId = "fji-eye"
 
-export interface ScheduleItem {
-  id: string;
-  label: string;
-  city: string;
-  date: string;
-  time: string;
-  venue: string;
-  feeLabel: string;
-  localContact?: string;
-  doctor?: string;
-  specialization?: string;
+export type ScheduleLocation = {
+  id: LocationId
+  label: string
+  country: string
+  city: string
+  dates: string[]
+  times: string[]
+  venues: string[]
+  feeLabel: string
+  localContact?: string
+  availableSlots?: TimeSlot[][]
 }
 
-export const schedule: ScheduleItem[] = [
+export type TimeSlot = {
+  time: string
+  displayTime: string
+  isAvailable: boolean
+}
+
+export const schedule: ScheduleLocation[] = [
   {
-    id: "suva-1",
-    label: "Eye Test Camp - Suva",
-    city: "Suva",
-    date: "October 27, 2025",
-    time: "9:00 AM - 5:00 PM",
-    venue: "Grand Pacific Hotel, Suva",
+    id: "fji-eye",
+    label: " Fiji",
+    country: "Fiji",
+    city: "Suva & Lautoka",
+    dates: ["2025-10-27", "2025-10-28", "2025-10-29", "2025-10-30"],
+    times: ["2 pm to 6 PM", "9 AM to 6 PM", "9 AM to 6 PM", "9 AM to 6 PM"],
+    venues: ["Suva", "Suva", "Lautoka", "Namaka"],
     feeLabel: "50 FJD",
-    localContact: "+679 123 4567",
-    doctor: "Dr. Rajesh Kumar",
-    specialization: "Senior Ophthalmologist"
-  },
-  {
-    id: "suva-2",
-    label: "Eye Test Camp - Suva",
-    city: "Suva",
-    date: "October 28, 2025",
-    time: "9:00 AM - 5:00 PM",
-    venue: "Grand Pacific Hotel, Suva",
-    feeLabel: "50 FJD",
-    localContact: "+679 123 4567",
-    doctor: "Dr. Rajesh Kumar",
-    specialization: "Senior Ophthalmologist"
-  },
-  {
-    id: "lautoka",
-    label: "Eye Test Camp - Lautoka",
-    city: "Lautoka",
-    date: "October 29, 2025",
-    time: "9:00 AM - 5:00 PM",
-    venue: "Lautoka Medical Center",
-    feeLabel: "50 FJD",
-    localContact: "+679 234 5678",
-    doctor: "Dr. Rajesh Kumar",
-    specialization: "Senior Ophthalmologist"
-  },
-  {
-    id: "namaka",
-    label: "Eye Test Camp - Namaka",
-    city: "Namaka",
-    date: "October 30, 2025",
-    time: "9:00 AM - 4:00 PM",
-    venue: "Namaka Community Hall",
-    feeLabel: "50 FJD",
-    localContact: "+679 345 6789",
-    doctor: "Dr. Rajesh Kumar",
-    specialization: "Senior Ophthalmologist"
+    localContact: "+679 9470588 (Suva), +679 9470527 (Lautoka)",
+    availableSlots: [
+      [
+        { time: "14:00", displayTime: "2:00 PM to 3:00 PM", isAvailable: true },
+        { time: "15:00", displayTime: "3:00 PM to 4:00 PM", isAvailable: true },
+        { time: "16:00", displayTime: "4:00 PM to 5:00 PM", isAvailable: true },
+     
+      ],
+      [
+        { time: "09:00", displayTime: "9:00 AM to 10:00 AM", isAvailable: true },
+        { time: "10:00", displayTime: "10:00 AM to 11:00 AM", isAvailable: true },
+        { time: "11:00", displayTime: "11:00 AM to 12:00 PM", isAvailable: true },
+                { time: "11:00", displayTime: "1:00 pm to 2:00 PM", isAvailable: true },
+        { time: "14:00", displayTime: "2:00 PM to 3:00 PM", isAvailable: true },
+        { time: "15:00", displayTime: "3:00 PM to 4:00 PM", isAvailable: true },
+        { time: "16:00", displayTime: "4:00 PM to 5:00 PM", isAvailable: true },
+       
+      ],
+      [
+        { time: "09:00", displayTime: "9:00 AM to 10:00 AM", isAvailable: true },
+        { time: "10:00", displayTime: "10:00 AM to 11:00 AM", isAvailable: true },
+        { time: "11:00", displayTime: "11:00 AM to 12:00 PM", isAvailable: true },
+                { time: "11:00", displayTime: "1:00 pm to 2:00 PM", isAvailable: true },
+        { time: "14:00", displayTime: "2:00 PM to 3:00 PM", isAvailable: true },
+        { time: "15:00", displayTime: "3:00 PM to 4:00 PM", isAvailable: true },
+        { time: "16:00", displayTime: "4:00 PM to 5:00 PM", isAvailable: true },
+        
+      ],
+      [
+        { time: "09:00", displayTime: "9:00 AM to 10:00 AM", isAvailable: true },
+        { time: "10:00", displayTime: "10:00 AM to 11:00 AM", isAvailable: true },
+        { time: "11:00", displayTime: "11:00 AM to 12:00 PM", isAvailable: true },
+                { time: "11:00", displayTime: "1:00 pm to 2:00 PM", isAvailable: true },
+        { time: "14:00", displayTime: "2:00 PM to 3:00 PM", isAvailable: true },
+        { time: "15:00", displayTime: "3:00 PM to 4:00 PM", isAvailable: true },
+        { time: "16:00", displayTime: "4:00 PM to 5:00 PM", isAvailable: true },
+        
+      ]
+    ]
   }
-];
+]
 
-export function formatDateFriendly(date: string): string {
-  return date;
+// Default time slots
+export const DEFAULT_TIME_SLOTS: TimeSlot[] = [
+  { time: "09:00", displayTime: "9:00 AM to 10:00 AM", isAvailable: true },
+  { time: "10:00", displayTime: "10:00 AM to 11:00 AM", isAvailable: true },
+  { time: "11:00", displayTime: "11:00 AM to 12:00 PM", isAvailable: true },
+  { time: "14:00", displayTime: "2:00 PM to 3:00 PM", isAvailable: true },
+  { time: "15:00", displayTime: "3:00 PM to 4:00 PM", isAvailable: true },
+  { time: "16:00", displayTime: "4:00 PM to 5:00 PM", isAvailable: true },
+  { time: "17:00", displayTime: "5:00 PM to 6:00 PM", isAvailable: true }
+]
+
+// ---- Formatting Utilities ----
+export function formatDateFriendly(iso: string) {
+  const d = new Date(iso + "T00:00:00")
+  return d.toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" })
 }
 
-export function formatScheduleDetails(loc: ScheduleItem): string[] {
-  return [
-    `📅 ${loc.date}`,
-    `⏰ ${loc.time}`,
-    `📍 ${loc.venue}`,
-    `👨‍⚕️ ${loc.doctor} - ${loc.specialization}`
-  ];
+export function formatTimeFriendly(t24: string) {
+  const [h, m] = t24.split(":").map(Number)
+  const d = new Date()
+  d.setHours(h, m, 0, 0)
+  return d.toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" })
+}
+
+// ---- Updated formatScheduleDetails ----
+export function formatScheduleDetails(location: ScheduleLocation): string[] {
+  return location.dates.map((date, index) => {
+    const formattedDate = formatDateFriendly(date)
+    const time = location.times[index] || ""
+    const venueCity = location.venues[index] || ""
+    const venueName = "The Eye Center"
+    let phoneNumber = ""
+
+    // Dynamic phone assignment
+    if (venueCity === "Suva") {
+      phoneNumber = "+679 9470588 (Suva)"
+    } else if (venueCity === "Lautoka") {
+      phoneNumber = "+679 9470527 (Lautoka)"
+    }
+
+    // Final formatted line
+    const parts = [formattedDate, time, `${venueName} - ${venueCity}`, phoneNumber].filter(Boolean)
+    return parts.join(", ")
+  })
+}
+
+// ---- Helper functions ----
+export function getFlagEmoji(locationId: LocationId): string {
+  const flags: Record<LocationId, string> = { "fji-eye": "🇫🇯" }
+  return flags[locationId] || "🏳️"
+}
+
+export function getLocationById(id: LocationId): ScheduleLocation | undefined {
+  return schedule.find((loc) => loc.id === id)
+}
+
+export function getAllLocationIds(): LocationId[] {
+  return schedule.map((loc) => loc.id)
+}
+
+export function getTimeSlotsForDate(location: ScheduleLocation, dateIndex: number): TimeSlot[] {
+  if (location.availableSlots && location.availableSlots[dateIndex]) {
+    return location.availableSlots[dateIndex].filter(slot => slot.isAvailable)
+  }
+  return DEFAULT_TIME_SLOTS.filter(slot => slot.isAvailable)
+}
+
+export function isTimeSlotAvailable(location: ScheduleLocation, dateIndex: number, time: string): boolean {
+  const slots = getTimeSlotsForDate(location, dateIndex)
+  return slots.some(slot => slot.time === time && slot.isAvailable)
 }

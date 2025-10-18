@@ -168,7 +168,7 @@ export default function Page() {
                             <img
                               src={flag.src}
                               alt={flag.alt}
-                              className="h-16 w-16 rounded-md object-cover"
+                              className="h-16 w-28 rounded-md object-cover"
                               loading="lazy"
                             />
                             <span className="absolute inset-0 rounded-md bg-gradient-to-tr from-white/30 to-transparent" />

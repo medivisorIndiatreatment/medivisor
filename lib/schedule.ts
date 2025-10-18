@@ -6,17 +6,17 @@ export type ScheduleLocation = {
   label: string
   country: string
   city: string
-  dates: string[] // ISO yyyy-mm-dd
-  times: string[] // Time ranges like ["9 AM to 6 PM"]
-  venues: string[] // Venue names
+  dates: string[]
+  times: string[]
+  venues: string[]
   feeLabel: string
   localContact?: string
-  availableSlots?: TimeSlot[][] // 2D array: dates[index] -> slots for that date
+  availableSlots?: TimeSlot[][]
 }
 
 export type TimeSlot = {
-  time: string // Format: "HH:MM"
-  displayTime: string // Format: "9:00 AM to 10:00 AM"
+  time: string
+  displayTime: string
   isAvailable: boolean
 }
 
@@ -38,7 +38,8 @@ export const schedule: ScheduleLocation[] = [
         { time: "11:00", displayTime: "11:00 AM to 12:00 PM", isAvailable: false },
         { time: "14:00", displayTime: "2:00 PM to 3:00 PM", isAvailable: true },
         { time: "15:00", displayTime: "3:00 PM to 4:00 PM", isAvailable: true },
-        { time: "16:00", displayTime: "4:00 PM to 5:00 PM", isAvailable: true }
+        { time: "16:00", displayTime: "4:00 PM to 5:00 PM", isAvailable: true },
+        { time: "17:00", displayTime: "5:00 PM to 6:00 PM", isAvailable: true }
       ],
       [
         { time: "09:00", displayTime: "9:00 AM to 10:00 AM", isAvailable: true },
@@ -46,7 +47,8 @@ export const schedule: ScheduleLocation[] = [
         { time: "11:00", displayTime: "11:00 AM to 12:00 PM", isAvailable: true },
         { time: "14:00", displayTime: "2:00 PM to 3:00 PM", isAvailable: false },
         { time: "15:00", displayTime: "3:00 PM to 4:00 PM", isAvailable: true },
-        { time: "16:00", displayTime: "4:00 PM to 5:00 PM", isAvailable: true }
+        { time: "16:00", displayTime: "4:00 PM to 5:00 PM", isAvailable: true },
+        { time: "17:00", displayTime: "5:00 PM to 6:00 PM", isAvailable: true }
       ]
     ]
   },
@@ -64,7 +66,8 @@ export const schedule: ScheduleLocation[] = [
       [
         { time: "14:00", displayTime: "2:00 PM to 3:00 PM", isAvailable: true },
         { time: "15:00", displayTime: "3:00 PM to 4:00 PM", isAvailable: true },
-        { time: "16:00", displayTime: "4:00 PM to 5:00 PM", isAvailable: true }
+        { time: "16:00", displayTime: "4:00 PM to 5:00 PM", isAvailable: true },
+        { time: "17:00", displayTime: "5:00 PM to 6:00 PM", isAvailable: true }
       ],
       [
         { time: "09:00", displayTime: "9:00 AM to 10:00 AM", isAvailable: true },
@@ -72,7 +75,8 @@ export const schedule: ScheduleLocation[] = [
         { time: "11:00", displayTime: "11:00 AM to 12:00 PM", isAvailable: true },
         { time: "14:00", displayTime: "2:00 PM to 3:00 PM", isAvailable: true },
         { time: "15:00", displayTime: "3:00 PM to 4:00 PM", isAvailable: true },
-        { time: "16:00", displayTime: "4:00 PM to 5:00 PM", isAvailable: true }
+        { time: "16:00", displayTime: "4:00 PM to 5:00 PM", isAvailable: true },
+        { time: "17:00", displayTime: "5:00 PM to 6:00 PM", isAvailable: true }
       ]
     ]
   },
@@ -93,12 +97,14 @@ export const schedule: ScheduleLocation[] = [
         { time: "11:00", displayTime: "11:00 AM to 12:00 PM", isAvailable: true },
         { time: "14:00", displayTime: "2:00 PM to 3:00 PM", isAvailable: true },
         { time: "15:00", displayTime: "3:00 PM to 4:00 PM", isAvailable: false },
-        { time: "16:00", displayTime: "4:00 PM to 5:00 PM", isAvailable: true }
+        { time: "16:00", displayTime: "4:00 PM to 5:00 PM", isAvailable: true },
+        { time: "17:00", displayTime: "5:00 PM to 6:00 PM", isAvailable: true }
       ],
       [
         { time: "09:00", displayTime: "9:00 AM to 10:00 AM", isAvailable: true },
         { time: "10:00", displayTime: "10:00 AM to 11:00 AM", isAvailable: true },
-        { time: "11:00", displayTime: "11:00 AM to 12:00 PM", isAvailable: true }
+        { time: "11:00", displayTime: "11:00 AM to 12:00 PM", isAvailable: true },
+         { time: "12:00", displayTime: "12:00 am to 1:00 PM", isAvailable: true }
       ]
     ]
   },
@@ -119,7 +125,8 @@ export const schedule: ScheduleLocation[] = [
         { time: "11:00", displayTime: "11:00 AM to 12:00 PM", isAvailable: true },
         { time: "14:00", displayTime: "2:00 PM to 3:00 PM", isAvailable: true },
         { time: "15:00", displayTime: "3:00 PM to 4:00 PM", isAvailable: true },
-        { time: "16:00", displayTime: "4:00 PM to 5:00 PM", isAvailable: false }
+        { time: "16:00", displayTime: "4:00 PM to 5:00 PM", isAvailable: false },
+        { time: "17:00", displayTime: "5:00 PM to 6:00 PM", isAvailable: true }
       ],
       [
         { time: "09:00", displayTime: "9:00 AM to 10:00 AM", isAvailable: true },
@@ -127,7 +134,8 @@ export const schedule: ScheduleLocation[] = [
         { time: "11:00", displayTime: "11:00 AM to 12:00 PM", isAvailable: true },
         { time: "14:00", displayTime: "2:00 PM to 3:00 PM", isAvailable: true },
         { time: "15:00", displayTime: "3:00 PM to 4:00 PM", isAvailable: true },
-        { time: "16:00", displayTime: "4:00 PM to 5:00 PM", isAvailable: true }
+        { time: "16:00", displayTime: "4:00 PM to 5:00 PM", isAvailable: true },
+        { time: "17:00", displayTime: "5:00 PM to 6:00 PM", isAvailable: true }
       ]
     ]
   },
@@ -140,16 +148,13 @@ export const DEFAULT_TIME_SLOTS: TimeSlot[] = [
   { time: "11:00", displayTime: "11:00 AM to 12:00 PM", isAvailable: true },
   { time: "14:00", displayTime: "2:00 PM to 3:00 PM", isAvailable: true },
   { time: "15:00", displayTime: "3:00 PM to 4:00 PM", isAvailable: true },
-  { time: "16:00", displayTime: "4:00 PM to 5:00 PM", isAvailable: true }
+  { time: "16:00", displayTime: "4:00 PM to 5:00 PM", isAvailable: true },
+  { time: "17:00", displayTime: "5:00 PM to 6:00 PM", isAvailable: true }
 ]
 
 export function formatDateFriendly(iso: string) {
   const d = new Date(iso + "T00:00:00")
-  return d.toLocaleDateString(undefined, {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  })
+  return d.toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" })
 }
 
 export function formatTimeFriendly(t24: string) {
@@ -159,25 +164,18 @@ export function formatTimeFriendly(t24: string) {
   return d.toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" })
 }
 
-// Helper to format date with time and venue
 export function formatScheduleDetails(location: ScheduleLocation): string[] {
   return location.dates.map((date, index) => {
     const formattedDate = formatDateFriendly(date)
     const time = location.times[index] || ""
     const venue = location.venues[index] || ""
-
-    if (time && venue) {
-      return `${formattedDate}, ${time}, ${venue}`
-    } else if (time) {
-      return `${formattedDate}, ${time}`
-    } else if (venue) {
-      return `${formattedDate}, ${venue}`
-    }
+    if (time && venue) return `${formattedDate}, ${time}, ${venue}`
+    if (time) return `${formattedDate}, ${time}`
+    if (venue) return `${formattedDate}, ${venue}`
     return formattedDate
   })
 }
 
-// Helper function to map location IDs to flag emojis
 export function getFlagEmoji(locationId: LocationId): string {
   const flags: Record<LocationId, string> = {
     png: "🇵🇬",
@@ -188,27 +186,21 @@ export function getFlagEmoji(locationId: LocationId): string {
   return flags[locationId] || "🏳️"
 }
 
-// Helper to get location by ID
 export function getLocationById(id: LocationId): ScheduleLocation | undefined {
   return schedule.find((loc) => loc.id === id)
 }
 
-// Helper to get all location IDs for form
 export function getAllLocationIds(): LocationId[] {
   return schedule.map((loc) => loc.id)
 }
 
-// Helper to get available time slots for a specific date index
 export function getTimeSlotsForDate(location: ScheduleLocation, dateIndex: number): TimeSlot[] {
   if (location.availableSlots && location.availableSlots[dateIndex]) {
     return location.availableSlots[dateIndex].filter(slot => slot.isAvailable)
   }
-  
-  // Fallback to default time slots if none specified
   return DEFAULT_TIME_SLOTS.filter(slot => slot.isAvailable)
 }
 
-// Helper to check if a specific time slot is available
 export function isTimeSlotAvailable(location: ScheduleLocation, dateIndex: number, time: string): boolean {
   const slots = getTimeSlotsForDate(location, dateIndex)
   return slots.some(slot => slot.time === time && slot.isAvailable)
