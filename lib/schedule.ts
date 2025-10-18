@@ -1,3 +1,4 @@
+// schedule.ts
 export type LocationId = "png" | "slb" | "vut" | "fji"
 
 export type ScheduleLocation = {
@@ -15,43 +16,43 @@ export type ScheduleLocation = {
 
 export type TimeSlot = {
   time: string // Format: "HH:MM"
-  displayTime: string // Format: "9:00 AM"
+  displayTime: string // Format: "9:00 AM to 10:00 AM"
   isAvailable: boolean
 }
 
 export const schedule: ScheduleLocation[] = [
   {
     id: "png",
-    label: "Papua New Guinea (Port Moresby)",
+    label: "Papua New Guinea ",
     country: "Papua New Guinea",
     city: "Port Moresby",
     dates: ["2025-11-18", "2025-11-19"],
-    times: ["9 AM to 6 PM", "9 AM to 6 PM"],
+    times: ["2 PM to 6 PM", "9 AM to 6 PM"],
     venues: ["Hotel Crown", "Hotel Crown"],
     feeLabel: "100 PGK / 25 USD",
     localContact: "Shirley Waira: 74376546",
     availableSlots: [
       [
-        { time: "09:00", displayTime: "9:00 AM", isAvailable: true },
-        { time: "10:00", displayTime: "10:00 AM", isAvailable: true },
-        { time: "11:00", displayTime: "11:00 AM", isAvailable: false },
-        { time: "14:00", displayTime: "2:00 PM", isAvailable: true },
-        { time: "15:00", displayTime: "3:00 PM", isAvailable: true },
-        { time: "16:00", displayTime: "4:00 PM", isAvailable: true }
+        { time: "09:00", displayTime: "9:00 AM to 10:00 AM", isAvailable: false },
+        { time: "10:00", displayTime: "10:00 AM to 11:00 AM", isAvailable: false },
+        { time: "11:00", displayTime: "11:00 AM to 12:00 PM", isAvailable: false },
+        { time: "14:00", displayTime: "2:00 PM to 3:00 PM", isAvailable: true },
+        { time: "15:00", displayTime: "3:00 PM to 4:00 PM", isAvailable: true },
+        { time: "16:00", displayTime: "4:00 PM to 5:00 PM", isAvailable: true }
       ],
       [
-        { time: "09:00", displayTime: "9:00 AM", isAvailable: true },
-        { time: "10:00", displayTime: "10:00 AM", isAvailable: true },
-        { time: "11:00", displayTime: "11:00 AM", isAvailable: true },
-        { time: "14:00", displayTime: "2:00 PM", isAvailable: false },
-        { time: "15:00", displayTime: "3:00 PM", isAvailable: true },
-        { time: "16:00", displayTime: "4:00 PM", isAvailable: true }
+        { time: "09:00", displayTime: "9:00 AM to 10:00 AM", isAvailable: true },
+        { time: "10:00", displayTime: "10:00 AM to 11:00 AM", isAvailable: true },
+        { time: "11:00", displayTime: "11:00 AM to 12:00 PM", isAvailable: true },
+        { time: "14:00", displayTime: "2:00 PM to 3:00 PM", isAvailable: false },
+        { time: "15:00", displayTime: "3:00 PM to 4:00 PM", isAvailable: true },
+        { time: "16:00", displayTime: "4:00 PM to 5:00 PM", isAvailable: true }
       ]
     ]
   },
   {
     id: "slb",
-    label: "Solomon Islands (Honiara)",
+    label: "Solomon Islands ",
     country: "Solomon Islands",
     city: "Honiara",
     dates: ["2025-11-20", "2025-11-21"],
@@ -61,23 +62,23 @@ export const schedule: ScheduleLocation[] = [
     localContact: "Freda Sofu: 7618955",
     availableSlots: [
       [
-        { time: "14:00", displayTime: "2:00 PM", isAvailable: true },
-        { time: "15:00", displayTime: "3:00 PM", isAvailable: true },
-        { time: "16:00", displayTime: "4:00 PM", isAvailable: true }
+        { time: "14:00", displayTime: "2:00 PM to 3:00 PM", isAvailable: true },
+        { time: "15:00", displayTime: "3:00 PM to 4:00 PM", isAvailable: true },
+        { time: "16:00", displayTime: "4:00 PM to 5:00 PM", isAvailable: true }
       ],
       [
-        { time: "09:00", displayTime: "9:00 AM", isAvailable: true },
-        { time: "10:00", displayTime: "10:00 AM", isAvailable: false },
-        { time: "11:00", displayTime: "11:00 AM", isAvailable: true },
-        { time: "14:00", displayTime: "2:00 PM", isAvailable: true },
-        { time: "15:00", displayTime: "3:00 PM", isAvailable: true },
-        { time: "16:00", displayTime: "4:00 PM", isAvailable: true }
+        { time: "09:00", displayTime: "9:00 AM to 10:00 AM", isAvailable: true },
+        { time: "10:00", displayTime: "10:00 AM to 11:00 AM", isAvailable: false },
+        { time: "11:00", displayTime: "11:00 AM to 12:00 PM", isAvailable: true },
+        { time: "14:00", displayTime: "2:00 PM to 3:00 PM", isAvailable: true },
+        { time: "15:00", displayTime: "3:00 PM to 4:00 PM", isAvailable: true },
+        { time: "16:00", displayTime: "4:00 PM to 5:00 PM", isAvailable: true }
       ]
     ]
   },
   {
     id: "vut",
-    label: "Vanuatu (Port Vila)",
+    label: "Vanuatu ",
     country: "Vanuatu",
     city: "Port Vila",
     dates: ["2025-11-23", "2025-11-24"],
@@ -87,23 +88,23 @@ export const schedule: ScheduleLocation[] = [
     localContact: "Mary Semeno: 7627430 / 5213197",
     availableSlots: [
       [
-        { time: "09:00", displayTime: "9:00 AM", isAvailable: true },
-        { time: "10:00", displayTime: "10:00 AM", isAvailable: true },
-        { time: "11:00", displayTime: "11:00 AM", isAvailable: true },
-        { time: "14:00", displayTime: "2:00 PM", isAvailable: true },
-        { time: "15:00", displayTime: "3:00 PM", isAvailable: false },
-        { time: "16:00", displayTime: "4:00 PM", isAvailable: true }
+        { time: "09:00", displayTime: "9:00 AM to 10:00 AM", isAvailable: true },
+        { time: "10:00", displayTime: "10:00 AM to 11:00 AM", isAvailable: true },
+        { time: "11:00", displayTime: "11:00 AM to 12:00 PM", isAvailable: true },
+        { time: "14:00", displayTime: "2:00 PM to 3:00 PM", isAvailable: true },
+        { time: "15:00", displayTime: "3:00 PM to 4:00 PM", isAvailable: false },
+        { time: "16:00", displayTime: "4:00 PM to 5:00 PM", isAvailable: true }
       ],
       [
-        { time: "09:00", displayTime: "9:00 AM", isAvailable: true },
-        { time: "10:00", displayTime: "10:00 AM", isAvailable: true },
-        { time: "11:00", displayTime: "11:00 AM", isAvailable: true }
+        { time: "09:00", displayTime: "9:00 AM to 10:00 AM", isAvailable: true },
+        { time: "10:00", displayTime: "10:00 AM to 11:00 AM", isAvailable: true },
+        { time: "11:00", displayTime: "11:00 AM to 12:00 PM", isAvailable: true }
       ]
     ]
   },
   {
     id: "fji",
-    label: "Fiji (Suva & Lautoka)",
+    label: "Fiji ",
     country: "Fiji",
     city: "Suva & Lautoka",
     dates: ["2025-11-25", "2025-11-26"],
@@ -113,20 +114,20 @@ export const schedule: ScheduleLocation[] = [
     localContact: "Suva: Reshmi Kumar (9470588), Lautoka: Ashlin Chandra (9470527)",
     availableSlots: [
       [
-        { time: "09:00", displayTime: "9:00 AM", isAvailable: true },
-        { time: "10:00", displayTime: "10:00 AM", isAvailable: true },
-        { time: "11:00", displayTime: "11:00 AM", isAvailable: true },
-        { time: "14:00", displayTime: "2:00 PM", isAvailable: true },
-        { time: "15:00", displayTime: "3:00 PM", isAvailable: true },
-        { time: "16:00", displayTime: "4:00 PM", isAvailable: false }
+        { time: "09:00", displayTime: "9:00 AM to 10:00 AM", isAvailable: true },
+        { time: "10:00", displayTime: "10:00 AM to 11:00 AM", isAvailable: true },
+        { time: "11:00", displayTime: "11:00 AM to 12:00 PM", isAvailable: true },
+        { time: "14:00", displayTime: "2:00 PM to 3:00 PM", isAvailable: true },
+        { time: "15:00", displayTime: "3:00 PM to 4:00 PM", isAvailable: true },
+        { time: "16:00", displayTime: "4:00 PM to 5:00 PM", isAvailable: false }
       ],
       [
-        { time: "09:00", displayTime: "9:00 AM", isAvailable: true },
-        { time: "10:00", displayTime: "10:00 AM", isAvailable: false },
-        { time: "11:00", displayTime: "11:00 AM", isAvailable: true },
-        { time: "14:00", displayTime: "2:00 PM", isAvailable: true },
-        { time: "15:00", displayTime: "3:00 PM", isAvailable: true },
-        { time: "16:00", displayTime: "4:00 PM", isAvailable: true }
+        { time: "09:00", displayTime: "9:00 AM to 10:00 AM", isAvailable: true },
+        { time: "10:00", displayTime: "10:00 AM to 11:00 AM", isAvailable: false },
+        { time: "11:00", displayTime: "11:00 AM to 12:00 PM", isAvailable: true },
+        { time: "14:00", displayTime: "2:00 PM to 3:00 PM", isAvailable: true },
+        { time: "15:00", displayTime: "3:00 PM to 4:00 PM", isAvailable: true },
+        { time: "16:00", displayTime: "4:00 PM to 5:00 PM", isAvailable: true }
       ]
     ]
   },
@@ -134,12 +135,12 @@ export const schedule: ScheduleLocation[] = [
 
 // Default time slots structure
 export const DEFAULT_TIME_SLOTS: TimeSlot[] = [
-  { time: "09:00", displayTime: "9:00 AM", isAvailable: true },
-  { time: "10:00", displayTime: "10:00 AM", isAvailable: true },
-  { time: "11:00", displayTime: "11:00 AM", isAvailable: true },
-  { time: "14:00", displayTime: "2:00 PM", isAvailable: true },
-  { time: "15:00", displayTime: "3:00 PM", isAvailable: true },
-  { time: "16:00", displayTime: "4:00 PM", isAvailable: true }
+  { time: "09:00", displayTime: "9:00 AM to 10:00 AM", isAvailable: true },
+  { time: "10:00", displayTime: "10:00 AM to 11:00 AM", isAvailable: true },
+  { time: "11:00", displayTime: "11:00 AM to 12:00 PM", isAvailable: true },
+  { time: "14:00", displayTime: "2:00 PM to 3:00 PM", isAvailable: true },
+  { time: "15:00", displayTime: "3:00 PM to 4:00 PM", isAvailable: true },
+  { time: "16:00", displayTime: "4:00 PM to 5:00 PM", isAvailable: true }
 ]
 
 export function formatDateFriendly(iso: string) {

@@ -5,6 +5,7 @@ import Registration from "@/components/registration-form";
 import Link from "next/link";
 import Partners from "@/components/Partners";
 import BlogCarousel from "@/components/BlogSection";
+import Testimonials from "@/components/Testimonials";
 
 // Helper function to map schedule labels to flag placeholders
 function flagForLabel(label: string) {
@@ -44,7 +45,7 @@ export default function Page() {
           </div>
 
           {/* Right - Content */}
-          <div className="space-y-2 md:order-2 order-1 py-10">
+          <div className="space-y-2 relative md:order-2 order-1  h-full">
             {/* Badge */}
             {/* <span className="inline-block bg-red-100 text-red-600 font-semibold text-xs uppercase tracking-widest px-4 py-1 rounded-full shadow-sm">
               Meet Our Director
@@ -52,51 +53,54 @@ export default function Page() {
 
             {/* Heading */}
             <div>
-              <h2 className="text-3xl sm:text-6xl font-semibold tracking-tight text-gray-900">
-                Pacific Patient Meet
-              </h2>
-              <p className="heading-sm my-4 font-medium">
-                Nov 18 – 26, 2025
-              </p>
-            </div>
+              <div className="md:pt-16">
+                <h2 className="text-3xl sm:text-6xl text-center font-semibold tracking-tight text-gray-900">
+                  Pacific Patient Meet
+                </h2>
+                <p className="heading-sm my-4 text-center font-medium">
+                  Nov 18 – 26, 2025
+                </p>
+              </div>
 
-            {/* Director Info */}
-            <div className="bg-[#74c044]/20 border border-white rounded-xs p-3 shadow-xs">
-              <h3 className="text-2xl font-bold text-gray-800">
+              {/* Director Info */}
+
+
+              {/* Schedule Section */}
+              <div className="flex h-full flex-wrap justify-between gap-4 pt-4">
+                {[
+                  { flag: "/icon/flag/png.png", country: "PNG", city: "Port Moresby", date: "Nov 18–19" },
+                  { flag: "/icon/flag/solomon-flag.png", country: "Solomon Islands", city: "Honiara", date: "Nov 20–21" },
+                  { flag: "/icon/flag/vanuatu.png", country: "Vanuatu", city: "Port Vila", date: "Nov 23–24" },
+                  { flag: "/icon/flag/fiji.png", country: "Fiji", city: "Lautoka & Suva", date: "Nov 25–26" },
+                ].map((item, i) => (
+                  <div
+                    key={i}
+                    className="flex flex-col items-center justify-center  w-[calc(25%-0.75rem)]"
+                  >
+                    <img
+                      src={item.flag}
+                      alt={`${item.country} Flag`}
+                      className="w-32 h-auto  mb-0"
+                    />
+                    <p className="font-semibold text-gray-800 text-xs md:text-sm mt-3 text-center">
+                      {item.country}
+                    </p>
+                    <p className="font-semibold text-gray-800 text-xs text-center">
+                      ({item.city})
+                    </p>
+
+                    <p className="text-sm text-gray-800 mt-0">{item.date}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div className="bg-[#74c044]  absolute bottom-0  -left-1/2 border border-white rounded-xs p-3 shadow-xs">
+              <h3 className="text-xl font-bold text-gray-100">
                 Mr. Kumar Sushant
               </h3>
-              <p className="text-gray-700">
+              <p className="text-gray-100 text-sm">
                 Director, Medivisor India Treatment
               </p>
-            </div>
-
-            {/* Schedule Section */}
-            <div className="flex flex-wrap justify-between gap-4 pt-4">
-              {[
-                { flag: "/icon/flag/png.png", country: "PNG", city: "Port Moresby", date: "Nov 18–19" },
-                { flag: "/icon/flag/solomon-flag.png", country: "Solomon Islands", city: "Honiara", date: "Nov 20–21" },
-                { flag: "/icon/flag/vanuatu.png", country: "Vanuatu", city: "Port Vila", date: "Nov 23–24" },
-                { flag: "/icon/flag/fiji.png", country: "Fiji", city: "Lautoka & Suva", date: "Nov 25–26" },
-              ].map((item, i) => (
-                <div
-                  key={i}
-                  className="flex flex-col items-center justify-center  w-[calc(25%-0.75rem)]"
-                >
-                  <img
-                    src={item.flag}
-                    alt={`${item.country} Flag`}
-                    className="w-32 h-auto  mb-0"
-                  />
-                  <p className="font-semibold text-gray-800 text-xs md:text-sm mt-3 text-center">
-                    {item.country}
-                  </p>
-                  <p className="font-semibold text-gray-800 text-xs text-center">
-                    ({item.city})
-                  </p>
-
-                  <p className="text-sm text-gray-800 mt-0">{item.date}</p>
-                </div>
-              ))}
             </div>
           </div>
         </div>
@@ -106,85 +110,48 @@ export default function Page() {
         <div className="absolute bottom-0 right-0 w-56 h-56 bg-green-100 rounded-full blur-3xl opacity-50"></div>
       </div>
 
-      <Partners />
-      <section className="bg-gray-50 py-10">
-        <div className="container mx-auto px-2 lg:px-12">
-          <div className="grid grid-cols-1 md:grid-cols-12 items-center md:gap-10">
-            {/* Left Image */}
+      {/* <Testimonials /> */}
 
-
-            {/* Right Content */}
-            <div className="col-span-5 md:mb-0  order-2 md:order-1 mb-5 space-y-6 px-2 md:p-6">
-              {/* Intro */}
-              <div className="text-gray-700 leading-relaxed text-base">
-                For those suffering from infertility, cancer, heart disease, joint pain, spine problems, or kidney disease in
-                <span className="font-semibold text-gray-900"> Papua New Guinea, Solomon Islands, Vanuatu, or Fiji</span>, here’s a valuable opportunity to meet the Medivisor Director and Doctors right in your country and receive expert medical guidance.
-              </div>
-
-              {/* CTA Text */}
-              <div className="text-lg font-semibold text-gray-900">
-                Register today to secure your appointment!
-              </div>
-
-              {/* Heading */}
-              <div className="bg-[#74c044]/10 p-4">
-                <div className="text-2xl mb-3 font-bold text-gray-900 border-l-4 border-[#74c044] pl-3">
-                  What You’ll Learn
-                </div>
-
-                {/* Bullet List */}
-                <ul className="space-y-1 ml-4 text-gray-700">
-                  <li className="list-disc">Treatment options available for your medical condition</li>
-                  <li className="list-disc">Estimated treatment cost in India</li>
-                  <li className="list-disc">Travel, visa, and hospital arrangements</li>
-                  <li className="list-disc">How Medivisor supports you throughout your journey to recovery</li>
-                </ul>
-              </div>
-
-              {/* Register Box */}
-              {/* <div className="bg-[#74c044]/10 border border-[#74c044]/20 text-gray-900 rounded-xl p-4 shadow-inner flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-                <p className="text-sm font-medium">
-                  <span className="font-semibold text-[#74c044]">Limited Slots Available</span> — Register Today!
-                </p>
-                <button className="bg-[#74c044] hover:bg-[#5ea136] text-white px-5 py-2 rounded-lg text-sm font-medium transition-all duration-200">
-                  Register Now
-                </button>
-              </div> */}
-            </div>
-
-            <div className="relative col-span-7  order-1 mb-5 md:order-2" data-aos="fade-right" data-aos-duration="1000">
-              <div className="lg:sticky lg:top-24">
-                <div className="rounded-md overflow-hidden border border-gray-200 shadow-xl">
-                  <iframe
-                    className="w-full min-h-[300px] md:min-h-[450px] rounded-md"
-                    src="https://www.youtube.com/embed/94RNiXZj8_8?autoplay=1&rel=0&modestbranding=1&showinfo=0"
-                    title="Medivisor Overview"
-                    loading="lazy"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
 
       <main className="container mx-auto px-4 sm:px-6 lg:px-8">
         {/* ===================== SCHEDULE + STICKY REGISTRATION ===================== */}
         <section className="h-full py-8">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
             {/* Left - Schedule */}
-            <div id="schedule" className="lg:col-span-6 space-y-4">
-              <div className="text-center md:text-left">
 
-                <h2 className="text-4xl md:text-3xl font-semibold text-[#241d1f]">
+            <div id="schedule" className="lg:col-span-6 space-y-4">
+
+            
+              <div className="   mb-5 space-y-6 ">
+                {/* Intro */}
+                <div className="text-gray-700 leading-relaxed text-base">
+                  For those suffering from infertility, cancer, heart disease, joint pain, spine problems, or kidney disease in
+                  Papua New Guinea, Solomon Islands, Vanuatu, or Fiji, here’s a valuable opportunity to meet the Medivisor Director and Doctors right in your country and receive expert medical guidance.
+                </div>
+
+               
+
+                {/* Heading */}
+                <div className="bg-[#E22026] p-4">
+                  <div className="text-2xl mb-3 font-bold text-gray-100 border-l-4 border-[#E22026] pl-3">
+                    What You’ll Learn
+                  </div>
+
+                  {/* Bullet List */}
+                  <ul className="space-y-1 ml-4 text-gray-100">
+                    <li className="list-disc">Treatment options available for your medical condition</li>
+                    <li className="list-disc">Estimated treatment cost in India</li>
+                    <li className="list-disc">Travel, visa, and hospital arrangements</li>
+                    <li className="list-disc">How Medivisor supports you throughout your journey to recovery</li>
+                  </ul>
+                </div>
+
+                {/* Register Box */}
+                <h2 className="text-4xl md:text-2xl font-normal text-[#241d1f]">
                   𝗦𝗰𝗵𝗲𝗱𝘂𝗹𝗲
 
                 </h2>
-
               </div>
-
               <div className="space-y-4">
                 {schedule.map((loc) => {
                   const flag = flagForLabel(loc.label);
@@ -304,10 +271,6 @@ export default function Page() {
         </section>
       </main>
 
-      {/* ===================== BLOG SECTION ===================== */}
-      <div className="md:mt-10 bg-gray-50 py-10">
-        <BlogCarousel />
-      </div>
     </section>
   );
 }

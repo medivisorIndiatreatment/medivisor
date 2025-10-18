@@ -1,3 +1,4 @@
+// registration-form.tsx
 "use client"
 import { useMemo, useState } from "react"
 import type React from "react"
@@ -66,10 +67,10 @@ export default function ModernRegistrationForm({ className }: { className?: stri
   // Get available time slots for selected date
   const availableTimeSlots = useMemo(() => {
     if (!form.date || !currentLocation) return []
-    
+
     const selectedDateIndex = availableDates.findIndex(d => d.date === form.date)
     if (selectedDateIndex === -1) return []
-    
+
     return getTimeSlotsForDate(currentLocation, selectedDateIndex)
   }, [form.date, currentLocation, availableDates])
 
@@ -110,7 +111,7 @@ export default function ModernRegistrationForm({ className }: { className?: stri
   const onChange = (key: keyof FormState, value: string) => {
     setForm((f) => {
       const next = { ...f, [key]: value }
-      
+
       // Reset dependent fields when parent field changes
       if (key === "country") {
         next.date = "" // Reset date when country changes
@@ -118,7 +119,7 @@ export default function ModernRegistrationForm({ className }: { className?: stri
       } else if (key === "date") {
         next.timeSlot = "" // Reset time slot when date changes
       }
-      
+
       return next
     })
 
@@ -283,7 +284,7 @@ export default function ModernRegistrationForm({ className }: { className?: stri
         {/* Phone */}
         <div className="grid gap-2">
           <label htmlFor="phone" className="text-sm font-medium text-gray-900">
-            Mobile Number *
+            WhatsApp / Viber Number (with ISD Code) *
           </label>
           <input
             id="phone"
@@ -397,12 +398,12 @@ export default function ModernRegistrationForm({ className }: { className?: stri
           )}
         </div>
 
-      
-       
+
+
         {/* Notes */}
         <div className="md:col-span-2 grid gap-2">
           <label htmlFor="notes" className="text-sm font-medium text-gray-900">
-            Notes (optional)
+           Message 
           </label>
           <textarea
             id="notes"
