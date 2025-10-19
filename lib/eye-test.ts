@@ -27,10 +27,10 @@ export const schedule: ScheduleLocation[] = [
     country: "Fiji",
     city: "Suva & Lautoka",
     dates: ["2025-10-27", "2025-10-28", "2025-10-29", "2025-10-30"],
-    times: ["2 pm to 6 PM", "9 AM to 6 PM", "9 AM to 6 PM", "9 AM to 6 PM"],
+    times: ["2 pm to 5 PM", "9 AM to 5 PM", "9 AM to 5 PM", "9 AM to 5 PM"],
     venues: ["Suva", "Suva", "Lautoka", "Namaka"],
-    feeLabel: "50 FJD",
-    localContact: "+679 9470588 (Suva), +679 9470527 (Lautoka)",
+    feeLabel: "150 FJD",
+    localContact: "+679 9470588 (Suva), +679 9470527 (Lautoka), +679 9470527 (Namaka)",
     availableSlots: [
       [
         { time: "14:00", displayTime: "2:00 PM to 3:00 PM", isAvailable: true },
@@ -107,9 +107,12 @@ export function formatScheduleDetails(location: ScheduleLocation): string[] {
 
     // Dynamic phone assignment
     if (venueCity === "Suva") {
-      phoneNumber = "+679 9470588 (Suva)"
+      phoneNumber = "+679 9470588"
     } else if (venueCity === "Lautoka") {
-      phoneNumber = "+679 9470527 (Lautoka)"
+      phoneNumber = "+679 9470527 "
+    }
+    else if (venueCity === "Namaka") {
+      phoneNumber = "+679 9470527 "
     }
 
     // Final formatted line

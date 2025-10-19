@@ -148,7 +148,7 @@ export default function Page() {
                                                 </div>
 
                                                 {/* Fee and Contact */}
-                                                {/* <div className="flex items-center justify-between pt-4 border-t border-gray-100">
+                                                <div className="flex items-center justify-between pt-4 border-t border-gray-100">
                                                     <div className="text-lg md:text-base">
                                                         <p className="text-gray-500 text-sm">Consultation Fee</p>
                                                         <p className="font-semibold text-[#241d1f] mt-1">
@@ -161,7 +161,7 @@ export default function Page() {
 
 
 
-                                                </div> */}
+                                                </div>
                                             </CardContent>
                                         </Card>
                                     );
@@ -182,46 +182,21 @@ export default function Page() {
                                     </div>
 
                                     {/* Name and Credentials */}
-                                    <div className="space-y-2 sm:space-y-3 mt-4 md:mt-0">
+                                    <div className="space-y-1 sm:space-y-1 mt-4 md:mt-0">
                                         <h2 className="text-3xl sm:text-3xl md:text-4xl font-bold text-gray-900 tracking-tight">
                                             Dr. Rahul Bhatia
                                         </h2>
-                                        <p className="text-[#74c044] font-semibold text-lg sm:text-lg tracking-wide">
+                                        <p className="text-gray-800 font-semibold text-lg sm:text-lg tracking-wide">
                                             MBBS, MS, DNB
+                                        </p>
+                                         <p className="text-gray-700 font-medium text-base sm:text-lg tracking-wide">
+                                           Sharp Sight Eye Hospitals, New Delhi
                                         </p>
                                        
                                     </div>
                                 </div>
 
-                                {/* Details Section */}
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
-
-                                    {/* Left Column */}
-                                    <div className="space-y-5 sm:space-y-6">
-                                       <div className="bg-white rounded-xs border border-gray-100 p-4 sm:p-5 shadow-xs">
-                                            <p className="text-xs sm:text-sm font-semibold text-gray-500 uppercase tracking-widest mb-2">
-                                                Expertise
-                                            </p>
-                                            <p className="text-gray-800 text-base sm:text-lg font-medium">
-                                                Cataract, Retina, Uvea, ROP
-                                            </p>
-                                        </div>
-
-                                       
-                                    </div>
-
-                                    {/* Right Column */}
-                                    <div className="space-y-5 sm:space-y-6">
-                                        <div className="bg-white rounded-xs border border-gray-100 p-4 sm:p-5 shadow-xs">
-                                            <p className="text-gray-700 text-sm sm:text-base leading-relaxed">
-                                                Currently practicing at{" "}
-                                                <span className="font-semibold text-gray-900">Sharp Sight Eye Hospitals</span>
-                                            </p>
-                                        </div>
-
-                                       
-                                    </div>
-                                </div>
+                             
                             </div>
 
 
