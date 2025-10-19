@@ -51,7 +51,7 @@ export default function Page() {
         <section className="w-full md:px-0 bg-white">
             <div className="relative overflow-hidden bg-white">
                 {/* Container */}
-                <div className="relative z-10 md:container mx-auto lg:px-16 py-20 grid md:grid-cols-2 items-center md:gap-4 md:gap-12">
+                <div className="relative z-10 md:container mx-auto lg:px-16 md:py-20 grid md:grid-cols-2 items-center md:gap-4 md:gap-12">
                     <div className="relative flex justify-center md:justify-center">
                         <div className="relative w-full md:h-[70vh]">
                             <img
@@ -90,8 +90,8 @@ export default function Page() {
                                 >
                                     <div className="absolute inset-x-0 top-0 h-1.5 rounded-t-xs bg-[#74BF44]"></div>
                                     <div className="p-5 text-center">
-                                        <p className="font-bold text-base text-[#E22026] mt-1">{item.date}</p>
-                                        <p className="font-bold text-base text-gray-800">{item.city}</p>
+                                        <p className="font-bold text-lg text-gray-800 mt-1">{item.date}</p>
+                                        <p className="font-bold text-lg text-gray-800">{item.city}</p>
                                     </div>
                                 </div>
                             ))}
@@ -100,7 +100,7 @@ export default function Page() {
                 </div>
             </div>
 
-            <main className="container mx-auto px-4 sm:px-6 mt-10 lg:px-8">
+            <main className="md:container mx-auto px-4 sm:px-6 md:mt-10 lg:px-8">
                 {/* ===================== SCHEDULE + STICKY REGISTRATION ===================== */}
                 <section className="h-full py-8">
                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
@@ -127,71 +127,7 @@ export default function Page() {
                                     </ul>
                                 </div>
                             </div>
-                            <div className="space-y-4">
-                                {schedule.map((loc) => {
-                                    const flag = flagForLabel(loc.label);
-                                    const scheduleDetails = formatScheduleDetails(loc);
-
-                                    return (
-                                        <Card
-                                            key={loc.id}
-                                            className="bg-white border border-gray-200 shadow-xs hover:shadow-sm transition-all duration-300 rounded-xs overflow-hidden backdrop-blur-sm"
-                                        >
-                                            <CardHeader className="pb-3 px-6 pt-6">
-                                                <div className="flex items-center gap-4">
-                                                    <div className="relative flex-shrink-0">
-                                                        <img
-                                                            src={flag.src}
-                                                            alt={flag.alt}
-                                                            className="h-16 w-28 rounded-md object-cover"
-                                                            loading="lazy"
-                                                            width={112}
-                                                            height={64}
-                                                        />
-                                                        <span className="absolute inset-0 rounded-md bg-gradient-to-tr from-white/30 to-transparent" />
-                                                    </div>
-                                                    <div className="flex-1">
-                                                        <CardTitle className="text-xl font-semibold text-[#241d1f] tracking-tight">
-                                                            {loc.label}
-                                                        </CardTitle>
-                                                        {loc.city && (
-                                                            <p className="text-lg md:text-base text-[#241d1f] mt-1">
-                                                                {loc.city}
-                                                            </p>
-                                                        )}
-                                                    </div>
-                                                </div>
-                                            </CardHeader>
-
-                                            <CardContent className="px-6 pb-6 pt-4 space-y-4 border-t border-gray-100">
-                                                {/* Schedule Details */}
-                                                <div className="space-y-3">
-                                                    {scheduleDetails.map((detail, index) => (
-                                                        <div key={index} className="flex justify-between items-start">
-                                                            <p className="text-lg md:text-base text-[#241d1f] flex-1 leading-relaxed">
-                                                                {detail}
-                                                            </p>
-                                                        </div>
-                                                    ))}
-                                                </div>
-
-                                                {/* Fee and Contact */}
-                                                <div className="flex items-center justify-between pt-4 border-t border-gray-100">
-                                                    <div className="text-lg md:text-base">
-                                                        <p className="text-gray-500 text-sm">Consultation Fee</p>
-                                                        <p className="font-semibold text-[#241d1f] mt-1">
-                                                            {loc.feeLabel}
-                                                        </p>
-                                                        <p className="text-gray-700 text-xs mt-0.5 italic">
-                                                            On-spot payment. Any tests to cost extra.
-                                                        </p>
-                                                    </div>
-                                                </div>
-                                            </CardContent>
-                                        </Card>
-                                    );
-                                })}
-                            </div>
+                        
                             <div className="relative bg-gradient-to-br from-white to-gray-50 rounded-xs shadow-xs p-3 sm:p-8 md:p-10 border border-gray-100">
                                 {/* Profile Header */}
                                 <div className="flex flex-col md:flex-row md:items-center md:justify-start gap-6 sm:gap-8 mb-8 md:mb-5 text-center md:text-left">
@@ -200,10 +136,11 @@ export default function Page() {
                                         <img
                                             src="/doctors/dr-rahul-bhatia.png"
                                             alt="Dr. Rahul Bhatia"
-                                            className="object-cover w-full h-full hover:scale-110 transition-transform duration-500 ease-out"
+                                            className="object-cover md:mt-0 mt-4 w-full h-full hover:scale-110 transition-transform duration-500 ease-out"
                                             width={192}
                                             height={192}
                                         />
+                                        <p className="bg-gray-50 md:hidden absolute top-1 text-sm text-gray-700 left-1">Visiting Consultant / Specialist</p>
                                     </div>
 
                                     {/* Name and Credentials */}
@@ -217,6 +154,7 @@ export default function Page() {
                                         <p className="text-gray-700 font-medium text-base sm:text-lg tracking-wide">
                                             Sharp Sight Eye Hospitals, New Delhi
                                         </p>
+                                          <p className="bg-gray-50 md:block hidden absolute top-3 text-sm text-gray-700 left-3">Visiting Consultant / Specialist</p>
                                     </div>
                                 </div>
                             </div>
