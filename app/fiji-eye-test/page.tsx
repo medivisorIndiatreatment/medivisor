@@ -37,7 +37,7 @@ export default function Page() {
 
                             <h1 className="text-4xl text-[#E22026] md:my-0 my-4 sm:text-8xl uppercase font-semibold leading-[0.9] ">
                                 <span className="md:text-3xl text-[#E22026]  ml-1">Medivisor </span>
-                                <br className="md:block hidden"/>
+                                <br className="md:block hidden" />
                                 Eye Test
                             </h1>
                             <p className="text-xl font-medium text-gray-600 ml-1.5">
@@ -77,22 +77,27 @@ export default function Page() {
                         <div id="schedule" className="lg:col-span-6 space-y-4">
                             <div className="mb-5 space-y-3">
                                 {/* Intro */}
-                                <h2 className="title-text">Blurry Vision? Consult with an Indian Eye Specialist</h2>
+                                <h2 className="title-text">𝗕𝗹𝘂𝗿𝗿𝘆 𝗩𝗶𝘀𝗶𝗼𝗻? 𝗠𝗲𝗲𝘁 𝗮𝗻 𝗜𝗻𝗱𝗶𝗮𝗻 𝗘𝘆𝗲 𝗦𝗽𝗲𝗰𝗶𝗮𝗹𝗶𝘀𝘁 𝗶𝗻 𝗙𝗶𝗷𝗶!
+
+                                </h2>
                                 <div className="text-gray-700 leading-relaxed text-base">
-                                    If you or your loved ones are experiencing vision-related problems such as retina, cornea, cataract, or glaucoma, here's an opportunity to meet an experienced Indian eye specialist visiting your country.
+                                    If you or your loved ones are facing vision problems related with retina, cornea, cataract, or glaucoma, here’s your chance to consult an experienced Indian eye specialist from Sharp Sight Eye Hospitals visiting your country.
+
+
                                 </div>
 
                                 {/* Heading */}
                                 <div className="bg-[#E22026] p-4">
                                     <div className="text-2xl mb-3 font-bold text-gray-100 border-l-4 border-[#E22026] pl-3">
-                                        During your consultation, you will learn about:
+                                        During your consultation, you’ll get:
+
                                     </div>
 
                                     {/* Bullet List */}
                                     <ul className="space-y-1 ml-8 text-gray-100">
-                                        <li className="list-disc">Treatment options available for your condition</li>
-                                        <li className="list-disc">Estimated treatment cost in India</li>
-                                        <li className="list-disc">Travel assistance and requirements</li>
+                                        <li className="list-disc"> Expert advice on your eye condition</li>
+                                        <li className="list-disc"> Details on treatment options available in India</li>
+                                        <li className="list-disc"> Estimated cost and travel assistance information</li>
                                     </ul>
                                 </div>
                             </div>
@@ -162,6 +167,92 @@ export default function Page() {
                                     );
                                 })}
                             </div>
+                            <div className="relative bg-white rounded-xs shadow-xs p-6 md:p-8 overflow-hidden border border-gray-200">
+
+                                {/* Profile Section - Full Width Image */}
+                                <div className="flex gap-x-5 items-center text-center mb-8">
+                                    {/* Full Width Profile Image */}
+                                    <div className=" max-w-48 md:max-w-56 mb-6">
+                                        <div className="relative w-full border-3 border-gray-200 aspect-square bg-white rounded-full overflow-hidden shadow-md">
+                                            <img
+                                                src="/doctors/dr-rahul-bhatia.png"
+                                                alt="Dr. Rahul Bhatia"
+                                                className="object-bottom w-full h-full"
+                                            />
+                                        </div>
+                                    </div>
+
+                                    {/* Name and Title */}
+                                    <div className="space-y-3">
+                                        <h2 className="text-3xl md:text-4xl font-bold text-gray-900 font-sans">
+                                            Dr. Rahul Bhatia
+                                        </h2>
+                                        <p className="text-[#74c044] font-semibold text-lg font-sans">MBBS, MS, DNB</p>
+                                    </div>
+                                </div>
+
+                                {/* Details Grid */}
+                                <div className="grid md:grid-cols-2 gap-6 mb-8">
+                                    {/* Left Column */}
+                                    <div className="space-y-5">
+                                        <div>
+                                            <p className="text-sm font-semibold text-gray-500 uppercase tracking-wide font-sans mb-2">
+                                                Expertise
+                                            </p>
+                                            <p className="text-gray-800 text-lg font-sans">Cataract, Retina, Uvea, ROP</p>
+                                        </div>
+
+                                        <div>
+                                            <p className="text-sm font-semibold text-gray-500 uppercase tracking-wide font-sans mb-2">
+                                                Experience
+                                            </p>
+                                            <p className="text-gray-800 text-lg font-sans">08 Years</p>
+                                        </div>
+
+                                        <div>
+                                            <p className="text-sm font-semibold text-gray-500 uppercase tracking-wide font-sans mb-2">
+                                                Professional Membership
+                                            </p>
+                                            <p className="text-gray-800 text-lg font-sans">DMC 11877</p>
+                                        </div>
+                                    </div>
+
+                                    {/* Right Column */}
+                                    <div className="space-y-5">
+                                        <div>
+                                            <p className="text-sm font-semibold text-gray-500 uppercase tracking-wide font-sans mb-2">
+                                                Languages
+                                            </p>
+                                            <p className="text-gray-800 text-lg font-sans">Hindi & English</p>
+                                        </div>
+
+                                        <div className="bg-gray-50 rounded-lg border border-gray-200 p-4">
+                                            <p className="text-gray-700 font-sans">
+                                                Currently practicing at <span className="font-semibold text-gray-900">Sharp Sight Eye Hospitals</span>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Biography Section */}
+                                <div className="pt-6 border-t border-gray-200">
+                                    <h3 className="text-2xl font-bold text-gray-900 mb-4 font-sans">
+                                        Biography
+                                    </h3>
+                                    <div className="space-y-4">
+                                        <p className="text-gray-600 leading-relaxed text-base font-sans">
+                                            Dr. Rahul Bhatia is a Consultant with Sharp Sight Eye Hospitals. He completed his MBBS & MS (Ophthal) from UCMS & GTB Hospitals, Delhi.
+                                        </p>
+                                        <p className="text-gray-600 leading-relaxed text-base font-sans">
+                                            With over 7 years of experience in Phacoemulsification cataract surgery, he specializes in monofocals, multifocals, and toric IOLs including glued IOLs for aphakic eyes.
+                                        </p>
+                                        <p className="text-gray-600 leading-relaxed text-base font-sans">
+                                            He received training in Medical Retina and ROP at Asia's largest children's hospitals, SSKH and Kalawati Saran Hospital, Delhi. Dr. Bhatia is academically active and has been invited as faculty in numerous national and international forums.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+
                         </div>
 
                         {/* Right - Sticky Registration Form */}
