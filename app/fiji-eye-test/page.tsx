@@ -21,7 +21,7 @@ export const metadata = {
         alt: 'Medivisor Eye Test Fiji Banner - Dr. Rahul Bhatia Consultation',
       },
     ],
-    url: 'https://medivisorindiatreatment.com/eye-test-fiji',
+    url: 'https://medivisorindiatreatment.com/fiji-eye-test',
     siteName: 'Medivisor',
     type: 'website',
   },

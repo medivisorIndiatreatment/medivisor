@@ -21,7 +21,7 @@ export const metadata = {
         alt: 'Pacific Patient Meet Banner - Mr. Kumar Sushant, Director, Medivisor India Treatment',
       },
     ],
-    url: typeof window !== 'undefined' ? window.location.origin + '/pacific-patient-meet' : 'https://medivisorindiatreatment.com/pacific-patient-meet',
+    url: 'https://medivisorindiatreatment.com/pacific-patient',
     siteName: 'Medivisor',
     type: 'website',
   },
@@ -151,7 +151,7 @@ export default function Page() {
 
             <div id="schedule" className="lg:col-span-6 space-y-4">
 
-            
+
               <div className="   mb-5 space-y-6 ">
                 {/* Intro */}
                 <div className="text-gray-700 leading-relaxed text-base">
@@ -159,7 +159,7 @@ export default function Page() {
                   Papua New Guinea, Solomon Islands, Vanuatu, or Fiji, here’s a valuable opportunity to meet the Medivisor Director and Doctors right in your country and receive expert medical guidance.
                 </div>
 
-               
+
 
                 {/* Heading */}
                 <div className="bg-[#E22026] p-4">
