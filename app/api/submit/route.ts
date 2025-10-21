@@ -101,7 +101,7 @@ export async function POST(request: Request) {
         await resend.emails.send({
           from: 'onboarding@resend.dev',
           to: 'info@medivisorhealth.com',
-          subject: `New Appointment Pacific Patient Registration from ${name}`,
+          subject: `New Appointment Registration from ${name}`,
           html: `
           <div style="font-family: Arial, sans-serif; font-size: 16px; color: #333; line-height: 1.6;">
             <div style="max-width: 600px; margin: 20px auto; padding: 20px; border: 1px solid #eee; border-radius: 8px; background-color: #f9f9f9;">
