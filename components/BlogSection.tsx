@@ -228,14 +228,14 @@ export default function BlogCarousel() {
                         <Link href={`/blog/${post.slug}`} className="transition-colors duration-200">
                           <CardContent className="flex flex-col flex-grow p-4 bg-white rounded-b-xs">
                             {/* Title with consistent sizing and ellipsis */}
-                            <div className="min-h-[60px] mb-2">
+                            <div className="min-h-[40px] mb-2">
                               <CardTitle className="text-lg font-medium leading-tight text-[#241d1f] hover:text-primary transition-colors line-clamp-2">
                                 {post.title}
                               </CardTitle>
                             </div>
 
                             {/* Meta information */}
-                            <div className="flex justify-start gap-x-3 items-center mb-3">
+                            <div className="flex justify-start gap-x-3 items-center mb-1">
                               <CardDescription className="text-xs text-gray-600">
                                 {post.firstPublishedDate &&
                                   new Date(post.firstPublishedDate).toLocaleDateString("en-US", {
