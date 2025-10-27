@@ -136,7 +136,7 @@ export default function FAQSection({ faqSectionRef }: FAQSectionProps) {
                   </div>
                   <div className="flex-1 min-w-0">
                     <h3 className="description">
-                      {item.id}. {item.question}
+                      {item.question}
                     </h3>
                   </div>
                 </div>
