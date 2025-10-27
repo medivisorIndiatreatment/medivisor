@@ -112,7 +112,7 @@ export default function FAQSection({ faqSectionRef }: FAQSectionProps) {
       <div className="mb-6">
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-4xl md:text-2xl font-semibold text-[#241d1f]"> Frequently Asked Questions (FAQs)</h2>
+            <h2 className="text-xl md:text-2xl font-semibold text-[#241d1f]"> Frequently Asked Questions (FAQs)</h2>
             <p className="description">
               {faqData.length} question{faqData.length !== 1 ? 's' : ''} found
             </p>

@@ -133,7 +133,7 @@ export default function Page() {
                       width={192}
                       height={192}
                     />
-                    <h2 className="text-4xl md:text-2xl font-semibold text-[#241d1f]">Visiting Consultant / Specialist</h2>
+                    <h2 className="text-4xl md:text-2xl font-semibold text-[#241d1f] md:py-0 my-3">Visiting Consultant / Specialist</h2>
                   </div>
 
                   {/* Name and Credentials */}
@@ -147,7 +147,7 @@ export default function Page() {
                     <p className="text-gray-700 font-medium text-base sm:text-lg tracking-wide">
                       Sharp Sight Eye Hospitals, New Delhi
                     </p>
-                    <p className=" md:block hidden absolute top-3 text-4xl md:text-2xl pb-3 font-semibold text-[#241d1f] left-3">Visiting Consultant / Specialist</p>
+                    <p className=" md:block hidden absolute top-3 text-xl md:text-2xl pb-3 font-semibold text-[#241d1f] left-3">Visiting Consultant / Specialist</p>
                   </div>
                 </div>
               </div>
