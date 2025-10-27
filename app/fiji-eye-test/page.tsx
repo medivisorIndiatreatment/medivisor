@@ -133,7 +133,7 @@ export default function Page() {
                       width={192}
                       height={192}
                     />
-                    <h2 className="text-4xl md:text-2xl font-semibold text-[#241d1f] md:py-0 my-3">Visiting Consultant / Specialist</h2>
+                    <h2 className="text-4xl md:text-2xl font-semibold text-[#241d1f] md:py-0 py-3">Visiting Consultant / Specialist</h2>
                   </div>
 
                   {/* Name and Credentials */}
