@@ -194,14 +194,14 @@ const HospitalCard = ({ hospital }: HospitalCardProps) => {
 
   return (
     <Link href={`/hospitals/${slug}`} className="block">
-      <article className="group bg-white rounded-xs shadow-xs hover:shadow-xs transition-all duration-300 border border-gray-50 overflow-hidden cursor-pointer h-full flex flex-col">
+      <article className="group bg-white rounded-lg shadow-sm hover:shadow-md transition-all duration-300 border border-gray-100 overflow-hidden cursor-pointer h-full flex flex-col">
         {/* Image Section */}
         <div className="relative h-48 overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100">
           {/* Badges Overlay */}
           <div className="absolute top-2 left-2 right-3 z-10 flex justify-end flex-wrap gap-2">
             {hospital.accreditation && (
-              <span className="inline-flex items-center gap-1 text-sm bg-gray-50 text-gray-700 px-3 py-1 rounded-xs shadow-xs">
-                <Award className="w-4 h-4" />
+              <span className="inline-flex items-center gap-1 text-xs bg-gray-50 text-gray-700 px-2 py-1 rounded-md shadow-sm">
+                <Award className="w-3 h-3" />
                 {hospital.accreditation}
               </span>
             )}
@@ -225,27 +225,27 @@ const HospitalCard = ({ hospital }: HospitalCardProps) => {
         </div>
 
         {/* Content Section */}
-        <div className="p-2 flex-1 flex flex-col">
+        <div className="p-3 sm:p-4 flex-1 flex flex-col">
           {/* Hospital Name */}
-          <header className="mb-2">
-            <h2 className="text-lg font-semibold line-clamp-2 group-hover:text-gray-900 transition-colors">
+          <header className="mb-3">
+            <h2 className="text-base sm:text-lg font-semibold line-clamp-2 group-hover:text-gray-900 transition-colors">
               {hospital.name}
             </h2>
           </header>
 
           {/* Treatments Section */}
           {displayTreatments.length > 0 && (
-            <section className="mb-2">
-              <div className="flex items-center justify-between border-t border-gray-100 pt-3">
+            <section className="mb-3">
+              <div className="flex items-center justify-between border-t border-gray-100 pt-2 sm:pt-3">
                 <p className="text-xs font-semibold text-gray-900 uppercase">Treatments</p>
               </div>
-              <div className="flex flex-wrap gap-2 mt-2">
+              <div className="flex flex-wrap gap-1 sm:gap-2 mt-1 sm:mt-2">
                 {displayTreatments.map((treatment) => (
                   <span
                     key={treatment._id}
-                    className="inline-flex items-center gap-1 bg-gray-50 px-3 py-1.5 rounded border border-gray-100 text-sm"
+                    className="inline-flex items-center gap-1 bg-gray-50 px-2 sm:px-3 py-1 sm:py-1.5 rounded border border-gray-100 text-xs sm:text-sm"
                   >
-                    <Cross className="w-3 h-3" />
+                    <Cross className="w-2 h-2 sm:w-3 sm:h-3" />
                     {treatment.name}
                   </span>
                 ))}
@@ -262,18 +262,18 @@ const HospitalCard = ({ hospital }: HospitalCardProps) => {
           {branchData.length > 0 && (
             <section className="mb-4">
               {/* Heading */}
-              <div className="flex items-center justify-between border-t border-gray-100 pt-3">
+              <div className="flex items-center justify-between border-t border-gray-100 pt-2 sm:pt-3">
                 <p className="text-xs font-semibold text-gray-900 uppercase">Branches</p>
               </div>
 
               {/* City List */}
-              <div className="space-y-0 items-center flex gap-x-2 mt-2">
+              <div className="space-y-1 sm:space-y-0 items-center flex flex-col sm:flex-row gap-1 sm:gap-x-2 mt-1 sm:mt-2 flex-wrap">
                 {displayBranches.map((branch, index) => (
-                  <div key={index} className="flex items-start gap-2">
-                    {/* <MapPin className="w-4 h-4 text-gray-500 mt-0.5 flex-shrink-0" /> */}
+                  <div key={index} className="flex items-start gap-1 sm:gap-2 w-full sm:w-auto">
+                    <MapPin className="w-3 h-3 sm:w-4 sm:h-4 text-gray-500 mt-0.5 flex-shrink-0 hidden sm:block" />
                     <div className="flex-1 min-w-0">
                       {branch.cities.length > 0 && (
-                        <p className="inline-flex items-center gap-1 bg-gray-50 px-3 py-1.5 rounded border border-gray-100 text-sm">
+                        <p className="inline-flex items-center gap-1 bg-gray-50 px-2 sm:px-3 py-1 sm:py-1.5 rounded border border-gray-100 text-xs sm:text-sm w-full sm:w-auto">
                           {branch.cities.slice(0, 2).join(", ")}
                           {branch.cities.length > 2 && (
                             <span className="text-gray-500 font-medium">
@@ -288,39 +288,37 @@ const HospitalCard = ({ hospital }: HospitalCardProps) => {
 
                 {/* Show remaining branches count */}
                 {remainingBranches > 0 && (
-                  <div className="flex items-center gap-2 text-sm text-gray-700 pt-0">
-                  
-                       <span className="inline-flex items-center text-xs text-gray-700">+{remainingBranches} more </span>
+                  <div className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm text-gray-700 pt-0 w-full sm:w-auto justify-center sm:justify-start">
+                    <span className="inline-flex items-center text-xs text-gray-700">+{remainingBranches} more</span>
                   </div>
                 )}
               </div>
             </section>
           )}
 
-
           {/* Stats Grid */}
-          <footer className="border-t border-gray-100 pt-3 mt-auto">
-            <div className="grid grid-cols-2 gap-2">
+          <footer className="border-t border-gray-100 pt-2 sm:pt-3 mt-auto">
+            <div className="grid grid-cols-2 gap-2 sm:gap-4">
               {hospital.beds && (
-                <div className="text-center rounded bg-gray-50 p-3 border border-gray-100">
+                <div className="text-center rounded bg-gray-50 p-2 sm:p-3 border border-gray-100">
                   <p className="text-sm font-bold text-gray-900">{hospital.beds}</p>
                   <p className="text-xs text-gray-900 uppercase font-medium">Total Beds</p>
                 </div>
               )}
               {hospital.yearEstablished && (
-                <div className="text-center rounded bg-gray-50 p-3 border border-gray-100">
+                <div className="text-center rounded bg-gray-50 p-2 sm:p-3 border border-gray-100">
                   <p className="text-sm font-bold text-gray-900">{hospital.yearEstablished}</p>
                   <p className="text-xs text-gray-900 uppercase font-medium">Established</p>
                 </div>
               )}
               {hospital.accreditation && (
-                <div className="text-center rounded bg-gray-50 p-3 border border-gray-100">
+                <div className="text-center rounded bg-gray-50 p-2 sm:p-3 border border-gray-100">
                   <p className="text-sm font-bold text-gray-900">{hospital.accreditation}</p>
                   <p className="text-xs text-gray-900 uppercase font-medium">Accreditation</p>
                 </div>
               )}
               {hospital.branches?.length > 0 && (
-                <div className="text-center rounded bg-gray-50 p-3 border border-gray-100">
+                <div className="text-center rounded bg-gray-50 p-2 sm:p-3 border border-gray-100">
                   <p className="text-sm font-bold text-gray-900">{hospital.branches.length}</p>
                   <p className="text-xs text-gray-900 uppercase font-medium">Branches</p>
                 </div>
@@ -409,7 +407,7 @@ const SearchDropdown = ({
             setIsOpen(true)
           }}
           onFocus={() => setIsOpen(true)}
-          className="pl-9 pr-10 py-2.5 border border-gray-200 rounded-lg w-full text-sm bg-gray-50 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all placeholder:text-gray-400"
+          className="pl-10 pr-12 py-3 border border-gray-200 rounded-lg w-full text-sm bg-gray-50 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all placeholder:text-gray-400"
         />
 
         {(value || selectedOption) && (
@@ -419,7 +417,7 @@ const SearchDropdown = ({
               onOptionSelect("")
               onClear()
             }}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors p-1"
           >
             <X className="w-4 h-4" />
           </button>
@@ -427,7 +425,7 @@ const SearchDropdown = ({
 
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className="absolute right-10 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+          className="absolute right-10 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors p-1"
         >
           <ChevronDown className={`w-4 h-4 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
         </button>
@@ -436,7 +434,7 @@ const SearchDropdown = ({
       {isOpen && (value || filteredOptions.length > 0) && (
         <>
           <div
-            className="fixed inset-0 z-10"
+            className="fixed inset-0 z-10 lg:hidden"
             onClick={() => setIsOpen(false)}
           />
           <div className="absolute top-full left-0 right-0 z-20 bg-white border border-gray-200 rounded-lg shadow-lg max-h-60 overflow-y-auto mt-1">
@@ -449,14 +447,14 @@ const SearchDropdown = ({
                     onChange("")
                     setIsOpen(false)
                   }}
-                  className="w-full px-4 py-2.5 text-left hover:bg-gray-50 transition-colors border-b border-gray-100 last:border-b-0 flex items-center gap-3"
+                  className="w-full px-4 py-3 text-left hover:bg-gray-50 transition-colors border-b border-gray-100 last:border-b-0 flex items-center gap-3 min-h-[44px]"
                 >
                   {getIcon()}
                   <div className="font-medium text-gray-900">{option.name}</div>
                 </button>
               ))
             ) : (
-              <div className="px-4 py-3 text-sm text-gray-500 text-center">
+              <div className="px-4 py-4 text-sm text-gray-500 text-center">
                 No {type === "hospital" ? "hospitals" : type === "city" ? "cities" : "treatments"} found
               </div>
             )}
@@ -510,18 +508,18 @@ const FilterSidebar = ({
   clearFilters,
 }: FilterSidebarProps) => (
   <aside
-    className={`fixed lg:static inset-y-0 left-0 z-20 w-full lg:w-80 bg-white border border-gray-50 rounded-xs shadow-xs transform transition-transform duration-300 ease-in-out ${showFilters ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
+    className={`fixed lg:static inset-y-0 left-0 z-50 w-[80vw] lg:w-80 bg-white border border-gray-50 rounded-r-lg lg:rounded-lg shadow-xl transform transition-transform duration-300 ease-in-out ${showFilters ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
       } overflow-y-auto lg:sticky lg:top-6 max-h-[calc(100vh-2rem)]`}
   >
     {/* Header */}
-    <div className="flex items-center justify-between px-5 pt-4 pb-2 border-b border-gray-100 bg-white sticky top-0 z-10">
-      <h2 className="title-text flex items-center gap-2">
+    <div className="flex items-center justify-between px-4 sm:px-5 pt-4 pb-3 border-b border-gray-100 bg-white sticky top-0 z-10">
+      <h2 className="text-lg font-semibold flex items-center gap-2">
         <Filter className="w-5 h-5 text-gray-700" />
         Search & Filters
       </h2>
       <button
         onClick={() => setShowFilters(false)}
-        className="lg:hidden text-gray-500 hover:text-gray-700 transition-colors"
+        className="lg:hidden text-gray-500 hover:text-gray-700 transition-colors p-1"
         aria-label="Close filters"
       >
         <ChevronLeft className="w-5 h-5" />
@@ -529,7 +527,7 @@ const FilterSidebar = ({
     </div>
 
     {/* Filter Content */}
-    <div className="p-5 space-y-6">
+    <div className="p-4 sm:p-5 space-y-6">
       {/* Hospital Search */}
       <SearchDropdown
         value={search}
@@ -578,7 +576,7 @@ const FilterSidebar = ({
       {/* Clear Filters Button */}
       <button
         onClick={clearFilters}
-        className="w-full py-2.5 px-4 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-100 hover:border-gray-400 transition-colors text-sm font-medium flex items-center justify-center gap-2"
+        className="w-full py-3 px-4 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-100 hover:border-gray-400 transition-colors text-sm font-medium flex items-center justify-center gap-2 min-h-[44px]"
       >
         <X className="w-4 h-4" />
         Clear All Filters
@@ -596,16 +594,16 @@ interface MobileFilterToggleProps {
 
 const MobileFilterToggle = ({ setShowFilters, resultsCount }: MobileFilterToggleProps) => (
   <div className="lg:hidden mb-4">
-    <div className="flex items-center justify-between mb-3">
+    <div className="flex items-center justify-between mb-3 p-2">
       <p className="text-sm text-gray-600">
         Showing <span className="font-semibold text-gray-900">{resultsCount}</span> hospitals
       </p>
       <button
         onClick={() => setShowFilters(true)}
-        className="py-2.5 px-4 bg-white border border-gray-300 rounded-lg flex items-center justify-center gap-2 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+        className="py-2.5 px-4 bg-white border border-gray-300 rounded-lg flex items-center justify-center gap-2 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors min-w-[140px]"
       >
         <Filter className="w-4 h-4" />
-        Search & Filters
+        Filters
       </button>
     </div>
   </div>
@@ -621,7 +619,7 @@ const ResultsHeader = ({ hospitals, clearFilters }: ResultsHeaderProps) => (
   <>
     {!hospitals.length ? null : (
       <div className="hidden lg:flex items-center justify-between mb-4">
-        <p className="title-text mt-4">
+        <p className="text-lg font-semibold mt-4">
           Found <span className="text-gray-800">{hospitals.length}</span> hospitals
         </p>
         <button
@@ -638,7 +636,7 @@ const ResultsHeader = ({ hospitals, clearFilters }: ResultsHeaderProps) => (
 
 // Sub-component: No Results
 const NoResults = () => (
-  <div className="flex flex-col items-center justify-center h-64 text-center space-y-4 bg-white rounded-lg border border-gray-200 p-8">
+  <div className="flex flex-col items-center justify-center h-64 text-center space-y-4 bg-white rounded-lg border border-gray-200 p-4 sm:p-8">
     <Hospital className="w-16 h-16 text-gray-400" />
     <h3 className="text-lg font-semibold text-gray-900">No hospitals found</h3>
     <p className="text-sm text-gray-600 max-w-md">
@@ -649,7 +647,7 @@ const NoResults = () => (
 
 // Sub-component: Loading Skeletons
 const LoadingSkeletons = () => (
-  <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+  <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
     {Array.from({ length: 6 }).map((_, index) => (
       <HospitalCardSkeleton key={index} />
     ))}
@@ -805,7 +803,7 @@ export default function HospitalDirectory() {
     if (initialLoad || loading) return <LoadingSkeletons />
     if (hospitals.length === 0) return <NoResults />
     return (
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
         {hospitals.map((hospital) => (
           <HospitalCard key={hospital._id} hospital={hospital} />
         ))}
@@ -832,7 +830,7 @@ export default function HospitalDirectory() {
 
       {/* Main Section */}
       <section className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="flex flex-col lg:flex-row gap-6 py-10">
+        <div className="flex flex-col lg:flex-row gap-6 py-10 relative">
           {/* Mobile Search Overlay */}
           {showFilters && (
             <div
@@ -864,7 +862,7 @@ export default function HospitalDirectory() {
           />
 
           {/* Main Content */}
-          <main className="flex-1">
+          <main className="flex-1 min-w-0">
             <MobileFilterToggle
               setShowFilters={setShowFilters}
               resultsCount={hospitals.length}
