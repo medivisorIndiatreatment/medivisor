@@ -243,9 +243,9 @@ const BranchesOfferingTreatmentCarousel = ({
 
   return (
     <section className="bg-white rounded-lg shadow-sm border border-gray-100 p-8 mb-8">
-      <div className="flex justify-between items-center mb-8">
+      <div className="flex justify-between items-center mb-4">
         <h3 className="text-2xl font-bold text-gray-900 flex items-center gap-3">
-          <Hospital className="w-6 h-6 text-gray-500" />
+        
           Nearby Branches in Delhi NCR Offering {treatmentName}
           <span className="text-gray-500 font-normal">({branches.length})</span>
         </h3>
@@ -365,9 +365,9 @@ const SpecialistDoctorsCarousel = ({
 
   return (
     <section className="bg-white rounded-lg shadow-sm border border-gray-100 p-8 mb-8">
-      <div className="flex justify-between items-center mb-8">
+      <div className="flex justify-between items-center mb-4">
         <h3 className="text-2xl font-bold text-gray-900 flex items-center gap-3">
-          <Stethoscope className="w-6 h-6 text-gray-500" />
+       
           {title}
           <span className="text-gray-500 font-normal">({doctors.length})</span>
         </h3>
@@ -431,20 +431,7 @@ const SpecialistDoctorsCarousel = ({
                           <span>{doctor.experience} years experience</span>
                         </div>
                       )}
-                      <div className="pt-2">
-                        <p className="text-xs font-medium text-gray-700 mb-1">Available At</p>
-                        <div className="flex flex-col gap-1">
-                          {[...new Set(doctor.hospitalBranches?.map((b: any) => b.name) || [])].slice(0, 2).map((branchName, idx) => (
-                            <span key={idx} className="text-xs text-gray-600 flex items-center gap-1">
-                              <Building2 className="w-3 h-3" />
-                              {branchName}
-                            </span>
-                          ))}
-                          {doctor.hospitalBranches && doctor.hospitalBranches.length > 2 && (
-                            <span className="text-xs text-gray-500">+{doctor.hospitalBranches.length - 2} more</span>
-                          )}
-                        </div>
-                      </div>
+                      
                     </div>
                   </Link>
                 </div>

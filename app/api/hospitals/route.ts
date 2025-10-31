@@ -1,4 +1,4 @@
-// app/api/hospitals/route.ts - Cleaned and optimized version
+// app/api/hospitals/route.ts - Updated and optimized version
 import { NextResponse } from "next/server"
 import { wixClient } from "@/lib/wixClient"
 
@@ -8,7 +8,8 @@ const COLLECTIONS = {
   CITIES: "CityMaster",
   TREATMENTS: "TreatmentMaster",
   HOSPITALS: "HospitalMaster",
-  ACCREDITATIONS: "Accreditation"
+  ACCREDITATIONS: "Accreditation",
+  SPECIALTIES: "SpecialtyMaster" // Added for specialties
 }
 
 // Utility function to get value from nested fields
@@ -47,14 +48,18 @@ const DataMappers = {
     city: ReferenceMapper.multiReference(item.city, "city name", "cityName", "name"),
     contactNumber: getValue(item, "Phone", "Phone", "contactNumber"),
     email: getValue(item, "Email", "email"),
-    totalBeds: getValue(item, "Total Beds", "totalBeds"),
+    totalBeds: getValue(item, "Total Beds", "totalBeds", "No of Beds", "noOfBeds"),
     icuBeds: getValue(item, "ICU Beds", "icuBeds"),
-     yearEstablished: getValue(item, "Year Established", "yearEstablished"),
+    yearEstablished: getValue(item, "Year Established", "yearEstablished"),
     emergencyContact: getValue(item, "Emergency Contact", "emergencyContact"),
     branchImage: getValue(item, "Branch Image", "branchImage", "image"),
     description: getValue(item, "Description", "description"),
     doctors: ReferenceMapper.multiReference(item.doctor, "Doctor Name", "doctorName", "name"),
     treatments: ReferenceMapper.multiReference(item.treatment, "Treatment Name", "treatment", "name"),
+    // New fields for specialties and accreditations
+    specialties: ReferenceMapper.multiReference(item.specialty, "Specialty Name", "specialtyName", "name", "title"),
+    accreditation: ReferenceMapper.multiReference(item.accreditation, "Title", "title", "accreditationName", "name"),
+    noOfDoctors: getValue(item, "No of Doctors", "noOfDoctors", "doctorCount"),
   }),
 
   doctor: (item: any) => ({
@@ -96,6 +101,15 @@ const DataMappers = {
     image: getValue(item, "Image", "image"),
     issuingBody: getValue(item, "Issuing Body", "issuingBody"),
     year: getValue(item, "Year", "year"),
+    description: getValue(item, "Description", "description"),
+  }),
+
+  specialty: (item: any) => ({
+    _id: item._id || item.ID,
+    name: getValue(item, "Specialty Name", "specialtyName", "name", "title") || "Specialty",
+    description: getValue(item, "Description", "description"),
+    image: getValue(item, "Image", "image"),
+    category: getValue(item, "Category", "category"),
   })
 }
 
@@ -145,6 +159,13 @@ const ReferenceMapper = {
             mappedItem.year = getValue(item, "Year", "year")
           }
 
+          // Specialty specific
+          if (nameFields.some(f => f.toLowerCase().includes('specialty') || f === 'Specialty Name')) {
+            mappedItem.description = getValue(item, "Description", "description")
+            mappedItem.image = getValue(item, "Image", "image")
+            mappedItem.category = getValue(item, "Category", "category")
+          }
+
           return mappedItem
         })
         .filter(Boolean)
@@ -170,7 +191,8 @@ const ReferenceMapper = {
       branch?.HospitalMaster_branches,
       branch?.Hospital,
       branch?.hospitalId,
-      branch?.["Hospital (ID)"]
+      branch?.["Hospital (ID)"],
+      branch?.["Hospital Group Master"] // Added from CSV
     ]
 
     fieldsToCheck.forEach(field => {
@@ -259,9 +281,12 @@ const DataFetcher = {
 const QueryBuilder = {
   buildBranchQuery(
     hospitalIds?: string[],
+    branchIds?: string[],
     cityIds?: string[],
     doctorIds?: string[],
     treatmentIds?: string[],
+    specialtyIds?: string[],
+    accreditationIds?: string[],
     includeReferences = false
   ) {
     let query = wixClient.items.query(COLLECTIONS.BRANCHES).descending("_createdDate")
@@ -273,10 +298,15 @@ const QueryBuilder = {
         .include("doctor")
         .include("treatment")
         .include("city")
+        .include("specialty") // Added for specialties
+        .include("accreditation") // Added for branch accreditations
     }
 
     if (hospitalIds?.length) {
       query = query.hasSome("HospitalMaster_branches" as any, hospitalIds)
+    }
+    if (branchIds?.length) {
+      query = query.hasSome("_id", branchIds)
     }
     if (cityIds?.length) {
       query = query.hasSome("city" as any, cityIds)
@@ -287,21 +317,30 @@ const QueryBuilder = {
     if (treatmentIds?.length) {
       query = query.hasSome("treatment" as any, treatmentIds)
     }
+    if (specialtyIds?.length) {
+      query = query.hasSome("specialty" as any, specialtyIds)
+    }
+    if (accreditationIds?.length) {
+      query = query.hasSome("accreditation" as any, accreditationIds)
+    }
 
     return query
   },
 
   async getHospitalIdsFromBranchFilters(
+    branchIds?: string[],
     cityIds?: string[],
     doctorIds?: string[],
-    treatmentIds?: string[]
+    treatmentIds?: string[],
+    specialtyIds?: string[],
+    accreditationIds?: string[]
   ): Promise<string[]> {
-    if (!cityIds?.length && !doctorIds?.length && !treatmentIds?.length) {
+    if (!branchIds?.length && !cityIds?.length && !doctorIds?.length && !treatmentIds?.length && !specialtyIds?.length && !accreditationIds?.length) {
       return []
     }
 
     try {
-      const branchQuery = this.buildBranchQuery(undefined, cityIds, doctorIds, treatmentIds, true)
+      const branchQuery = this.buildBranchQuery(undefined, branchIds, cityIds, doctorIds, treatmentIds, specialtyIds, accreditationIds, true)
       const branches = await branchQuery.limit(1000).find()
 
       const hospitalIds = new Set<string>()
@@ -325,12 +364,18 @@ export async function GET(req: Request) {
     // Parse query parameters
     const params = {
       q: url.searchParams.get("q")?.trim(),
+      branchId: url.searchParams.get("branchId")?.trim(),
       cityId: url.searchParams.get("cityId")?.trim(),
       doctorId: url.searchParams.get("doctorId")?.trim(),
       treatmentId: url.searchParams.get("treatmentId")?.trim(),
+      specialtyId: url.searchParams.get("specialtyId")?.trim(),
+      accreditationId: url.searchParams.get("accreditationId")?.trim(),
       cityText: url.searchParams.get("city")?.trim(),
+      branchText: url.searchParams.get("branch")?.trim(),
       doctorText: url.searchParams.get("doctor")?.trim(),
       treatmentText: url.searchParams.get("treatment")?.trim(),
+      specialtyText: url.searchParams.get("specialty")?.trim(),
+      accreditationText: url.searchParams.get("accreditation")?.trim(),
       hospitalId: url.searchParams.get("hospitalId")?.trim(),
       page: Math.max(0, Number(url.searchParams.get("page") || "0")),
       pageSize: Math.min(50, Number(url.searchParams.get("pageSize") || "20"))
@@ -339,21 +384,41 @@ export async function GET(req: Request) {
     console.log("Fetching hospitals with filters:", params)
 
     // Process text searches to get IDs
-    const [cityIdsFromText, doctorIdsFromText, treatmentIdsFromText] = await Promise.all([
+    const [
+      branchIdsFromText, 
+      cityIdsFromText, 
+      doctorIdsFromText, 
+      treatmentIdsFromText,
+      specialtyIdsFromText,
+      accreditationIdsFromText
+    ] = await Promise.all([
+      params.branchText ? DataFetcher.searchIdsByName(COLLECTIONS.BRANCHES, ["Branch Name", "branchName", "name"], params.branchText) : Promise.resolve([]),
       params.cityText ? DataFetcher.searchIdsByName(COLLECTIONS.CITIES, ["city name", "cityName", "name"], params.cityText) : Promise.resolve([]),
       params.doctorText ? DataFetcher.searchIdsByName(COLLECTIONS.DOCTORS, ["Doctor Name", "doctorName", "name"], params.doctorText) : Promise.resolve([]),
-      params.treatmentText ? DataFetcher.searchIdsByName(COLLECTIONS.TREATMENTS, ["Treatment Name", "treatmentName", "name"], params.treatmentText) : Promise.resolve([])
+      params.treatmentText ? DataFetcher.searchIdsByName(COLLECTIONS.TREATMENTS, ["Treatment Name", "treatmentName", "name"], params.treatmentText) : Promise.resolve([]),
+      params.specialtyText ? DataFetcher.searchIdsByName(COLLECTIONS.SPECIALTIES, ["Specialty Name", "specialtyName", "name", "title"], params.specialtyText) : Promise.resolve([]),
+      params.accreditationText ? DataFetcher.searchIdsByName(COLLECTIONS.ACCREDITATIONS, ["Title", "title", "accreditationName", "name"], params.accreditationText) : Promise.resolve([])
     ])
 
     // Combine IDs from different sources
+    const branchIds = [...branchIdsFromText, ...(params.branchId ? [params.branchId] : [])]
     const cityIds = [...cityIdsFromText, ...(params.cityId ? [params.cityId] : [])]
     const doctorIds = [...doctorIdsFromText, ...(params.doctorId ? [params.doctorId] : [])]
     const treatmentIds = [...treatmentIdsFromText, ...(params.treatmentId ? [params.treatmentId] : [])]
+    const specialtyIds = [...specialtyIdsFromText, ...(params.specialtyId ? [params.specialtyId] : [])]
+    const accreditationIds = [...accreditationIdsFromText, ...(params.accreditationId ? [params.accreditationId] : [])]
 
     // Get hospital IDs from branch filters
     let hospitalIds: string[] = []
-    if (cityIds.length || doctorIds.length || treatmentIds.length) {
-      hospitalIds = await QueryBuilder.getHospitalIdsFromBranchFilters(cityIds, doctorIds, treatmentIds)
+    if (branchIds.length || cityIds.length || doctorIds.length || treatmentIds.length || specialtyIds.length || accreditationIds.length) {
+      hospitalIds = await QueryBuilder.getHospitalIdsFromBranchFilters(
+        branchIds,
+        cityIds, 
+        doctorIds, 
+        treatmentIds,
+        specialtyIds,
+        accreditationIds
+      )
       console.log("Hospital IDs from branch filters:", hospitalIds.length)
 
       if (hospitalIds.length === 0) {
@@ -415,7 +480,10 @@ export async function GET(req: Request) {
       hospitalsResult.items,
       cityIds,
       doctorIds,
-      treatmentIds
+      treatmentIds,
+      specialtyIds,
+      accreditationIds,
+      branchIds
     )
 
     return NextResponse.json({
@@ -438,7 +506,10 @@ async function enrichHospitalsWithRelatedData(
   hospitals: any[], 
   cityIds: string[], 
   doctorIds: string[], 
-  treatmentIds: string[]
+  treatmentIds: string[],
+  specialtyIds: string[] = [],
+  accreditationIds: string[] = [],
+  branchIds: string[] = []
 ) {
   const hospitalIds = hospitals.map(h => h._id!)
 
@@ -446,7 +517,7 @@ async function enrichHospitalsWithRelatedData(
   let branchesResult = { items: [] }
   if (hospitalIds.length > 0) {
     branchesResult = await QueryBuilder.buildBranchQuery(
-      hospitalIds, undefined, undefined, undefined, true
+      hospitalIds, undefined, undefined, undefined, undefined, undefined, undefined, true
     )
       .limit(1000)
       .find()
@@ -459,6 +530,8 @@ async function enrichHospitalsWithRelatedData(
   const allDoctorIds = new Set<string>()
   const allCityIds = new Set<string>()
   const allTreatmentIds = new Set<string>()
+  const allSpecialtyIds = new Set<string>()
+  const allAccreditationIds = new Set<string>()
 
   branchesResult.items.forEach((branch) => {
     const hospitalIdsFromBranch = ReferenceMapper.extractHospitalIds(branch)
@@ -474,15 +547,19 @@ async function enrichHospitalsWithRelatedData(
         ReferenceMapper.extractIds(mappedBranch.doctors).forEach(id => allDoctorIds.add(id))
         ReferenceMapper.extractIds(mappedBranch.city).forEach(id => allCityIds.add(id))
         ReferenceMapper.extractIds(mappedBranch.treatments).forEach(id => allTreatmentIds.add(id))
+        ReferenceMapper.extractIds(mappedBranch.specialties).forEach(id => allSpecialtyIds.add(id))
+        ReferenceMapper.extractIds(mappedBranch.accreditation).forEach(id => allAccreditationIds.add(id))
       }
     })
   })
 
   // Fetch all related data
-  const [doctorsData, citiesData, treatmentsData] = await Promise.all([
+  const [doctorsData, citiesData, treatmentsData, specialtiesData, accreditationsData] = await Promise.all([
     DataFetcher.fetchDoctorsWithTreatments(Array.from(allDoctorIds)),
     DataFetcher.fetchCollectionData(COLLECTIONS.CITIES, Array.from(allCityIds), DataMappers.city),
-    DataFetcher.fetchCollectionData(COLLECTIONS.TREATMENTS, Array.from(allTreatmentIds), DataMappers.treatment)
+    DataFetcher.fetchCollectionData(COLLECTIONS.TREATMENTS, Array.from(allTreatmentIds), DataMappers.treatment),
+    DataFetcher.fetchCollectionData(COLLECTIONS.SPECIALTIES, Array.from(allSpecialtyIds), DataMappers.specialty),
+    DataFetcher.fetchCollectionData(COLLECTIONS.ACCREDITATIONS, Array.from(allAccreditationIds), DataMappers.accreditation)
   ])
 
   // Build final hospital objects with enriched data
@@ -490,15 +567,24 @@ async function enrichHospitalsWithRelatedData(
     const hospitalBranches = branchesByHospital[hospital._id!] || []
 
     // Filter branches based on criteria
+    const hasBranchFilter = branchIds.length > 0
     const hasCityFilter = cityIds.length > 0
     const hasTreatmentFilter = treatmentIds.length > 0
+    const hasSpecialtyFilter = specialtyIds.length > 0
+    const hasAccreditationFilter = accreditationIds.length > 0
     
     const filteredBranches = hospitalBranches.filter((branch) => {
+      const branchMatch = !hasBranchFilter || branchIds.includes(branch._id)
       const cityMatch = !hasCityFilter || 
         branch.city?.some((city: any) => cityIds.includes(city._id))
       const treatmentMatch = !hasTreatmentFilter || 
         branch.treatments?.some((treatment: any) => treatmentIds.includes(treatment._id))
-      return cityMatch && treatmentMatch
+      const specialtyMatch = !hasSpecialtyFilter || 
+        branch.specialties?.some((specialty: any) => specialtyIds.includes(specialty._id))
+      const accreditationMatch = !hasAccreditationFilter || 
+        branch.accreditation?.some((accreditation: any) => accreditationIds.includes(accreditation._id))
+      
+      return branchMatch && cityMatch && treatmentMatch && specialtyMatch && accreditationMatch
     })
 
     // Enrich branches with complete data
@@ -506,12 +592,16 @@ async function enrichHospitalsWithRelatedData(
       ...branch,
       doctors: branch.doctors.map((doctor: any) => doctorsData[doctor._id] || doctor),
       city: branch.city.map((city: any) => citiesData[city._id] || city),
-      treatments: branch.treatments.map((treatment: any) => treatmentsData[treatment._id] || treatment)
+      treatments: branch.treatments.map((treatment: any) => treatmentsData[treatment._id] || treatment),
+      specialties: branch.specialties.map((specialty: any) => specialtiesData[specialty._id] || specialty),
+      accreditation: branch.accreditation.map((accreditation: any) => accreditationsData[accreditation._id] || accreditation)
     }))
 
-    // Aggregate unique doctors and treatments from filtered branches
+    // Aggregate unique doctors, treatments, specialties, and accreditations from filtered branches
     const uniqueDoctors = new Map()
     const uniqueTreatments = new Map()
+    const uniqueSpecialties = new Map()
+    const uniqueAccreditations = new Map()
 
     enrichedBranches.forEach(branch => {
       branch.doctors.forEach((doctor: any) => {
@@ -524,20 +614,31 @@ async function enrichHospitalsWithRelatedData(
           uniqueTreatments.set(treatment._id, treatment)
         }
       })
+      branch.specialties.forEach((specialty: any) => {
+        if (specialty._id && !uniqueSpecialties.has(specialty._id)) {
+          uniqueSpecialties.set(specialty._id, specialty)
+        }
+      })
+      branch.accreditation.forEach((accreditation: any) => {
+        if (accreditation._id && !uniqueAccreditations.has(accreditation._id)) {
+          uniqueAccreditations.set(accreditation._id, accreditation)
+        }
+      })
     })
 
-    // Enrich hospital accreditation with full data if needed (already mapped via include and ReferenceMapper)
+    // Enrich hospital accreditation with full data
     const mappedHospital = DataMappers.hospital(hospital)
     mappedHospital.accreditation = mappedHospital.accreditation.map((acc: any) => {
-      // If full data is already there from include, use it; otherwise, could fetch but since included, it's fine
-      return acc
+      return accreditationsData[acc._id] || acc
     })
 
     return {
       ...mappedHospital,
       branches: enrichedBranches,
       doctors: Array.from(uniqueDoctors.values()),
-      treatments: Array.from(uniqueTreatments.values())
+      treatments: Array.from(uniqueTreatments.values()),
+      specialties: Array.from(uniqueSpecialties.values()),
+      accreditations: Array.from(uniqueAccreditations.values())
     }
   })
 }

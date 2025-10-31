@@ -275,9 +275,6 @@ const ImageWithFallback = ({
 const DoctorCard = ({ doctor }: { doctor: any }) => {
   const doctorImage = getImageUrl(doctor.profileImage)
   const doctorSlug = doctor.slug || generateSlug(doctor.name)
-  const aboutText = getTextContent(doctor.about)
-  const keyPoints = extractKeyPoints(aboutText, 1)
-  const languages = doctor.languagesSpoken ? doctor.languagesSpoken.split(',').map(l => l.trim()).slice(0, 2) : []
 
   return (
     <Link
@@ -304,17 +301,6 @@ const DoctorCard = ({ doctor }: { doctor: any }) => {
       {/* Info Section */}
       <div className="flex flex-col flex-1 bg-white md:bg-gray-50 p-4">
         <h5 className="title-text text-base font-semibold text-gray-900 mb-1 line-clamp-1">{doctor.name}</h5>
-        <p className="description-1 text-sm text-gray-700">{doctor.specialization}</p>
-
-        {doctor.designation && (
-          <p className="description-2 text-xs text-gray-600 font-medium mt-1">{doctor.designation}</p>
-        )}
-
-        {keyPoints.length > 0 && (
-          <p className="description-2 text-xs text-gray-600 line-clamp-2 mt-auto pt-3 border-t border-gray-50">
-            {keyPoints[0]}
-          </p>
-        )}
       </div>
     </Link>
 
@@ -324,10 +310,6 @@ const DoctorCard = ({ doctor }: { doctor: any }) => {
 const TreatmentCard = ({ treatment }: { treatment: any }) => {
   const treatmentImage = getImageUrl(treatment.treatmentImage)
   const treatmentSlug = treatment.slug || generateSlug(treatment.name)
-  const processedDescription = treatment.description
-    ? removeBannersFromDescription(treatment.description)
-    : "Comprehensive medical treatment for optimal recovery."
-  const keyPoints = extractKeyPoints(processedDescription, 2)
 
   return (
     <Link href={`/treatment/${treatmentSlug}`} className="group h-full flex flex-col hover:no-underline bg-white rounded-lg border border-gray-100 shadow-sm overflow-hidden ">
@@ -341,16 +323,6 @@ const TreatmentCard = ({ treatment }: { treatment: any }) => {
       </div>
       <div className="p-4 flex-1 flex bg-white md:bg-gray-50 flex-col">
         <h5 className="title-text font-semibold text-gray-900 text-base mb-2 line-clamp-1">{treatment.name}</h5>
-        {treatment.category && <p className="description-1 text-gray-700 text-sm mb-3">{treatment.category}</p>}
-        <div className="space-y-2 mb-3 flex-1">
-          {keyPoints.slice(0, 1).map((point, idx) => (
-            <p key={idx} className="description-2 text-gray-600 text-xs line-clamp-2">{point}</p>
-          ))}
-        </div>
-        <div className="mt-auto space-y-1 text-xs text-gray-500">
-          {treatment.duration && <p className="flex items-center gap-1"><Clock className="w-3 h-3" /> {treatment.duration}</p>}
-          {treatment.cost && <p className="description-1 text-gray-900 font-semibold">From ${treatment.cost}</p>}
-        </div>
       </div>
     </Link>
   )
@@ -359,8 +331,7 @@ const TreatmentCard = ({ treatment }: { treatment: any }) => {
 const BranchCard = ({ branch, hospitalSlug }: { branch: any; hospitalSlug: string }) => {
   const branchImage = getImageUrl(branch.branchImage)
   const branchSlug = generateBranchSlug(hospitalSlug, branch.name)
-  const branchDesc = getTextContent(branch.description)
-  const keyPoints = extractKeyPoints(branchDesc, 2)
+  const branchCity = (branch.city || [])[0]?.name || (branch.city || '')
 
   return (
     <Link href={`/hospitals/branches/${branchSlug}`} className="group block bg-white rounded-lg border border-gray-100 shadow-sm overflow-hidden ">
@@ -374,15 +345,11 @@ const BranchCard = ({ branch, hospitalSlug }: { branch: any; hospitalSlug: strin
       </div>
       <div className="p-4 bg-white md:bg-gray-50">
         <h5 className="title-text font-semibold text-gray-900 text-base mb-2 line-clamp-1">{branch.name}</h5>
-        {/* {branch.address && <p className="description-1 text-gray-600 text-sm mb-1 line-clamp-2">{branch.address}</p>} */}
-        {keyPoints.length > 0 && (
-          <div className="space-y-1 mb-3">
-            {keyPoints.slice(0, 1).map((point, idx) => (
-              <p key={idx} className="description-1 text-gray-600 text-sm leading-relaxed line-clamp-2">{point}</p>
-            ))}
-          </div>
+        {branchCity && (
+          <p className="description-1 text-gray-600 text-sm leading-relaxed line-clamp-2">
+            {branchCity}
+          </p>
         )}
-       
       </div>
     </Link>
   )
@@ -458,7 +425,7 @@ const SimilarHospitalCard = ({ hospital }: { hospital: any }) => {
         <div className="space-y-2 text-xs text-gray-500 mt-auto pt-3 border-t border-gray-100">
           {(hospital.beds || hospital.noOfBeds) && <p className="description-2 flex items-center gap-1"><Bed className="w-3 h-3" /> {hospital.beds || hospital.noOfBeds} Beds</p>}
           {hospital.branches?.length > 0 && <p className="description-2 flex items-center gap-1"><Network className="w-3 h-3" /> {hospital.branches.length} Branches</p>}
-          {hospital.yearEstablished && <p className="description-2 flex items-center gap-1"><CalendarDays className="w-3 h-3" /> Est. {hospital.yearEstablished}</p>}
+          {hospital.yearEstablished && <p className="description-2 flex items-center gap-1"><CalendarDays className="w-3 h-3" />  {hospital.yearEstablished}</p>}
         </div>
       </div>
     </Link>
@@ -533,7 +500,7 @@ const EmblaCarousel = ({
     <div className="relative">
       <div className="flex justify-between items-center mb-2 md:mb-4">
         <h3 className="heading-sm text-xl font-bold text-gray-900 flex items-center gap-3">
-         
+          <Icon className="w-5 h-5 text-gray-600" />
           {title}
         </h3>
         <CarouselControls onPrev={scrollPrev} onNext={scrollNext} show={items.length > itemsPerView} />
@@ -683,7 +650,7 @@ const HeroSection = ({ hospital, params }: { hospital: HospitalWithBranchPreview
                     ) : (
                       <Award className="w-4 h-4" />
                     )}
-                    <div className="text-3xl text-white">{acc.name}</div>
+                    <div className="text-sm font-medium">{acc.name}</div>
                   </span>
                 ))}
                 {hospital.emergencyServices && (
@@ -786,6 +753,20 @@ export default function HospitalDetail({ params }: { params: Promise<{ slug: str
     }
   }, [resolvedParams.slug])
 
+  const computedStats = useMemo(() => {
+    if (!hospital) return { totalBeds: 0, totalDoctors: 0, totalBranches: 0, yearEstablished: 'N/A' };
+
+    const totalBeds = hospital.branches?.reduce((sum, b) => sum + (parseInt(b.totalBeds || b.beds || '0') || 0), 0) || 0;
+    const totalDoctors = hospital.branches?.reduce((sum, b) => {
+      const num = parseInt((b.noOfDoctors || '0').replace(/[^\d]/g, ''));
+      return sum + (isNaN(num) ? 0 : num);
+    }, 0) || 0;
+    const totalBranches = hospital.branches?.length || 0;
+    const yearEstablished = hospital.yearEstablished || 'N/A';
+
+    return { totalBeds, totalDoctors, totalBranches, yearEstablished };
+  }, [hospital]);
+
   const uniqueCities = useMemo(() => {
     if (!hospital) return []
     const cities = hospital.branches?.flatMap(branch => 
@@ -843,16 +824,10 @@ export default function HospitalDetail({ params }: { params: Promise<{ slug: str
               <section className="md:bg-white md:rounded-lg md:border border-gray-200  md:p-8">
                 <h2 className="heading-sm text-2xl font-bold text-gray-900 mb-4">Hospital Overview</h2>
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6">
-                  {hospital.branches?.length > 0 && (
-                    <StatCard icon={Building2} value={hospital.branches.length} label="Branches" />
-                  )}
-                  {(hospital.beds || hospital.noOfBeds) && (
-                    <StatCard icon={Bed} value={hospital.beds || hospital.noOfBeds} label="Beds" />
-                  )}
-                  {hospital.accreditation?.length > 0 && (
-                    <StatCard icon={Award} value={hospital.accreditation.length} label="Accreditations" />
-                  )}
-                 
+                  <StatCard icon={Building2} value={computedStats.totalBranches} label="Branches" />
+                  <StatCard icon={Bed} value={computedStats.totalBeds} label="Total Beds" />
+                  <StatCard icon={Users} value={computedStats.totalDoctors} label="Doctors" />
+                  <StatCard icon={Calendar} value={` ${computedStats.yearEstablished}`} label="Established" />
                 </div>
               </section>
 
@@ -871,7 +846,7 @@ export default function HospitalDetail({ params }: { params: Promise<{ slug: str
               {hospital.branches?.length > 0 && (
                 <section className="md:bg-white rounded-lg md:border border-gray-200  md:p-8">
                   <div className="flex flex-col lg:flex-row lg:items-center justify-between mb-4 gap-4">
-                    <h2 className="heading-sm text-xl font-bold text-gray-900">Our Branches</h2>
+                    <h2 className="heading-sm text-xl font-bold text-gray-900">Nearby Branches</h2>
                     <div className="flex items-center gap-4 w-full lg:w-auto">
                       <FilterDropdown
                         options={uniqueCities}
@@ -927,6 +902,17 @@ export default function HospitalDetail({ params }: { params: Promise<{ slug: str
                 </section>
               )}
 
+              {/* Similar Hospitals Section */}
+              {similarHospitals.length > 0 && (
+                <section className="md:bg-white md:rounded-lg md:border border-gray-200 md:p-8">
+                  <EmblaCarousel
+                    items={similarHospitals}
+                    title="Similar Hospitals"
+                    icon={Hospital}
+                    type="hospitals"
+                  />
+                </section>
+              )}
 
             </main>
 

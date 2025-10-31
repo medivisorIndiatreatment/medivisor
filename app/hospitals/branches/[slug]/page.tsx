@@ -125,8 +125,6 @@ const getShortDescription = (richContent: any, maxLength: number = 100): string 
 // Helper function to render rich text content
 const renderRichText = (richContent: any): JSX.Element | null => {
   if (typeof richContent === 'string') {
-    // Handle HTML string with dangerouslySetInnerHTML, stripping or mapping classes if needed
-    // For simplicity, render as HTML, assuming global styles or inline styles
     return <div className="description-1 leading-relaxed prose space-y-3 prose-sm max-w-none" dangerouslySetInnerHTML={{ __html: richContent }} />
   }
   if (!richContent || !richContent.nodes) return null
@@ -237,6 +235,66 @@ const Breadcrumb = ({ hospitalName, branchName, hospitalSlug }: { hospitalName: 
   </nav>
 )
 
+// Accreditations List Component
+const AccreditationsList = ({ accreditations }: { accreditations: any[] }) => {
+  if (!accreditations || accreditations.length === 0) {
+    return (
+      <div className="text-center p-6 bg-gray-50 rounded-lg border border-gray-100">
+        <Award className="w-8 h-8 text-gray-400 mx-auto mb-3" />
+        <p className="text-gray-500 text-sm">No accreditations listed</p>
+        <p className="text-gray-400 mt-2 text-xs">Accreditations</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="text-center p-6 bg-white md:bg-gray-50 rounded-lg border border-gray-100 hover:shadow-sm transition-shadow">
+      <Award className="w-8 h-8 text-gray-600 mx-auto mb-3" />
+      <div className="space-y-1 max-h-20 overflow-y-auto">
+        {accreditations.slice(0, 4).map((acc: any) => (
+          <p key={acc._id} className="text-sm text-gray-700 font-medium line-clamp-1 px-2 py-1 bg-gray-100 rounded mx-auto w-full max-w-[120px]">
+            {acc.name}
+          </p>
+        ))}
+        {accreditations.length > 4 && (
+          <p className="text-xs text-gray-500 mt-2">+{accreditations.length - 4} more</p>
+        )}
+      </div>
+      <p className="text-gray-500 mt-3 text-xs font-medium">Accreditations</p>
+    </div>
+  );
+}
+
+// Specialties List Component
+const SpecialtiesList = ({ specialties }: { specialties: any[] }) => {
+  if (!specialties || specialties.length === 0) {
+    return (
+      <div className="text-center p-6 bg-gray-50 rounded-lg border border-gray-100">
+        <Heart className="w-8 h-8 text-gray-400 mx-auto mb-3" />
+        <p className="text-gray-500 text-xs">No specialties listed</p>
+        <p className="text-gray-400 mt-2 text-xs">Specialties</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="text-center p-6 bg-white md:bg-gray-50 rounded-lg border border-gray-100 hover:shadow-sm transition-shadow">
+      <Heart className="w-8 h-8 text-gray-600 mx-auto mb-3" />
+      <div className="space-y-1 max-h-20 overflow-y-auto">
+        {specialties.slice(0, 4).map((spec: any) => (
+          <p key={spec._id || Math.random()} className="text-3xl font-semibold text-gray-800">
+            {spec.name}
+          </p>
+        ))}
+        {specialties.length > 4 && (
+          <p className="text-xs text-gray-500 mt-2">+{specialties.length - 4} more</p>
+        )}
+      </div>
+      <p className="text-gray-500 mt-3 text-sm font-medium">Specialties</p>
+    </div>
+  );
+}
+
 // Similar Branches Carousel Component
 const SimilarBranchesCarousel = ({ branches, currentCityDisplay }: { branches: any[], currentCityDisplay: string }) => {
   if (branches.length === 0) return null
@@ -252,12 +310,12 @@ const SimilarBranchesCarousel = ({ branches, currentCityDisplay }: { branches: a
   const scrollNext = useCallback(() => emblaApi && emblaApi.scrollNext(), [emblaApi])
 
   const itemsPerView = 3
-  const visibleSlidesClass = `min-w-0 w-80`
+  const visibleSlidesClass = `w-full sm:w-1/2 lg:w-[calc(32.7%-0.666rem)]`
 
   return (
     <section className="bg-white rounded-lg shadow-sm p-4 border border-gray-100">
-      <div className="flex justify-between items-center mb-4">
-        <h3 className="text-2xl font-semibold text-gray-800 flex items-center gap-3">
+      <div className="flex justify-between items-center mb-4 map-4">
+        <h3 className="text-2xl font-semibold text-gray-800  flex items-center gap-3">
           Nearby Branches in {currentCityDisplay} <span className="text-gray-700 text-base font-normal">({branches.length})</span>
         </h3>
         {branches.length > itemsPerView && (
@@ -316,35 +374,18 @@ const BranchCard = ({ branch, branchImage, hospitalSlug }: { branch: any, branch
           </div>
         )}
       </div>
-      <div className="p-4 space-y-3">
+      <div className="p-4 space-y-2">
         <h3 className="font-semibold text-gray-800 text-base line-clamp-1">{branch.name}</h3>
-        <p className="text-gray-600 text-sm leading-relaxed">{getShortDescription(branch.description, 80)}</p>
-        {branch.yearEstablished && (
-          <div className="flex items-center gap-2 text-xs text-gray-500">
-            <Calendar className="w-4 h-4" />
-            <span>Est. {branch.yearEstablished}</span>
-          </div>
-        )}
-       
-        {branch.totalBeds && (
-          <div className="flex items-center gap-2 text-xs text-gray-500">
-            <Bed className="w-4 h-4" />
-            <span>{branch.totalBeds} Beds</span>
-          </div>
-        )}
-        <div className="pt-2">
-          <p className="text-xs font-medium text-gray-700 mb-1">Location</p>
-          <div className="flex items-center gap-1 text-xs text-gray-600">
-            <MapPin className="w-3 h-3 flex-shrink-0" />
-            <span>{firstCity}</span>
-          </div>
+        <div className="flex items-center gap-1 text-xs text-gray-600">
+          <MapPin className="w-3 h-3 flex-shrink-0" />
+          <span>{firstCity}</span>
         </div>
       </div>
     </Link>
   )
 }
 
-// Doctor Card Component (assuming used in carousel)
+// Doctor Card Component
 const DoctorCard = ({ doctor }: { doctor: any }) => {
   const doctorImage = getDoctorImage(doctor.profileImage)
   const doctorSlug = doctor.slug || generateSlug(doctor.name)
@@ -366,15 +407,21 @@ const DoctorCard = ({ doctor }: { doctor: any }) => {
         )}
       </div>
       <div className="p-4 flex-1 flex flex-col">
-        <h3 className="font-semibold text-gray-900 text-base mb-2 line-clamp-1">{doctor.name}</h3>
-        <p className="text-gray-600 text-sm mb-3">{doctor.specialization}</p>
+        <h3 className="font-medium text-gray-900 text-lg mb-2 line-clamp-1">{doctor.name}</h3>
+        <p className="text-gray-600 text-sm mb-2">{doctor.specialization}</p>
+        {doctor.experience && (
+          <p className="text-gray-500 text-xs mb-3 flex items-center gap-1">
+            <Calendar className="w-3 h-3" />
+            {doctor.experience} years of experience
+          </p>
+        )}
         <p className="text-gray-500 text-xs line-clamp-2 flex-1">{getShortDescription(doctor.about)}</p>
       </div>
     </Link>
   )
 }
 
-// Treatment Card Component (assuming used in carousel)
+// Treatment Card Component
 const TreatmentCard = ({ item }: { item: any }) => {
   const treatmentImage = getTreatmentImage(item.treatmentImage || item.image)
 
@@ -396,12 +443,7 @@ const TreatmentCard = ({ item }: { item: any }) => {
       </div>
       <div className="p-4 flex-1 flex flex-col">
         <h3 className="font-semibold text-gray-900 text-base mb-2 line-clamp-1">{item.name}</h3>
-        <p className="text-gray-500 text-sm line-clamp-1">
-          {item.category || 'Specialized Treatment'}
-        </p>
-        <p className="text-gray-500 text-sm line-clamp-2">
-          {getShortDescription(item.description)}
-        </p>
+
         {item.cost && (
           <div className="mt-4 pt-4 border-t border-gray-100">
             <p className="text-blue-600 font-semibold text-sm">Starting from ${item.cost}</p>
@@ -412,7 +454,7 @@ const TreatmentCard = ({ item }: { item: any }) => {
   )
 }
 
-// Embla Carousel Component (assuming definition)
+// Embla Carousel Component
 const EmblaCarousel = ({
   items,
   title,
@@ -435,7 +477,7 @@ const EmblaCarousel = ({
   const scrollNext = useCallback(() => emblaApi && emblaApi.scrollNext(), [emblaApi])
 
   const itemsPerView = 3
-  const visibleSlidesClass = `min-w-0 w-80`
+  const visibleSlidesClass = `w-full sm:w-1/2 lg:w-[calc(32.7%-0.666rem)]`
 
   const renderCard = (item: any) => {
     switch (type) {
@@ -449,10 +491,10 @@ const EmblaCarousel = ({
   }
 
   return (
-    <section className="relative">
-      <div className="flex justify-between items-center mb-4">
-        <h3 className="text-2xl font-semibold text-gray-800 flex items-center gap-3">
-          <Icon className="w-6 h-6 text-gray-600" />
+    <section className="bg-white rounded-lg shadow-sm p-4 border border-gray-100">
+      <div className="flex justify-between items-center map-4">
+        <h3 className="text-2xl font-semibold mb-4 text-gray-800 flex items-center gap-3">
+
           {title}
         </h3>
         {items.length > itemsPerView && (
@@ -479,7 +521,10 @@ const EmblaCarousel = ({
   )
 }
 
-// Skeleton Components (assuming definitions)
+// Hospital Group Overview Component
+
+
+// Skeleton Components
 const HeroSkeleton = () => (
   <section className="relative w-full h-[70vh] bg-gradient-to-br from-gray-200 to-gray-300 animate-pulse">
     <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/30 to-transparent" />
@@ -645,8 +690,8 @@ export default function BranchDetail({ params }: { params: Promise<{ slug: strin
         <Breadcrumb hospitalName="Hospital Name" branchName="Branch Name" hospitalSlug="" />
         <section className="py-12 relative z-10">
           <div className="container mx-auto px-4">
-            <div className="grid lg:grid-cols-12 gap-8">
-              <main className="lg:col-span-9 space-y-8">
+            <div className="grid lap:grid-cols-12 gap-8">
+              <main className="lap:col-span-9 space-y-8">
                 <OverviewSkeleton />
                 <AboutSkeleton />
                 <CarouselSkeleton type="doctors" />
@@ -719,29 +764,53 @@ export default function BranchDetail({ params }: { params: Promise<{ slug: strin
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/30 to-transparent" />
         <div className="absolute bottom-0 left-0 w-full z-10 px-6 pb-12 text-white">
           <div className="container mx-auto space-y-4">
-           <div className="flex gap-x-4 items-center">
-             <div className="flex justify-start">
-              {hospitalLogo && (
-                <div className="relative w-16 h-16 bg-white rounded-full p-2">
-                  <Image
-                    src={hospitalLogo}
-                    alt={`${hospital.name} logo`}
-                    fill
-                    className="object-contain rounded-full"
-                  />
+            <div className="flex gap-x-4 items-center">
+              <div className="flex justify-start">
+                {hospitalLogo && (
+                  <div className="relative w-16 h-16 bg-white rounded-full p-2">
+                    <Image
+                      src={hospitalLogo}
+                      alt={`${hospital.name} logo`}
+                      fill
+                      className="object-contain rounded-full"
+                    />
+                  </div>
+                )}
+              </div>
+              <div className="flex-1">
+                <h1 className="text-2xl md:text-3xl lg:text-4xl font-semibold leading-tight">
+                  {branch.name}
+                </h1>
+                <div className="flex flex-wrap gap-x-2 mt-0">
+                  {branch.specialties?.slice(0, 3).map((spec: any) => (
+                    <span key={spec._id} className="flex items-center gap-1  text-lg">
+
+                      {spec.name},
+                    </span>
+                  ))}
+                  {branch.accreditation && branch.accreditation.slice(0, 3).map((acc: any) => (
+                    <span key={acc._id} className="flex items-center gap-2 text-lg">
+                      {acc.name}
+                      {acc.image && (
+                        <img
+                          src={getWixImageUrl(acc.image)}
+                          alt={acc.name}
+                          className="w-5 h-5 rounded-full object-contain"
+                        />
+                      )}
+
+                    </span>
+                  ))}
+                  {branch.specialties?.length > 3 && (
+                    <span className="text-lg text-blue-200">+{branch.specialties.length - 3} more</span>
+                  )}
                 </div>
-              )}
+              </div>
             </div>
-            <h1 className="text-3xl md:text-4xl lg:text-5xl font-semibold leading-tight">
-              {branch.name}
-            </h1>
-           </div>
-            {/* <p className="text-lg max-w-2xl leading-relaxed text-gray-200">
-               {branch.address || "A dedicated healthcare facility providing comprehensive medical services"}
-            </p> */}
             <div className="flex flex-wrap gap-3 mt-4">
+
               {branch.address && (
-                <span className="flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-lg text-sm font-medium border border-white/20">
+                <span className="flex items-center gap-2 text-lg font-medium ">
                   <MapPin className="w-4 h-4" />
                   {branch.address}
                 </span>
@@ -762,34 +831,53 @@ export default function BranchDetail({ params }: { params: Promise<{ slug: strin
         <div className="container mx-auto px-4">
           <div className="grid lg:grid-cols-12 gap-4 md:px-0 px-2">
             <main className="lg:col-span-9 space-y-4">
+              {/* Hospital Group Overview */}
+            
+
               {/* Key Statistics */}
               <section className="md:bg-white md:rounded-lg md:shadow-sm md:p-4 md:border border-gray-100">
                 <h2 className="text-2xl font-semibold text-gray-800 mb-4">Branch Overview</h2>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                  {branch.specialties?.length > 0 && (
+                    <SpecialtiesList specialties={branch.specialties} />
+                  )}
                   {branch.totalBeds && (
                     <StatCard icon={Bed} value={branch.totalBeds} label="Total Beds" />
                   )}
-               
-                  {branch.operatingRooms && (
-                    <StatCard icon={Scissors} value={branch.operatingRooms} label="Operating Rooms" />
+                  {branch.icuBeds && (
+                    <StatCard icon={Bed} value={branch.icuBeds} label="ICU Beds" />
+                  )}
+                  {branch.noOfDoctors && (
+                    <StatCard icon={Users} value={branch.noOfDoctors} label="Doctors" />
                   )}
                   {branch.yearEstablished && (
                     <StatCard icon={Calendar} value={branch.yearEstablished} label="Established" />
                   )}
+                  {/* {branch.accreditation?.length > 0 && (
+                    <AccreditationsList accreditations={branch.accreditation} />
+                  )} */}
+
                 </div>
               </section>
 
               {/* About Branch Section */}
               {branch.description && (
                 <section className="md:bg-white md:rounded-lg md:shadow-sm md:p-4 md:border border-gray-100">
-                  <h2 className="text-2xl font-semibold  text-gray-800 mt-5 md:mt-0 mb-2 md:mb-4">About {branch.name}</h2>
+                  <h2 className="text-2xl font-semibold  text-gray-800 mt-5 md:mt-0 mb-2 md:mb-2">About {branch.name}</h2>
                   {renderRichText(branch.description)}
+                  <div className="pt-2">
+                    <a href="/hospitals" className="description  ">
+                      Explore More About Our Group Hospitals
+                    </a>
+                  </div>
+
                 </section>
+
               )}
 
               {/* Doctors Section */}
               {branch.doctors && branch.doctors.length > 0 && (
-                <section className="md:bg-white md:rounded-lg md:shadow-sm md:p-4 md:border border-gray-100">
+                <section >
                   <EmblaCarousel
                     items={branch.doctors}
                     title="Our Specialist Doctors"
@@ -801,7 +889,7 @@ export default function BranchDetail({ params }: { params: Promise<{ slug: strin
 
               {/* Treatments Section */}
               {branch.treatments && branch.treatments.length > 0 && (
-                <section className="md:bg-white md:rounded-lg md:shadow-sm md:p-4 mt-5 md:mt-0 md:border border-gray-100">
+                <section>
                   <EmblaCarousel
                     items={branch.treatments}
                     title="Available Treatments"
@@ -811,20 +899,7 @@ export default function BranchDetail({ params }: { params: Promise<{ slug: strin
                 </section>
               )}
 
-              {/* Facilities & Services */}
-              {branch.facilities && branch.facilities.length > 0 && (
-                <section className="bg-white rounded-lg shadow-sm p-4 border border-gray-100">
-                  <h2 className="text-2xl font-semibold text-gray-800 mb-4">Facilities & Services</h2>
-                  <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {branch.facilities.map((facility: string, index: number) => (
-                      <div key={index} className="flex items-center gap-3 p-4 bg-gray-50 rounded-lg border border-gray-100">
-                        <div className="w-3 h-3 bg-gray-600 rounded-full flex-shrink-0"></div>
-                        <span className="text-gray-700 font-medium">{facility}</span>
-                      </div>
-                    ))}
-                  </div>
-                </section>
-              )}
+
 
               {/* Similar Branches Section */}
               <SimilarBranchesCarousel branches={similarBranches} currentCityDisplay={currentCityDisplay} />
@@ -832,7 +907,7 @@ export default function BranchDetail({ params }: { params: Promise<{ slug: strin
 
             {/* Sidebar */}
             <aside className="lg:col-span-3 space-y-8">
-             <ContactForm/>
+              <ContactForm />
             </aside>
           </div>
         </div>

@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback, useMemo, useRef } from "react"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import Banner from "@/components/BannerService"
 import {
   Search,
@@ -50,6 +51,47 @@ interface AccreditationType {
   year: string | null;
 }
 
+interface BranchType {
+  _id: string
+  name: string
+  address: string | null
+  city: Array<{
+    _id: string
+    name: string
+    state: string | null
+    country: string | null
+  }>
+  contactNumber: string | null
+  email: string | null
+  totalBeds: number | null
+  icuBeds: string | null
+  yearEstablished: number | null
+  emergencyContact: string | null
+  branchImage: any | null
+  description: string | null
+  doctors: Array<any>
+  treatments: Array<{
+    _id: string
+    name: string
+    description: string | null
+    category: string | null
+    duration: string | null
+    cost: string | null
+    treatmentImage?: string | null
+  }>
+  specialties: Array<{
+    _id: string
+    name: string
+    image: string | null
+    description: string | null
+    issuingBody: string | null
+    year: string | null
+    category: string | null
+  }>
+  accreditation: AccreditationType[]
+  noOfDoctors: string | null
+}
+
 interface HospitalType {
   _id: string
   name: string
@@ -64,25 +106,7 @@ interface HospitalType {
   website: string | null
   email: string | null
   contactNumber: string | null
-  branches: Array<{
-    _id: string
-    name: string
-    address: string | null
-    city: Array<{
-      _id: string
-      name: string
-      state: string | null
-      country: string | null
-    }>
-    contactNumber: string | null
-    email: string | null
-    totalBeds: string | null
-    icuBeds: string | null
-    emergencyContact: string | null
-    branchImage: any | null
-    doctors: Array<any>
-    treatments: Array<any>
-  }>
+  branches: BranchType[]
   doctors: Array<{
     _id: string
     name: string
@@ -135,21 +159,10 @@ const HospitalCardSkeleton = () => (
       {/* Title */}
       <div className="h-6 bg-gray-200 rounded w-3/4" />
 
-      {/* Treatments Section Skeleton */}
-      <div className="space-y-2">
-        <div className="h-4 bg-gray-200 rounded w-1/3" />
-        <div className="flex gap-2">
-          <div className="h-6 bg-gray-200 rounded w-20" />
-          <div className="h-6 bg-gray-200 rounded w-16" />
-        </div>
-      </div>
-
-      {/* Branches Section Skeleton */}
+      {/* Location Section Skeleton */}
       <div className="space-y-2">
         <div className="h-4 bg-gray-200 rounded w-1/4" />
-        <div className="flex gap-2">
-          <div className="h-6 bg-gray-200 rounded w-24" />
-        </div>
+        <div className="h-4 bg-gray-200 rounded w-3/4" />
       </div>
 
       {/* Stats Grid Skeleton */}
@@ -162,36 +175,39 @@ const HospitalCardSkeleton = () => (
   </div>
 )
 
-// Sub-component: Hospital Card
+// Sub-component: Hospital Card (now showing branch data)
 interface HospitalCardProps {
-  hospital: HospitalType
+  branch: BranchType
+  hospitalName: string
+  hospitalLogo: string | null
 }
 
-const HospitalCard = ({ hospital }: HospitalCardProps) => {
-  const slug = hospital.slug || generateSlug(hospital.name)
-  const imageUrl = getWixImageUrl(hospital.image) || getWixImageUrl(hospital.logo)
-  const displayTreatments = hospital.treatments?.slice(0, 2) || []
-  const remainingTreatments = hospital.treatments?.length - 2 || 0
+const HospitalCard = ({ branch, hospitalName, hospitalLogo }: HospitalCardProps) => {
+  const router = useRouter()
 
-  // Get unique branch names with their cities
-  const branchData = useMemo(() => {
-    const branches = hospital.branches?.map(branch => ({
-      name: branch.name,
-      cities: branch.city?.map(c => c.name).filter(Boolean) || []
-    })) || []
+  // Generate slug from branch name and hospital name
+  const slug = generateSlug(`${hospitalName} ${branch.name}`)
 
-    return branches
-  }, [hospital.branches])
+  // Use branch image first, then hospital image/logo as fallback
+  const imageUrl = getWixImageUrl(branch.branchImage?.imageData?.image?.src?.id || branch.branchImage) || null
 
-  const displayBranches = branchData.slice(0, 2)
-  const remainingBranches = branchData.length - 2
+  // Get cities for this branch
+  const cities = branch.city?.map(c => c.name).filter(Boolean) || []
+  const primaryCity = cities[0] || ""
+  const primaryState = branch.city?.[0]?.state || ""
 
-  // Display up to 3 accreditations
-  const displayAccreditations = hospital.accreditation?.slice(0, 3) || []
-  const remainingAccreditations = hospital.accreditation?.length - 3 || 0
+  // Get accreditations for this branch
+  const displayAccreditations = branch.accreditation?.slice(0, 3) || []
+  const remainingAccreditations = branch.accreditation?.length - 3 || 0
+
+  // Get hospital logo URL
+  const hospitalLogoUrl = hospitalLogo ? getWixImageUrl(hospitalLogo) : null
+
+  // Get primary specialty
+  const primarySpecialty = branch.specialties?.[0]?.name || 'N/A'
 
   return (
-    <Link href={`/hospitals/${slug}`} className="block">
+    <Link href={`/hospitals/branches/${slug}`} className="block">
       <article className="group bg-white rounded-lg shadow-sm hover:shadow-md transition-all duration-300 border border-gray-100 overflow-hidden cursor-pointer h-full flex flex-col">
         {/* Image Section */}
         <div className="relative h-60 md:h-48 overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100">
@@ -203,7 +219,7 @@ const HospitalCard = ({ hospital }: HospitalCardProps) => {
                   <img
                     src={getWixImageUrl(acc.image)}
                     alt={acc.name}
-                    className="w-10 h-10 rounded-full object-contain"
+                    className="w-7 h-7 rounded-full object-contain"
                     onError={(e) => {
                       e.currentTarget.style.display = "none"
                     }}
@@ -211,7 +227,6 @@ const HospitalCard = ({ hospital }: HospitalCardProps) => {
                 ) : (
                   <Award className="w-3 h-3" />
                 )}
-                {/* {acc.name} */}
               </span>
             ))}
             {remainingAccreditations > 0 && (
@@ -224,7 +239,7 @@ const HospitalCard = ({ hospital }: HospitalCardProps) => {
           {imageUrl ? (
             <img
               src={imageUrl}
-              alt={hospital.name}
+              alt={branch.name}
               className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500"
               onError={(e) => {
                 e.currentTarget.style.display = "none"
@@ -240,101 +255,53 @@ const HospitalCard = ({ hospital }: HospitalCardProps) => {
 
         {/* Content Section */}
         <div className="p-3 sm:p-4 flex-1 flex flex-col">
-          {/* Hospital Name */}
+          {/* Hospital and Branch Name */}
           <header className="mb-3">
-            <h2 className="text-2xl sm:text-lg font-semibold line-clamp-2 group-hover:text-gray-900 transition-colors">
-              {hospital.name}
+            <h2 className="text-lg sm:text-lg font-medium line-clamp-2 group-hover:text-gray-900 transition-colors">
+              {branch.name}
             </h2>
+            <div className="flex relative items-center gap-x-2">
+              {primaryCity && (
+                <div className="pt-1 flex-1">
+               
+                  <div className="flex items-center flex gap-x-1 text-sm text-gray-700">
+                    <MapPin className="w-4 h-4 mr-1 " />
+                    <span className="truncate">{primaryCity}</span>, <p className="text-sm text-gray-600"> { " "}{primarySpecialty}</p>
+                  </div> 
+                </div>
+              )}
+              {hospitalLogoUrl && (
+                <img
+                  src={hospitalLogoUrl}
+                  alt={`${hospitalName} logo`}
+                  className="w-20 h-auto rounded absolute -bottom-2 -right-0 object-contain flex-shrink-0"
+                  onError={(e) => {
+                    e.currentTarget.style.display = "none"
+                  }}
+                />
+              )}
+            </div>
           </header>
-
-          {/* Treatments Section */}
-          {displayTreatments.length > 0 && (
-            <section className="mb-3">
-              <div className="flex items-center justify-between border-t border-gray-100 pt-2 sm:pt-3">
-                <p className="md:text-xs text-lg font-semibold text-gray-900 uppercase">Treatments</p>
-              </div>
-              <div className="flex flex-wrap gap-2 sm:gap-2 mt-1 sm:mt-2">
-                {displayTreatments.map((treatment) => (
-                  <span
-                    key={treatment._id}
-                    className="inline-flex items-center gap-1 bg-gray-50 px-2 sm:px-3 py-1 sm:py-1.5 rounded border border-gray-100 text-lg sm:text-sm"
-                  >
-                    <Cross className="w-4 h-4 sm:w-3 sm:h-3" />
-                    {treatment.name}
-                  </span>
-                ))}
-                {remainingTreatments > 0 && (
-                  <span className="inline-flex items-center text-lg sm:text-sm text-gray-700">
-                    +{remainingTreatments} more
-                  </span>
-                )}
-              </div>
-            </section>
-          )}
-
-          {/* Branches Section */}
-          {branchData.length > 0 && (
-            <section className="mb-4">
-              {/* Heading */}
-              <div className="flex items-center justify-between border-t border-gray-100 pt-2 sm:pt-3">
-                   <p className="md:text-xs text-lg font-semibold text-gray-900 uppercase">Branches</p>
-              </div>
-
-              {/* City List */}
-              <div className="space-y-1 sm:space-y-0 items-center flex  gap-2 sm:gap-x-2 mt-1 sm:mt-2 flex-wrap">
-                {displayBranches.map((branch, index) => (
-                  <div key={index} className="flex items-start gap-1 sm:gap-2 w-auto">
-                 
-                    <div className="flex-1 min-w-0">
-                      {branch.cities.length > 0 && (
-                        <p className="flex items-center gap-1 bg-gray-50 px-2 sm:px-3 py-1 sm:py-1.5 rounded border border-gray-100 text-lg sm:text-sm w-auto">
-                          {branch.cities.slice(0, 2).join(", ")}
-                          {branch.cities.length > 2 && (
-                            <span className="text-gray-500 text-lg sm:text-sm font-medium">
-                              +{branch.cities.length - 2} more
-                            </span>
-                          )}
-                        </p>
-                      )}
-                    </div>
-                  </div>
-                ))}
-
-                {/* Show remaining branches count */}
-                {remainingBranches > 0 && (
-                  <div className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm text-gray-700 pt-0 w-auto justify-center sm:justify-start">
-                    <span className="inline-flex items-center text-lg md:text-xs text-gray-700">+{remainingBranches} more</span>
-                  </div>
-                )}
-              </div>
-            </section>
-          )}
 
           {/* Stats Grid */}
           <footer className="border-t border-gray-100 pt-2 sm:pt-3 mt-auto">
-            <div className="grid grid-cols-2 gap-2 sm:gap-4">
-              {hospital.beds && (
-                <div className="text-center rounded bg-gray-50 p-2 sm:p-3 border border-gray-100">
-                  <p className="text-lg md:text-sm font-bold text-gray-900">{hospital.beds}</p>
-                  <p className="text-lg md:text-xs text-gray-900 uppercase font-medium">Total Beds</p>
+            <div className="grid grid-cols-3 gap-2 sm:gap-2">
+              {branch.noOfDoctors && (
+                <div className="text-center rounded bg-gray-50 p-2 sm:p-2 border border-gray-100">
+                  <p className="text-lg md:text-sm font-semibold text-gray-900">{branch.noOfDoctors}</p>
+                  <p className="text-lg md:text-xs text-gray-900 uppercase font-medium">Doctors</p>
                 </div>
               )}
-              {/* {hospital.yearEstablished && (
+              {branch.totalBeds && (
                 <div className="text-center rounded bg-gray-50 p-2 sm:p-3 border border-gray-100">
-                  <p className="text-sm font-bold text-gray-900">{hospital.yearEstablished}</p>
-                  <p className="text-xs text-gray-900 uppercase font-medium">Established</p>
+                  <p className="text-lg md:text-sm font-semibold text-gray-900">{branch.totalBeds}+</p>
+                  <p className="text-lg md:text-xs text-gray-900 uppercase font-medium"> Beds</p>
                 </div>
               )}
-              {hospital.accreditation && (
+              {branch.yearEstablished && (
                 <div className="text-center rounded bg-gray-50 p-2 sm:p-3 border border-gray-100">
-                  <p className="text-sm font-bold text-gray-900">{hospital.accreditation}</p>
-                  <p className="text-xs text-gray-900 uppercase font-medium">Accreditation</p>
-                </div>
-              )} */}
-              {hospital.branches?.length > 0 && (
-                <div className="text-center rounded bg-gray-50 p-2 sm:p-3 border border-gray-100">
-                  <p className="text-lg md:text-sm font-bold text-gray-900">{hospital.branches.length}</p>
-                  <p className="text-lg md:text-xs text-gray-900 uppercase font-medium">Branches</p>
+                  <p className="text-lg md:text-sm font-semibold text-gray-900">{branch.yearEstablished}</p>
+                  <p className="text-lg md:text-xs text-gray-900 uppercase font-medium">Est</p>
                 </div>
               )}
             </div>
@@ -354,7 +321,7 @@ interface SearchDropdownProps {
   selectedOption: string
   onOptionSelect: (id: string) => void
   onClear: () => void
-  type: "hospital" | "city" | "treatment"
+  type: "branch" | "city" | "treatment"
 }
 
 const SearchDropdown = ({
@@ -376,8 +343,8 @@ const SearchDropdown = ({
 
   const getIcon = () => {
     switch (type) {
-      case "hospital":
-        return <Hospital className="w-4 h-4 text-gray-500" />
+      case "branch":
+        return <Building2 className="w-4 h-4 text-gray-500" />
       case "city":
         return <MapPin className="w-4 h-4 text-gray-500" />
       case "treatment":
@@ -389,8 +356,8 @@ const SearchDropdown = ({
 
   const getPlaceholder = () => {
     switch (type) {
-      case "hospital":
-        return "Search hospitals..."
+      case "branch":
+        return "Search branches..."
       case "city":
         return "Search cities..."
       case "treatment":
@@ -404,7 +371,7 @@ const SearchDropdown = ({
     <div className="relative space-y-2">
       <label className="block text-sm font-medium text-gray-800 flex items-center gap-2">
         {getIcon()}
-        {type === "hospital" ? "Hospital" : type === "city" ? "City" : "Treatment"}
+        {type === "branch" ? "Branch" : type === "city" ? "City" : "Treatment"}
       </label>
 
       <div className="relative">
@@ -469,7 +436,7 @@ const SearchDropdown = ({
               ))
             ) : (
               <div className="px-4 py-4 text-sm text-gray-500 text-center">
-                No {type === "hospital" ? "hospitals" : type === "city" ? "cities" : "treatments"} found
+                No {type === "branch" ? "branches" : type === "city" ? "cities" : "treatments"} found
               </div>
             )}
           </div>
@@ -481,19 +448,19 @@ const SearchDropdown = ({
 
 // Sub-component: Filter Sidebar
 interface FilterSidebarProps {
-  search: string
-  setSearch: (value: string) => void
+  branchQuery: string
+  setBranchQuery: (value: string) => void
   cityQuery: string
   setCityQuery: (value: string) => void
   treatmentQuery: string
   setTreatmentQuery: (value: string) => void
-  selectedHospitalId: string
-  setSelectedHospitalId: (value: string) => void
+  selectedBranchId: string
+  setSelectedBranchId: (value: string) => void
   selectedCityId: string
   setSelectedCityId: (value: string) => void
   selectedTreatmentId: string
   setSelectedTreatmentId: (value: string) => void
-  hospitals: { id: string; name: string }[]
+  branches: { id: string; name: string }[]
   cities: { id: string; name: string }[]
   treatments: { id: string; name: string }[]
   showFilters: boolean
@@ -503,19 +470,19 @@ interface FilterSidebarProps {
 }
 
 const FilterSidebar = ({
-  search,
-  setSearch,
+  branchQuery,
+  setBranchQuery,
   cityQuery,
   setCityQuery,
   treatmentQuery,
   setTreatmentQuery,
-  selectedHospitalId,
-  setSelectedHospitalId,
+  selectedBranchId,
+  setSelectedBranchId,
   selectedCityId,
   setSelectedCityId,
   selectedTreatmentId,
   setSelectedTreatmentId,
-  hospitals,
+  branches,
   cities,
   treatments,
   showFilters,
@@ -529,7 +496,7 @@ const FilterSidebar = ({
       bg-white border border-gray-50 rounded-t-lg lg:rounded-lg lg:rounded-r-lg shadow-xl lg:shadow-none
       overflow-hidden lg:overflow-y-auto
       max-h-[80vh] lg:max-h-[calc(100vh-2rem)]
-      transform transition-transform duration-300 ease-in-out
+      transform transition-transform duration-300 ease-in-out lg:sticky lg:top-10
       ${showFilters
         ? 'translate-y-0 lg:translate-x-0'
         : 'translate-y-full md:translate-y-0 lg:translate-x-0'
@@ -561,19 +528,19 @@ const FilterSidebar = ({
 
     {/* Filter Content */}
     <div className="p-4 sm:p-5 space-y-4 lg:space-y-6">
-      {/* Hospital Search */}
+      {/* Branch Filter */}
       <SearchDropdown
-        value={search}
-        onChange={setSearch}
-        placeholder="Search hospitals..."
-        options={hospitals}
-        selectedOption={selectedHospitalId}
-        onOptionSelect={setSelectedHospitalId}
+        value={branchQuery}
+        onChange={setBranchQuery}
+        placeholder="Search branches..."
+        options={branches}
+        selectedOption={selectedBranchId}
+        onOptionSelect={setSelectedBranchId}
         onClear={() => {
-          setSearch("")
-          setSelectedHospitalId("")
+          setBranchQuery("")
+          setSelectedBranchId("")
         }}
-        type="hospital"
+        type="branch"
       />
 
       {/* City Filter */}
@@ -643,16 +610,16 @@ const MobileSearchButton = ({ setShowFilters, resultsCount }: MobileSearchButton
 
 // Sub-component: Results Header
 interface ResultsHeaderProps {
-  hospitals: HospitalType[]
+  branches: BranchType[]
   clearFilters: () => void
 }
 
-const ResultsHeader = ({ hospitals, clearFilters }: ResultsHeaderProps) => (
+const ResultsHeader = ({ branches, clearFilters }: ResultsHeaderProps) => (
   <>
-    {!hospitals.length ? null : (
+    {!branches.length ? null : (
       <div className="hidden lg:flex items-center justify-between mb-4">
         <p className="text-lg font-semibold mt-4">
-          Found <span className="text-gray-800">{hospitals.length}</span> hospitals
+          Found <span className="text-gray-800">{branches.length}</span> hospitals
         </p>
         <button
           onClick={clearFilters}
@@ -689,13 +656,14 @@ const LoadingSkeletons = () => (
 // Main Component
 export default function HospitalDirectory() {
   const [hospitals, setHospitals] = useState<HospitalType[]>([])
-  const [search, setSearch] = useState("")
-  const [hospitalsList, setHospitalsList] = useState<{ id: string; name: string }[]>([])
-  const [cities, setCities] = useState<{ id: string; name: string }[]>([])
-  const [treatments, setTreatments] = useState<{ id: string; name: string }[]>([])
+  const [branches, setBranches] = useState<BranchType[]>([])
+  const [branchOptions, setBranchOptions] = useState<{ id: string; name: string }[]>([])
+  const [cityOptions, setCityOptions] = useState<{ id: string; name: string }[]>([])
+  const [treatmentOptions, setTreatmentOptions] = useState<{ id: string; name: string }[]>([])
+  const [branchQuery, setBranchQuery] = useState("")
   const [cityQuery, setCityQuery] = useState("")
   const [treatmentQuery, setTreatmentQuery] = useState("")
-  const [selectedHospitalId, setSelectedHospitalId] = useState("")
+  const [selectedBranchId, setSelectedBranchId] = useState("")
   const [selectedCityId, setSelectedCityId] = useState("")
   const [selectedTreatmentId, setSelectedTreatmentId] = useState("")
   const [loading, setLoading] = useState(false)
@@ -733,9 +701,9 @@ export default function HospitalDirectory() {
 
     vw!.addEventListener('resize', updateKeyboardHeight)
     window.addEventListener('orientationchange', updateKeyboardHeight)
-    window.addEventListener('resize', updateKeyboardHeight) // For orientation/resize changes
+    window.addEventListener('resize', updateKeyboardHeight)
 
-    updateKeyboardHeight() // Initial call
+    updateKeyboardHeight()
 
     return () => {
       vw!.removeEventListener('resize', updateKeyboardHeight)
@@ -748,10 +716,10 @@ export default function HospitalDirectory() {
   const filterParams = useMemo(() => {
     const params = new URLSearchParams()
 
-    if (selectedHospitalId) {
-      params.append("hospitalId", selectedHospitalId)
-    } else if (search) {
-      params.append("q", search)
+    if (selectedBranchId) {
+      params.append("branchId", selectedBranchId)
+    } else if (branchQuery) {
+      params.append("branch", branchQuery)
     }
     if (selectedCityId) {
       params.append("cityId", selectedCityId)
@@ -768,7 +736,7 @@ export default function HospitalDirectory() {
     params.append("_t", Date.now().toString())
 
     return params
-  }, [search, selectedHospitalId, cityQuery, selectedCityId, treatmentQuery, selectedTreatmentId])
+  }, [branchQuery, selectedBranchId, cityQuery, selectedCityId, treatmentQuery, selectedTreatmentId])
 
   // Fetch hospitals with debounced callback
   const fetchHospitals = useCallback(async () => {
@@ -793,10 +761,21 @@ export default function HospitalDirectory() {
 
       console.log("[HospitalDirectory] Fetched hospitals count:", data.items?.length || 0)
       setHospitals(data.items || [])
+
+      // Extract all branches from hospitals
+      const allBranches: BranchType[] = []
+      data.items?.forEach((hospital: HospitalType) => {
+        hospital.branches?.forEach((branch: BranchType) => {
+          allBranches.push(branch)
+        })
+      })
+      setBranches(allBranches)
+
     } catch (err) {
       if ((err as Error).name !== "AbortError") {
         console.error("[HospitalDirectory] Error fetching hospitals:", err)
         setHospitals([])
+        setBranches([])
       }
     } finally {
       setLoading(false)
@@ -819,16 +798,15 @@ export default function HospitalDirectory() {
       if (!res.ok) throw new Error("Failed to fetch filter options")
       const data = await res.json()
 
-      const hospitalMap: Record<string, string> = {}
+      const branchMap: Record<string, string> = {}
       const cityMap: Record<string, string> = {}
       const treatmentMap: Record<string, string> = {}
 
-      data.items?.forEach((hospital: any) => {
-        if (hospital?._id && hospital?.name) {
-          hospitalMap[hospital._id] = hospital.name
-        }
-
-        hospital.branches?.forEach((branch: any) => {
+      data.items?.forEach((hospital: HospitalType) => {
+        hospital.branches?.forEach((branch: BranchType) => {
+          if (branch?._id && branch?.name) {
+            branchMap[branch._id] = branch.name
+          }
           branch.city?.forEach((city: any) => {
             if (city?._id && city?.name) cityMap[city._id] = city.name
           })
@@ -838,9 +816,9 @@ export default function HospitalDirectory() {
         })
       })
 
-      setHospitalsList(Object.entries(hospitalMap).map(([id, name]) => ({ id, name })))
-      setCities(Object.entries(cityMap).map(([id, name]) => ({ id, name })))
-      setTreatments(Object.entries(treatmentMap).map(([id, name]) => ({ id, name })))
+      setBranchOptions(Object.entries(branchMap).map(([id, name]) => ({ id, name })))
+      setCityOptions(Object.entries(cityMap).map(([id, name]) => ({ id, name })))
+      setTreatmentOptions(Object.entries(treatmentMap).map(([id, name]) => ({ id, name })))
     } catch (e) {
       console.error("[HospitalDirectory] Error fetching filter options:", (e as Error).message)
     }
@@ -865,22 +843,33 @@ export default function HospitalDirectory() {
   }, [fetchFilterOptions])
 
   const clearFilters = () => {
-    setSearch("")
+    setBranchQuery("")
     setCityQuery("")
     setTreatmentQuery("")
-    setSelectedHospitalId("")
+    setSelectedBranchId("")
     setSelectedCityId("")
     setSelectedTreatmentId("")
   }
 
   const renderContent = () => {
     if (initialLoad || loading) return <LoadingSkeletons />
-    if (hospitals.length === 0) return <NoResults />
+    if (branches.length === 0) return <NoResults />
     return (
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
-        {hospitals.map((hospital) => (
-          <HospitalCard key={hospital._id} hospital={hospital} />
-        ))}
+        {branches.map((branch) => {
+          // Find the parent hospital for this branch
+          const parentHospital = hospitals.find(hospital =>
+            hospital.branches?.some(b => b._id === branch._id)
+          )
+          return (
+            <HospitalCard
+              key={branch._id}
+              branch={branch}
+              hospitalName={parentHospital?.name || "Hospital"}
+              hospitalLogo={parentHospital?.logo || null}
+            />
+          )
+        })}
       </div>
     )
   }
@@ -915,21 +904,21 @@ export default function HospitalDirectory() {
 
           {/* Sidebar Filters */}
           <FilterSidebar
-            search={search}
-            setSearch={setSearch}
+            branchQuery={branchQuery}
+            setBranchQuery={setBranchQuery}
             cityQuery={cityQuery}
             setCityQuery={setCityQuery}
             treatmentQuery={treatmentQuery}
             setTreatmentQuery={setTreatmentQuery}
-            selectedHospitalId={selectedHospitalId}
-            setSelectedHospitalId={setSelectedHospitalId}
+            selectedBranchId={selectedBranchId}
+            setSelectedBranchId={setSelectedBranchId}
             selectedCityId={selectedCityId}
             setSelectedCityId={setSelectedCityId}
             selectedTreatmentId={selectedTreatmentId}
             setSelectedTreatmentId={setSelectedTreatmentId}
-            hospitals={hospitalsList}
-            cities={cities}
-            treatments={treatments}
+            branches={branchOptions}
+            cities={cityOptions}
+            treatments={treatmentOptions}
             showFilters={showFilters}
             setShowFilters={setShowFilters}
             clearFilters={clearFilters}
@@ -938,19 +927,14 @@ export default function HospitalDirectory() {
 
           {/* Main Content */}
           <main className="flex-1 min-w-0 pb-20 lg:pb-0">
-            <ResultsHeader hospitals={hospitals} clearFilters={clearFilters} />
+            <ResultsHeader branches={branches} clearFilters={clearFilters} />
             {renderContent()}
           </main>
         </div>
-
-        {/* Mobile Bottom Search Button */}
-        {!showFilters && (
-          <MobileSearchButton
-            setShowFilters={setShowFilters}
-            resultsCount={hospitals.length}
-          />
-        )}
       </section>
+
+      {/* Mobile Search Button */}
+      <MobileSearchButton setShowFilters={setShowFilters} resultsCount={branches.length} />
     </div>
   )
 }
