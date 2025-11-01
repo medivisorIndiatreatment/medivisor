@@ -3,6 +3,7 @@
 "use client"
 
 import { useState, useEffect, useCallback, useMemo, useRef } from "react"
+import { Suspense } from "react"
 import { useSearchParams } from "next/navigation"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
@@ -1086,8 +1087,8 @@ const NoResults = ({ view }: NoResultsProps) => (
   </div>
 )
 
-// Main Component
-export default function HospitalDirectory() {
+// Main Content Component (wrapped in Suspense)
+function HospitalDirectoryContent() {
   const searchParams = useSearchParams()
   const [hospitals, setHospitals] = useState<HospitalType[]>([])
   const [branchOptions, setBranchOptions] = useState<{ id: string; name: string }[]>([])
@@ -1771,5 +1772,21 @@ export default function HospitalDirectory() {
 
       <MobileSearchButton setShowFilters={setShowFilters} resultsCount={currentCount} view={view} />
     </div>
+  )
+}
+
+// Page Component with Suspense Boundary
+export default function HospitalsPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center">
+        <div className="text-center">
+          <Loader2 className="w-8 h-8 animate-spin mx-auto mb-4 text-gray-500" />
+          <p className="text-gray-600">Loading hospital directory...</p>
+        </div>
+      </div>
+    }>
+      <HospitalDirectoryContent />
+    </Suspense>
   )
 }
