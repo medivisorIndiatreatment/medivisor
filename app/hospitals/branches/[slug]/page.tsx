@@ -2,7 +2,7 @@
 
 "use client"
 
-import { useState, useEffect, useCallback } from "react"
+import { useState, useEffect, useCallback, useMemo, useRef } from "react"
 import Image from "next/image"
 import type { HospitalWithBranchPreview } from "@/types/hospital"
 import {
@@ -24,9 +24,14 @@ import {
   Clock,
   ArrowLeft,
   Home,
-  Hospital
+  Hospital,
+  Search,
+  X,
+  Filter,
+  ChevronDown
 } from "lucide-react"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import useEmblaCarousel from "embla-carousel-react"
 import classNames from "classnames"
 import ContactForm from "@/components/ContactForm"
@@ -521,8 +526,397 @@ const EmblaCarousel = ({
   )
 }
 
-// Hospital Group Overview Component
+// Sub-component: Search Dropdown
+interface SearchDropdownProps {
+  value: string
+  onChange: (value: string) => void
+  placeholder: string
+  options: { id: string; name: string }[]
+  selectedOption: string
+  onOptionSelect: (id: string) => void
+  onClear: () => void
+  type: "branch" | "city" | "treatment" | "specialty"
+}
 
+const SearchDropdown = ({
+  value,
+  onChange,
+  placeholder,
+  options,
+  selectedOption,
+  onOptionSelect,
+  onClear,
+  type,
+}: SearchDropdownProps) => {
+  const [isOpen, setIsOpen] = useState(false)
+  const dropdownRef = useRef<HTMLDivElement>(null)
+  const filteredOptions = useMemo(() => 
+    options.filter(option =>
+      option.name.toLowerCase().includes(value.toLowerCase())
+    ), [options, value])
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsOpen(false)
+      }
+    }
+
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside)
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [isOpen])
+
+  const selectedOptionName = options.find(opt => opt.id === selectedOption)?.name
+
+  const getIcon = () => {
+    switch (type) {
+      case "branch":
+        return <Building2 className="w-4 h-4 text-gray-500" />
+      case "city":
+        return <MapPin className="w-4 h-4 text-gray-500" />
+      case "treatment":
+        return <Stethoscope className="w-4 h-4 text-gray-500" />
+      case "specialty":
+        return <Heart className="w-4 h-4 text-gray-500" />
+      default:
+        return <Search className="w-4 h-4 text-gray-500" />
+    }
+  }
+
+  const getPlaceholder = () => {
+    switch (type) {
+      case "branch":
+        return "e.g., Apollo Delhi Branch..."
+      case "city":
+        return "e.g., Mumbai, Delhi..."
+      case "treatment":
+        return "e.g., MRI Scan, Chemotherapy..."
+      case "specialty":
+        return "e.g., Cardiology, Neurology..."
+      default:
+        return placeholder
+    }
+  }
+
+  const getLabel = () => {
+    switch (type) {
+      case "branch":
+        return "Filter by Branch"
+      case "city":
+        return "Filter by City"
+      case "treatment":
+        return "Filter by Treatment"
+      case "specialty":
+        return "Filter by Specialty"
+      default:
+        return ""
+    }
+  }
+
+  const getNoResultsText = () => {
+    switch (type) {
+      case "branch":
+        return "branches"
+      case "city":
+        return "cities"
+      case "treatment":
+        return "treatments"
+      case "specialty":
+        return "specialties"
+      default:
+        return ""
+    }
+  }
+
+  return (
+    <div ref={dropdownRef} className="relative space-y-2">
+      <label className="block text-sm font-medium text-gray-700 flex items-center gap-2">
+        {getIcon()}
+        <span className="">{getLabel()}</span>
+      </label>
+
+      <div className="relative">
+        <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+          {getIcon()}
+        </div>
+        <input
+          type="text"
+          placeholder={getPlaceholder()}
+          value={selectedOptionName || value}
+          onChange={(e) => {
+            onChange(e.target.value)
+            if (selectedOption) onOptionSelect("")
+            setIsOpen(true)
+          }}
+          onFocus={() => setIsOpen(true)}
+          className="pl-10 pr-12 py-3 border border-gray-200 rounded-lg w-full text-sm bg-white focus:bg-white focus:ring-2 focus:ring-gray-500 focus:border-gray-500 transition-all placeholder:text-gray-400 shadow-sm"
+        />
+
+        {(value || selectedOption) && (
+          <button
+            onClick={() => {
+              onChange("")
+              onOptionSelect("")
+              onClear()
+            }}
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors p-1"
+            aria-label="Clear filter"
+          >
+            <X className="w-4 h-4" />
+          </button>
+        )}
+
+        <button
+          onClick={() => setIsOpen(!isOpen)}
+          className="absolute right-10 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors p-1"
+          aria-label="Toggle dropdown"
+        >
+          <ChevronDown className={`w-4 h-4 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+        </button>
+      </div>
+
+      {isOpen && (value || filteredOptions.length > 0) && (
+        <>
+          <div
+            className="fixed inset-0 z-10 lg:hidden"
+            onClick={() => setIsOpen(false)}
+          />
+          <div className="absolute top-full left-0 right-0 z-20 bg-white border border-gray-200 rounded-lg shadow-lg max-h-60 overflow-y-auto mt-1">
+            {filteredOptions.length > 0 ? (
+              filteredOptions.map((option) => (
+                <button
+                  key={option.id}
+                  onClick={() => {
+                    onOptionSelect(option.id)
+                    onChange("")
+                    setIsOpen(false)
+                  }}
+                  className="w-full px-4 py-3 text-left hover:bg-gray-50 transition-colors border-b border-gray-100 last:border-b-0 flex items-center gap-3 min-h-[44px]"
+                >
+                  {getIcon()}
+                  <div className="font-medium text-gray-900">{option.name}</div>
+                </button>
+              ))
+            ) : (
+              <div className="px-4 py-4 text-sm text-gray-500 text-center">
+                No {getNoResultsText()} match your search. Try a different term.
+              </div>
+            )}
+          </div>
+        </>
+      )}
+    </div>
+  )
+}
+
+// Hospital Search Component - Updated with dropdown filters
+const HospitalSearch = ({
+  allHospitals
+}: {
+  allHospitals: any[]
+}) => {
+  const router = useRouter()
+
+  // Build filter options from allHospitals
+  const branchOptions = useMemo(() => {
+    const branchMap: Record<string, string> = {}
+    allHospitals.forEach((hospital: any) => {
+      hospital.branches?.forEach((branch: any) => {
+        if (branch?._id && branch?.name) {
+          branchMap[branch._id] = branch.name
+        }
+      })
+    })
+    return Object.entries(branchMap).map(([id, name]) => ({ id, name }))
+  }, [allHospitals])
+
+  const cityOptions = useMemo(() => {
+    const cityMap: Record<string, string> = {}
+    allHospitals.forEach((hospital: any) => {
+      hospital.branches?.forEach((branch: any) => {
+        branch.city?.forEach((city: any) => {
+          if (city?._id && city?.name) cityMap[city._id] = city.name
+        })
+      })
+    })
+    return Object.entries(cityMap).map(([id, name]) => ({ id, name }))
+  }, [allHospitals])
+
+  const treatmentOptions = useMemo(() => {
+    const treatmentMap: Record<string, string> = {}
+    allHospitals.forEach((hospital: any) => {
+      hospital.treatments?.forEach((t: any) => {
+        if (t?._id && t?.name) treatmentMap[t._id] = t.name
+      })
+      hospital.branches?.forEach((branch: any) =>
+        branch.treatments?.forEach((t: any) => {
+          if (t?._id && t?.name) treatmentMap[t._id] = t.name
+        })
+      )
+    })
+    return Object.entries(treatmentMap).map(([id, name]) => ({ id, name }))
+  }, [allHospitals])
+
+  const specializationOptions = useMemo(() => {
+    const specializationSet = new Set<string>()
+    allHospitals.forEach((hospital: any) => {
+      hospital.branches?.forEach((branch: any) => {
+        branch.treatments?.forEach((t: any) => {
+          if (t?.category) specializationSet.add(t.category)
+        })
+        branch.doctors?.forEach((d: any) => {
+          if (d.specialization) specializationSet.add(d.specialization)
+        })
+        branch.specialties?.forEach((s: any) => {
+          if (s.name) specializationSet.add(s.name)
+        })
+      })
+      hospital.treatments?.forEach((t: any) => {
+        if (t?.category) specializationSet.add(t.category)
+      })
+      hospital.doctors?.forEach((d: any) => {
+        if (d.specialization) specializationSet.add(d.specialization)
+      })
+    })
+    return Array.from(specializationSet).map(name => ({ id: name, name }))
+  }, [allHospitals])
+
+  // States for filters
+  const [searchQuery, setSearchQuery] = useState("")
+  const [branchQuery, setBranchQuery] = useState("")
+  const [cityQuery, setCityQuery] = useState("")
+  const [treatmentQuery, setTreatmentQuery] = useState("")
+  const [specializationQuery, setSpecializationQuery] = useState("")
+  const [selectedBranchId, setSelectedBranchId] = useState("")
+  const [selectedCityId, setSelectedCityId] = useState("")
+  const [selectedTreatmentId, setSelectedTreatmentId] = useState("")
+  const [selectedSpecialization, setSelectedSpecialization] = useState("")
+
+  const clearFilters = () => {
+    setSearchQuery("")
+    setBranchQuery("")
+    setCityQuery("")
+    setTreatmentQuery("")
+    setSpecializationQuery("")
+    setSelectedBranchId("")
+    setSelectedCityId("")
+    setSelectedTreatmentId("")
+    setSelectedSpecialization("")
+  }
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+
+    let url = '/hospitals?'
+    let params: string[] = []
+
+    if (searchQuery) {
+      params.push(`search=${encodeURIComponent(searchQuery)}`)
+    }
+    if (selectedBranchId || branchQuery) {
+      params.push(`branch=${encodeURIComponent(selectedBranchId || branchQuery)}`)
+    }
+    if (selectedCityId || cityQuery) {
+      params.push(`city=${encodeURIComponent(selectedCityId || cityQuery)}`)
+    }
+    if (selectedTreatmentId || treatmentQuery) {
+      params.push(`treatment=${encodeURIComponent(selectedTreatmentId || treatmentQuery)}`)
+    }
+    if (selectedSpecialization || specializationQuery) {
+      params.push(`specialty=${encodeURIComponent(selectedSpecialization || specializationQuery)}`)
+    }
+
+    if (params.length > 0) {
+      router.push(url + params.join('&'))
+    } else {
+      router.push('/hospitals')
+    }
+  }
+
+  return (
+    <div className="bg-white rounded-lg shadow-sm p-4 border border-gray-100">
+      <h3 className="text-lg font-semibold text-gray-800 mb-3 flex items-center gap-2">
+        <Building2 className="w-5 h-5" />
+        Search Hospitals
+      </h3>
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center gap-2">
+            <Search className="w-4 h-4 text-gray-500" />
+            Hospital or Branch Name
+          </label>
+          <input
+            type="text"
+            placeholder="Enter hospital or branch name..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          />
+        </div>
+        <SearchDropdown
+          value={cityQuery}
+          onChange={setCityQuery}
+          placeholder="Search cities..."
+          options={cityOptions}
+          selectedOption={selectedCityId}
+          onOptionSelect={setSelectedCityId}
+          onClear={() => {
+            setCityQuery("")
+            setSelectedCityId("")
+          }}
+          type="city"
+        />
+        <SearchDropdown
+          value={treatmentQuery}
+          onChange={setTreatmentQuery}
+          placeholder="Search treatments..."
+          options={treatmentOptions}
+          selectedOption={selectedTreatmentId}
+          onOptionSelect={setSelectedTreatmentId}
+          onClear={() => {
+            setTreatmentQuery("")
+            setSelectedTreatmentId("")
+          }}
+          type="treatment"
+        />
+        <SearchDropdown
+          value={specializationQuery}
+          onChange={setSpecializationQuery}
+          placeholder="Search specialties..."
+          options={specializationOptions}
+          selectedOption={selectedSpecialization}
+          onOptionSelect={setSelectedSpecialization}
+          onClear={() => {
+            setSpecializationQuery("")
+            setSelectedSpecialization("")
+          }}
+          type="specialty"
+        />
+        <button
+          type="submit"
+          className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors font-medium"
+        >
+          Search
+        </button>
+        <button
+          type="button"
+          onClick={clearFilters}
+          className="w-full bg-gray-200 text-gray-700 py-2 rounded-lg hover:bg-gray-300 transition-colors font-medium"
+        >
+          Clear Filters
+        </button>
+      </form>
+      <p className="text-xs text-gray-500 mt-2 text-center">
+        Redirects to hospital list with filtered results
+      </p>
+    </div>
+  )
+}
 
 // Skeleton Components
 const HeroSkeleton = () => (
@@ -832,7 +1226,7 @@ export default function BranchDetail({ params }: { params: Promise<{ slug: strin
           <div className="grid lg:grid-cols-12 gap-4 md:px-0 px-2">
             <main className="lg:col-span-9 space-y-4">
               {/* Hospital Group Overview */}
-            
+
 
               {/* Key Statistics */}
               <section className="md:bg-white md:rounded-lg md:shadow-sm md:p-4 md:border border-gray-100">
@@ -907,6 +1301,7 @@ export default function BranchDetail({ params }: { params: Promise<{ slug: strin
 
             {/* Sidebar */}
             <aside className="lg:col-span-3 space-y-8">
+              <HospitalSearch allHospitals={allHospitals} />
               <ContactForm />
             </aside>
           </div>

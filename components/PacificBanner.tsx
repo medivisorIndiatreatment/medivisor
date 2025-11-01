@@ -22,7 +22,7 @@ export default function Banner() {
         </div>
 
         {/* Right - Content */}
-        <div className="space-y-2  flex items-center  md:relative md:order-2 order-1 h-full">
+        <div className="space-y-2 mt-16 md:mt-0 flex items-center  md:relative md:order-2 order-1 h-full">
           {/* Heading */}
           <div className=" container mx-auto px-6 lg:px-12">
             <div>

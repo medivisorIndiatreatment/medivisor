@@ -28,7 +28,7 @@ function flagForLabel(label: string) {
   }
   return { src: "/icon/flag/fiji.png", alt: "Country flag" };
 }
-  
+
 export const metadata = {
   title: 'Pacific Patient Meet I Nov 18-26 I PNG, Solomon, Vanuatu, Fiji',
   description: 'Hello Friends, A Medivisor medical team is coming to your country! If you or your loved ones are suffering from any long-term illness or have been recently diagnosed with a condition that cannot be treated locally, this is your chance to meet the Medivisor team in person and explore the best possible treatment options in India.',
@@ -94,15 +94,15 @@ export default function Page() {
                 <div className="">
                   <h3 className="text-2xl font-bold text-gray-800 mb-4">👩‍⚕️ Ideal for patients suffering from:</h3>
                   <ul className="space-y-1 ml-5 description list-disc ">
-                    <li>Brain Tumours, Head & Neck Tumours, or other types of Tumour</li>
-                    <li>Any types of Cancer</li>
-                    <li>Infertility or other Gynecological Problems</li>
-                    <li>Spinal Deformities and Chronic Back Pain</li>
-                    <li>Cardiac (Heart) Conditions</li>
-                    <li>Knee, Hip, or other Orthopedic Problems</li>
-                    <li>Kidney Failure, Kidney Stones, or other Renal Disorders</li>
-                    <li>Liver Cirrhosis, Liver Failure, or other Liver Conditions</li>
-                    <li>Any other Surgical or Complex Medical Need</li>
+                    <li>Brain, Head & Neck Tumours — Including all types of cancerous and non-cancerous growths</li>
+                    <li>Any Type of Cancer — Comprehensive diagnosis and advanced treatment options</li>
+                    <li>Infertility & Gynecological Problems — Including IVF, endometriosis, fibroids, and PCOS</li>
+                    <li>Spinal Deformities & Chronic Back Pain — Minimally invasive and corrective spine surgeries</li>
+                    <li>Cardiac (Heart) Conditions — Bypass surgery, valve replacement, angioplasty, and more</li>
+                    <li>Knee, Hip & Other Orthopedic Problems — Joint replacements and sports injury management</li>
+                    <li>Kidney Failure, Stones & Other Renal Disorders — Including dialysis and transplant options</li>
+                    <li>Liver Cirrhosis, Liver Failure & Other Liver Diseases — With transplant and regenerative therapies</li>
+                    <li>Other Surgical & Complex Medical Needs — Multispecialty solutions under one roof</li>
                   </ul>
                 </div>
 
