@@ -29,7 +29,7 @@ export const schedule: ScheduleLocation[] = [
     dates: ["2025-11-18", "2025-11-19"],
     times: ["2 PM to 6 PM", "9 AM to 6 PM"],
     venues: ["Hotel Holiday Inn", "Hotel Holiday Inn"],
-    feeLabel: "100 PGK / 25 USD",
+    feeLabel: "100 PGK ",
     localContact: "Shirley Waira: 74376546",
     availableSlots: [
       [
@@ -60,7 +60,7 @@ export const schedule: ScheduleLocation[] = [
     dates: ["2025-11-20", "2025-11-21"],
     times: ["2 PM to 6 PM", "9 AM to 6 PM"],
     venues: ["Hotel Grace", "Hotel Grace"],
-    feeLabel: "200 SBD / 25 USD",
+    feeLabel: "200 SBD ",
     localContact: "Freda Sofu: 7618955",
     availableSlots: [
       [
@@ -88,7 +88,7 @@ export const schedule: ScheduleLocation[] = [
     dates: ["2025-11-23", "2025-11-24"],
     times: ["9 AM to 6 PM", "9 AM to 1 PM"],
     venues: ["Hotel Golden Port", "Hotel Golden Port"],
-    feeLabel: "2500 Vatu / 25 USD",
+    feeLabel: "1500 Vatu ",
     localContact: "Mary Semeno: 7627430 / 5213197",
     availableSlots: [
       [
@@ -116,7 +116,7 @@ export const schedule: ScheduleLocation[] = [
     dates: ["2025-11-25", "2025-11-26"],
     times: ["9 AM to 6 PM", "9 AM to 6 PM"],
     venues: ["Hotel Novotel, Lami", "Hotel Novotel, Namaka"],
-    feeLabel: "50 FJD / 25 USD",
+    feeLabel: "50 FJD ",
     localContact: "Suva: Reshmi Kumar (9470588), Lautoka: Ashlin Chandra (9470527)",
     availableSlots: [
       [
