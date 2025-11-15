@@ -27,7 +27,7 @@ const faqData: FAQItem[] = [
   {
     id: '2',
     question: 'How much does the consultation cost?',
-    answer: 'The consultation fee is 25 USD (or 100 PGK / 200 SBD / 2500 Vatu / 50 FJD) per person, payable on the spot during your appointment.',
+    answer: 'The consultation fee is  100 PGK / 200 SBD / 1500 Vatu / 50 FJD per person, payable on the spot during your appointment.',
     category: 'Consultation',
     icon: CreditCard
   },
@@ -48,7 +48,7 @@ const faqData: FAQItem[] = [
   {
     id: '5',
     question: 'Do I need to bring any medical reports?',
-    answer: 'Yes. Please bring your latest eye test reports, prescription glasses, and any related medical documents. These help the doctor understand your condition more accurately.',
+    answer: 'Yes. Please bring all the latest reports, and related medical documents. These help the doctor understand your condition more accurately.',
     category: 'Requirements',
     icon: FileText
   },
