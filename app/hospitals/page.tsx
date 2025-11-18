@@ -1,10 +1,9 @@
 // app/hospitals/page.tsx
 "use client"
-// app/hospitals/page.tsx
+
 import React, { useState, useEffect, useCallback, useMemo, useRef, Suspense } from "react"
 import { useSearchParams, useRouter, usePathname } from "next/navigation"
 import Link from "next/link"
-import { Metadata } from "next" // Import Metadata type for SEO
 import Banner from "@/components/BannerService"
 import {
   Filter,
@@ -21,41 +20,6 @@ import {
   Users,
   Star
 } from "lucide-react"
-
-// =============================================================================
-// METADATA (SEO)
-// =============================================================================
-
-// In Next.js App Router, metadata is generated on the server.
-// Since the main component is a client component, we define metadata here.
-export const metadata: Metadata = {
-  title: 'Find Hospitals, Doctors, and Treatments | Health Service',
-  description: 'Search and filter the best hospitals, specialist doctors, and advanced medical treatments near you. Start your health journey today.',
-  keywords: ['hospitals', 'doctors', 'treatments', 'medical services', 'healthcare', 'find a doctor', 'health directory'],
-  openGraph: {
-    title: 'Find Hospitals, Doctors, and Treatments | Health Service',
-    description: 'Search and filter the best hospitals, specialist doctors, and advanced medical treatments near you.',
-    url: '/hospitals',
-    siteName: 'Health Service',
-    images: [
-      {
-        url: '/images/og-hospitals.jpg', // Placeholder image path
-        width: 1200,
-        height: 630,
-        alt: 'Hospital search page',
-      },
-    ],
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'Find Hospitals, Doctors, and Treatments | Health Service',
-    description: 'Search and filter the best hospitals, specialist doctors, and advanced medical treatments near you.',
-  },
-  // Add canonical URL for SEO
-  alternates: {
-    canonical: '/hospitals',
-  }
-}
 
 // =============================================================================
 // TYPES & UTILITIES
@@ -493,9 +457,6 @@ const useHospitalsData = () => {
     const fetchData = async () => {
       setLoading(true)
       try {
-        // Simulating a delay for a better skeleton effect
-        await new Promise(resolve => setTimeout(resolve, 500)); 
-        
         const res = await fetch(`/api/hospitals?pageSize=1000`)
         if (!res.ok) throw new Error("Failed to fetch hospital data")
         const data = await res.json() as ApiResponse
@@ -782,7 +743,7 @@ const useHospitalsData = () => {
     city: getUniqueOptions("city", filteredBranches, filteredDoctors, filteredTreatments),
     treatment: getUniqueOptions("treatments", filteredBranches, filteredDoctors, filteredTreatments),
     specialization: getUniqueOptions("specialization", filteredBranches, filteredDoctors, filteredTreatments),
-    department: getUniqueOptions("departments", filteredBranches, filteredDoctors, filteredTreatments),
+    department: getUniqueOptions("department", filteredBranches, filteredDoctors, filteredTreatments),
     doctor: getUniqueOptions("doctors", filteredBranches, filteredDoctors, filteredTreatments),
     branch: getUniqueOptions("branch", filteredBranches, filteredDoctors, filteredTreatments),
   }), [getUniqueOptions, filteredBranches, filteredDoctors, filteredTreatments])
@@ -810,16 +771,15 @@ const useHospitalsData = () => {
     const activeKeys: FilterKey[] = getVisibleFiltersByView(filters.view);
     ['branch', 'city', 'specialization', 'treatment', 'doctor', 'department'].forEach(keyStr => {
       const key = keyStr as FilterKey
-      if (filters[key].id || filters[key].query) {
+      if (activeKeys.includes(key) || filters[key].id || filters[key].query) {
         const display = getFilterValueDisplay(key, filters, availableOptions)
         if (display) {
-          // Use filter key instead of display for query parameter when ID is set or query is slugified
           params.push(`${key}=${generateSlug(display)}`)
         }
       }
     })
     const newQueryString = params.length > 0 ? "?" + params.join("&") : ""
-    const targetUrlPath = `${pathname}${newQueryString}`
+    const targetUrlPath = `/hospitals${newQueryString}`
     const currentSearch = searchParams.toString()
     const currentUrl = pathname + (currentSearch ? `?${currentSearch}` : "")
     if (currentUrl !== targetUrlPath) {
@@ -830,7 +790,7 @@ const useHospitalsData = () => {
   useEffect(() => {
     if (loading || allHospitals.length === 0) return;
 
-    const resolveToId = <T extends { _id: string; name?: string; doctorName?: string; title?: string }>(key: FilterKey, allItems: T[], getName: (item: T) => string) => {
+    const resolveToId = <T extends { _id: string; name: string }>(key: FilterKey, allItems: T[], getName: (item: T) => string) => {
       const filter = filters[key];
       if (filter.query && !filter.id) {
         const exact = allItems.find(item => generateSlug(getName(item)) === filter.query);
@@ -842,14 +802,14 @@ const useHospitalsData = () => {
     };
 
     // treatment
-    resolveToId('treatment', allExtendedTreatments, t => t.name!);
+    resolveToId('treatment', allExtendedTreatments, t => t.name);
 
     // doctor
-    resolveToId('doctor', allExtendedDoctors, d => d.doctorName!);
+    resolveToId('doctor', allExtendedDoctors, d => d.doctorName);
 
     // branch
-    const allBranchesFlat = allHospitals.flatMap(h => h.branches.map(b => ({ ...b, _id: b._id, name: b.branchName } as BranchType & { name: string })));
-    resolveToId('branch', allBranchesFlat, b => b.name!);
+    const allBranchesFlat = allHospitals.flatMap(h => h.branches.map(b => ({ ...b, _id: b._id, name: b.branchName })));
+    resolveToId('branch', allBranchesFlat, b => b.name);
 
     // city
     const allCitiesList = allHospitals.flatMap(h => h.branches.flatMap(b => b.city));
@@ -901,7 +861,9 @@ const useHospitalsData = () => {
   }
 }
 
-
+// =============================================================================
+// UI COMPONENTS
+// =============================================================================
 
 type OptionType = { id: string; name: string }
 
@@ -1006,7 +968,7 @@ const FilterDropdown = React.memo(({ placeholder, filterKey, filters, updateSubF
 })
 FilterDropdown.displayName = 'FilterDropdown'
 
-const FilterSidebar = ({ filters, showFilters, setShowFilters, clearFilters, updateSubFilter, availableOptions, getFilterValueDisplay }: ReturnType<typeof useHospitalsData> & { getFilterValueDisplay: ReturnType<typeof useHospitalsData>['getFilterValueDisplay'] }) => {
+const FilterSidebar = ({ filters, showFilters, setShowFilters, clearFilters, updateSubFilter, availableOptions, getFilterValueDisplay, filteredBranches, filteredDoctors, filteredTreatments }: ReturnType<typeof useHospitalsData> & { getFilterValueDisplay: ReturnType<typeof useHospitalsData>['getFilterValueDisplay'] }) => {
   const filterOptions: { value: FilterKey, label: string, isPrimary: boolean }[] = useMemo(() => {
     switch (filters.view) {
       case "hospitals":
@@ -1106,15 +1068,14 @@ const FilterSidebar = ({ filters, showFilters, setShowFilters, clearFilters, upd
           {showFilters && (
             <button
               onClick={() => setShowFilters(false)}
-              className="md:hidden text-gray-400 hover:text-gray-600 absolute top-4 right-4"
-              aria-label="Close filters"
+              className="md:hidden text-gray-400 hover:text-gray-600"
             >
               <X className="w-5 h-5" />
             </button>
           )}
         </div>
 
-        <div className="mt-6 border-t border-gray-200 pt-4">
+        <div className="mt-2 border-t border-gray-200 pt-2">
           <label className="block text-base font-medium text-gray-900 mb-3">Currently Applied Filters</label>
           <div className="space-y-2">
             {filterOptions.map((opt) => {
@@ -1180,7 +1141,7 @@ const HospitalCard = ({ branch }: { branch: BranchType & { hospitalName: string;
   const accreditationLogoUrl = getWixImageUrl(branch.accreditation?.[0]?.image)
 
   return (
-    <Link href={`/hospitals/branches/${slug}`} className="block" aria-label={`View ${branch.branchName}`}>
+    <Link href={`/hospitals/branches/${slug}`} className="block">
       <article className="group bg-white rounded-xs shadow-xs transition-all duration-300 overflow-hidden cursor-pointer h-full flex flex-col hover:shadow-sm border border-gray-100">
         <div className="relative h-48 overflow-hidden bg-gray-50">
           {hospitalLogoUrl && (
@@ -1270,6 +1231,7 @@ const DoctorCard = ({ doctor }: { doctor: ExtendedDoctorType }) => {
   const slug = generateSlug(`${doctor.doctorName}`);
   const imageUrl = getWixImageUrl(doctor.profileImage);
 
+  // ⭐ FIXED: Branch count logic + clean display
   const primaryLocationDisplay = useMemo(() => {
     const locations = doctor.filteredLocations || doctor.locations;
 
@@ -1278,15 +1240,15 @@ const DoctorCard = ({ doctor }: { doctor: ExtendedDoctorType }) => {
       return "Location not specified";
     }
 
-    // Use the first location in the filtered list
-    const first = locations[0]; 
+    // Always pick first location (index 0)
+    const first = locations[1] || locations[0];
 
     const branch = first.branchName ? ` ${first.branchName}` : "";
     const city = first?.cities?.[0]?.cityName ? `, ${first.cities[0].cityName}` : "";
 
     let primary = `${branch}${city}`;
 
-    // Hide count if only 1 branch
+    // ⭐ Hide count if only 1 branch
     if (locations.length > 1) {
       primary += ` +${locations.length - 1} more`;
     }
@@ -1296,7 +1258,7 @@ const DoctorCard = ({ doctor }: { doctor: ExtendedDoctorType }) => {
 
 
   return (
-    <Link href={`/doctors/${slug}`} className="block" aria-label={`View Doctor ${doctor.doctorName}`}>
+    <Link href={`/doctors/${slug}`} className="block">
       <article className="group bg-white rounded-xs shadow-xs transition-all duration-300 overflow-hidden cursor-pointer h-full flex flex-col hover:shadow-sm border border-gray-100">
         <div className="relative h-48 overflow-hidden bg-gray-50">
           {doctor.popular && (
@@ -1371,7 +1333,7 @@ const TreatmentCard = ({ treatment }: { treatment: ExtendedTreatmentType }) => {
   }, [treatment])
 
   return (
-    <Link href={`/treatment/${slug}`} className="block" aria-label={`View Treatment ${treatment.name}`}>
+    <Link href={`/treatment/${slug}`} className="block">
       <article className="group bg-white rounded-xs shadow-xs transition-all duration-300 overflow-hidden cursor-pointer h-full flex flex-col hover:shadow-sm border border-gray-100">
         <div className="relative h-48 overflow-hidden bg-gray-50">
           {treatment.popular && (
@@ -1480,10 +1442,7 @@ const ResultsHeader = ({
   sortBy: "all" | "popular" | "az" | "za",
   setSortBy: (sortBy: "all" | "popular" | "az" | "za") => void
 }) => (
-  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-gray-50 p-4 w-full">
-    <p className="text-base font-normal text-gray-700">
-      <span className="font-semibold">{currentCount}</span> {view === 'hospitals' ? 'Branches' : view} Found
-    </p>
+  <div className="flex flex-col sm:flex-row sm:items-center  gap-4 bg-gray-50 border-b border-gray-50 p-4">
     <div className="flex items-center gap-4">
       <Sorting sortBy={sortBy} setSortBy={setSortBy} />
       <button
@@ -1499,8 +1458,7 @@ const ResultsHeader = ({
 const MobileFilterButton = ({ setShowFilters }: { setShowFilters: (show: boolean) => void }) => (
   <button
     onClick={() => setShowFilters(true)}
-    className="fixed bottom-6 right-6 md:hidden bg-white text-gray-600 p-4 rounded-full shadow-xl hover:shadow-2xl transition-shadow z-30 border border-gray-100"
-    aria-label="Show filters"
+    className="fixed bottom-6 right-6 md:hidden bg-gray-50 text-gray-600 p-4 rounded-xs shadow-lg hover:shadow-xl transition-shadow z-30 border border-gray-100"
   >
     <Filter className="w-5 h-5" />
   </button>
@@ -1529,18 +1487,18 @@ const BreadcrumbNav = () => (
 
 const HospitalCardSkeleton = () => (
   <div className="bg-white rounded-xs shadow-md overflow-hidden animate-pulse border border-gray-100">
-    <div className="h-48 bg-gray-100 relative">
-      <div className="absolute bottom-3 left-3 bg-gray-200 rounded-xs w-12 h-12 border border-white" />
+    <div className="h-48 bg-gray-50 relative">
+      <div className="absolute bottom-3 left-3 bg-gray-100 rounded-xs w-12 h-12 border border-white" />
     </div>
     <div className="p-5 space-y-4">
-      <div className="h-6 bg-gray-200 rounded-md w-3/4" />
+      <div className="h-6 bg-gray-100 rounded-md w-3/4" />
       <div className="space-y-2">
-        <div className="h-4 bg-gray-200 rounded-md w-1/4" />
-        <div className="h-4 bg-gray-200 rounded-md w-3/4" />
+        <div className="h-4 bg-gray-100 rounded-md w-1/4" />
+        <div className="h-4 bg-gray-100 rounded-md w-3/4" />
       </div>
-      <div className="grid grid-cols-3 gap-3 pt-3 border-t border-gray-100">
+      <div className="grid grid-cols-3 gap-3 pt-3 border-t border-gray-50">
         {Array.from({ length: 3 }).map((_, i) => (
-          <div key={i} className="bg-gray-100 rounded-xs p-3 h-16" />
+          <div key={i} className="bg-gray-50 rounded-xs p-3 h-16" />
         ))}
       </div>
     </div>
@@ -1549,14 +1507,14 @@ const HospitalCardSkeleton = () => (
 
 const DoctorCardSkeleton = () => (
   <div className="bg-white rounded-xs shadow-md overflow-hidden animate-pulse border border-gray-100">
-    <div className="h-48 bg-gray-100 relative" />
+    <div className="h-48 bg-gray-50 relative" />
     <div className="p-5 space-y-4">
-      <div className="h-6 bg-gray-200 rounded-md w-3/4" />
-      <div className="h-4 bg-gray-200 rounded-md w-1/2" />
-      <div className="h-3 bg-gray-200 rounded-md w-full" />
-      <div className="space-y-2 border-t border-gray-100 pt-3">
-        <div className="h-3 bg-gray-200 rounded-md w-3/4" />
-        <div className="h-3 bg-gray-200 rounded-md w-1/2" />
+      <div className="h-6 bg-gray-100 rounded-md w-3/4" />
+      <div className="h-4 bg-gray-100 rounded-md w-1/2" />
+      <div className="h-3 bg-gray-100 rounded-md w-full" />
+      <div className="space-y-2 border-t border-gray-50 pt-3">
+        <div className="h-3 bg-gray-100 rounded-md w-3/4" />
+        <div className="h-3 bg-gray-100 rounded-md w-1/2" />
       </div>
     </div>
   </div>
@@ -1564,25 +1522,15 @@ const DoctorCardSkeleton = () => (
 
 const TreatmentCardSkeleton = () => (
   <div className="bg-white rounded-xs shadow-md overflow-hidden animate-pulse border border-gray-100">
-    <div className="h-48 bg-gray-100 relative" />
+    <div className="h-48 bg-gray-50 relative" />
     <div className="p-5 space-y-4">
-      <div className="h-6 bg-gray-200 rounded-md w-3/4" />
-      <div className="h-4 bg-gray-200 rounded-md w-1/2" />
-      <div className="space-y-2 border-t border-gray-100 pt-3">
-        <div className="h-3 bg-gray-200 rounded-md w-3/4" />
-        <div className="h-3 bg-gray-200 rounded-md w-1/2" />
+      <div className="h-6 bg-gray-100 rounded-md w-3/4" />
+      <div className="h-4 bg-gray-100 rounded-md w-1/2" />
+      <div className="space-y-2 border-t border-gray-50 pt-3">
+        <div className="h-3 bg-gray-100 rounded-md w-3/4" />
+        <div className="h-3 bg-gray-100 rounded-md w-1/2" />
       </div>
     </div>
-  </div>
-)
-
-const MainContentSkeleton = ({ view }: { view: string }) => (
-  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-    {Array.from({ length: 9 }).map((_, i) =>
-      view === "hospitals" ? <HospitalCardSkeleton key={i} /> :
-        view === "doctors" ? <DoctorCardSkeleton key={i} /> :
-          <TreatmentCardSkeleton key={i} />
-    )}
   </div>
 )
 
@@ -1608,7 +1556,15 @@ const RenderContent = ({
   clearFilters: () => void
 }) => {
   if (loading) {
-    return <MainContentSkeleton view={view} />
+    return (
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {Array.from({ length: 9 }).map((_, i) =>
+          view === "hospitals" ? <HospitalCardSkeleton key={i} /> :
+            view === "doctors" ? <DoctorCardSkeleton key={i} /> :
+              <TreatmentCardSkeleton key={i} />
+        )}
+      </div>
+    )
   }
 
   if (currentCount === 0) {
@@ -1670,37 +1626,6 @@ function HospitalsPageContent() {
 
   const setSortBy = (s: FilterState["sortBy"]) => updateFilter("sortBy", s)
 
-  // Use a simplified skeleton for the main layout while loading
-  if (loading) {
-    return (
-      <div className="bg-gray-25 min-h-screen">
-        <Banner title="Find Branches, Doctors, and Treatments" />
-        <BreadcrumbNav />
-        <section className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
-          <div className="flex flex-col md:flex-row gap-4">
-            <div className="md:w-64 lg:w-72 md:flex-shrink-0 pt-0">
-              <div className="bg-white rounded-xs p-4 border border-gray-100 animate-pulse h-96">
-                <div className="h-6 bg-gray-100 w-1/2 mb-4" />
-                <div className="space-y-4">
-                  <div className="h-10 bg-gray-100 rounded-xs" />
-                  <div className="h-10 bg-gray-100 rounded-xs" />
-                  <div className="h-10 bg-gray-100 rounded-xs" />
-                </div>
-              </div>
-            </div>
-            <main className="flex-1 min-w-0">
-              <div className="flex justify-between items-center bg-gray-50 p-4 rounded-xs shadow-xs mb-4">
-                <div className="h-10 w-64 bg-gray-100 rounded-xs animate-pulse" />
-                <div className="h-10 w-32 bg-gray-100 rounded-xs animate-pulse" />
-              </div>
-              <MainContentSkeleton view={filters.view} />
-            </main>
-          </div>
-        </section>
-      </div>
-    );
-  }
-
   return (
     <div className="bg-gray-25 min-h-screen">
       <Banner title="Find Branches, Doctors, and Treatments" />
@@ -1722,17 +1647,17 @@ function HospitalsPageContent() {
           />
 
           <main className="flex-1  min-w-0 lg:pb-0 min-h-screen">
-            <div className=" flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-gray-50 p-4 rounded-xs shadow-xs mb-4">
-              <ViewToggle view={filters.view} setView={setView} />
-              <FilterDropdown
-                placeholder="Search by City Name"
-                filterKey="city"
-                filters={filters}
-                updateSubFilter={updateSubFilter}
-                options={availableOptions.city}
-              />
-            </div>
-            <div className=" bg-gray-50 border-b border-gray-50">
+            <div className=" flex justify-between items-center bg-gray-50">
+              <div className="flex flex-col lg:flex-row lg:items-center  gap-4">
+                <ViewToggle view={filters.view} setView={setView} />
+                <FilterDropdown
+                  placeholder="Search by City Name"
+                  filterKey="city"
+                  filters={filters}
+                  updateSubFilter={updateSubFilter}
+                  options={availableOptions.city}
+                />
+              </div>
               <ResultsHeader
                 view={filters.view}
                 currentCount={currentCount}
@@ -1741,7 +1666,6 @@ function HospitalsPageContent() {
                 setSortBy={setSortBy}
               />
             </div>
-
 
             <RenderContent
               view={filters.view}
@@ -1761,7 +1685,6 @@ function HospitalsPageContent() {
   )
 }
 
-// Wrapper component to host the client logic and handle the Suspense/Skeleton loading for data fetch
 export default function HospitalsPage() {
   return (
     <Suspense
