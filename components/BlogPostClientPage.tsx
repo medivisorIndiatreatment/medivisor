@@ -1,36 +1,11 @@
 "use client"
 
-<<<<<<< HEAD
-import { useEffect, useState } from "react"
-import { wixClient } from "@/lib/wixClient"
-import { media } from "@wix/sdk"
-=======
 import React, { useEffect, useState } from 'react'
 import { wixClient } from '@/lib/wixClient'
 import { media } from '@wix/sdk'
->>>>>>> parent of 80f7212 (blog fix)
-import {
-  ChevronLeft,
-  Facebook,
-  Twitter,
-  Linkedin,
-  Copy,
-  Clock,
-  Calendar,
-  Eye,
-  Heart,
-  MessageCircle,
-  Share2,
-  Bookmark,
-<<<<<<< HEAD
-} from "lucide-react"
-import { RicosRenderer } from "@/components/RichContentViewer"
-import { extractTextFromRicos, type RicosContent } from "@/lib/ricos-parser"
-=======
-} from 'lucide-react'
-import { RicosRenderer } from '@/components/RichContentViewer'
+import { ChevronLeft, Facebook, Twitter, Linkedin, Copy, Clock, Calendar, Eye, Heart, MessageCircle, Share2, Bookmark } from 'lucide-react'
+import { RicosRenderer } from './RichContentViewer'
 import { extractTextFromRicos, type RicosContent } from '@/lib/ricos-parser'
->>>>>>> parent of 80f7212 (blog fix)
 
 interface Post {
   _id: string
@@ -76,22 +51,23 @@ interface Post {
   viewCount?: number
   likeCount?: number
   commentCount?: number
+  settings?: any
 }
 
 // Function to get Wix Image URL with better error handling
 function getWixImageUrl(wixUrl: string | undefined): string | null {
   if (!wixUrl) return null
-
+  
   try {
-    if (wixUrl.startsWith("wix:image://")) {
+    if (wixUrl.startsWith('wix:image://')) {
       const { url } = media.getImageUrl(wixUrl)
       return url
-    } else if (wixUrl.startsWith("http")) {
+    } else if (wixUrl.startsWith('http')) {
       return wixUrl
     }
     return null
   } catch (error) {
-    console.error("Error getting Wix image URL:", error)
+    console.error('Error getting Wix image URL:', error)
     return null
   }
 }
@@ -105,6 +81,7 @@ function getYouTubeEmbedUrl(youtubeUrl: string | undefined): string | null {
   const match = youtubeUrl.match(regExp)
 
   if (match && match[1] && match[1].length === 11) {
+    // Added &modestbranding=1&rel=0 for a cleaner look
     return `https://www.youtube.com/embed/${match[1]}?autoplay=0&modestbranding=1&rel=0`
   }
   return null
@@ -116,39 +93,33 @@ function calculateReadTime(content: string | RicosContent | undefined, minutesTo
     return `${minutesToRead} min read`
   }
 
-  if (!content) return "Less than 1 min read"
+  if (!content) return 'Less than 1 min read'
 
-<<<<<<< HEAD
-  let text = ""
-  if (typeof content === "string") {
-    text = content.replace(/<[^>]*>/g, "")
-  } else if (content && "nodes" in content) {
-=======
   let text = ''
   if (typeof content === 'string') {
-    // Basic HTML tag removal for string content
     text = content.replace(/<[^>]*>/g, '')
   } else if (content && 'nodes' in content) {
-    // Use the Ricos parser for rich content
->>>>>>> parent of 80f7212 (blog fix)
     text = extractTextFromRicos(content.nodes)
   }
 
   const wordsPerMinute = 200
-  // Split by whitespace and filter out empty strings
   const wordCount = text.split(/\s+/).filter((word) => word.length > 0).length
   const minutes = Math.ceil(wordCount / wordsPerMinute)
-  return minutes === 0 ? "Less than 1 min read" : `${minutes} min read`
+  return minutes === 0 ? 'Less than 1 min read' : `${minutes} min read`
 }
 
 // Function to format date
 function formatDate(dateString: string | undefined): string {
-  if (!dateString) return "N/A"
-  return new Date(dateString).toLocaleDateString("en-US", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  })
+  if (!dateString) return 'N/A'
+  try {
+    return new Date(dateString).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    })
+  } catch (e) {
+    return 'N/A'
+  }
 }
 
 interface BlogPostProps {
@@ -163,10 +134,21 @@ export default function BlogPost({ slug }: BlogPostProps) {
   const [isBookmarked, setIsBookmarked] = useState(false)
   const [isLiked, setIsLiked] = useState(false)
 
+  // Client-side meta tag updates
+  useEffect(() => {
+    if (!post) return
+
+    document.title = `${post.title} | Medivisor India`
+
+    return () => {
+      document.title = 'Medivisor India'
+    }
+  }, [post])
+
   useEffect(() => {
     const fetchPostData = async () => {
       if (!slug) {
-        setError("No slug provided")
+        setError('No slug provided')
         setIsLoading(false)
         return
       }
@@ -174,138 +156,64 @@ export default function BlogPost({ slug }: BlogPostProps) {
       setIsLoading(true)
       setError(null)
 
-      try {
-<<<<<<< HEAD
-        if (!wixClient.posts) {
-          setError("Blog service not available. Please check configuration.")
-=======
-        console.log('Fetching post with slug:', slug)
-
-        if (!wixClient.posts) {
-          console.error('Error: wixClient.posts module not available')
-          setError('Blog service not available. Please check configuration.')
->>>>>>> parent of 80f7212 (blog fix)
+      // **CRITICAL CHECK** - Ensure wixClient and posts module are available and callable
+      if (!wixClient || !wixClient.posts || typeof wixClient.posts.getPostBySlug !== 'function') {
+          console.error('[v0] Error: wixClient or wixClient.posts.getPostBySlug module not available')
+          setError('Blog service not available. Please check API Key configuration and ensure the Wix Blog V4 SDK is correctly integrated.')
           setIsLoading(false)
           return
-        }
+      }
+      
+      const postsClient = wixClient.posts // Alias for cleaner code
+
+      try {
+        console.log('[v0] Fetching post with slug:', slug)
 
         let fetchedPost: Post | null = null
 
-<<<<<<< HEAD
+        // --- Attempt 1: getPostBySlug with RICH_CONTENT Fieldset ---
+        // The error is being thrown here, confirming the API call failed (likely CORS/Permissions)
         try {
-          const queryResponse = await wixClient.posts.queryPosts().eq("slug", slug).find()
-
-          if (queryResponse.items && queryResponse.items.length > 0) {
-            const basicPost = queryResponse.items[0]
-            const postId = basicPost._id
-
-            // Check if basicPost already has content (unlikely but possible)
-            if (basicPost.richContent) {
-              fetchedPost = basicPost as Post
-            } else {
-              try {
-                // Try fetching without options first - sometimes this works better
-                const fullPostResponse = await wixClient.posts.getPost(postId)
-
-                if (fullPostResponse && (fullPostResponse.richContent || fullPostResponse.content)) {
-                  fetchedPost = fullPostResponse as Post
-                } else {
-                  // If no content, try with explicit fieldsets
-                  const richPostResponse = await wixClient.posts.getPost(postId, {
-                    fieldsets: ["RICH_CONTENT", "CONTENT"],
-                  })
-
-                  if (richPostResponse) {
-                    fetchedPost = richPostResponse as Post
-                  } else {
-                    fetchedPost = basicPost as Post
-                  }
-                }
-              } catch (getPostError) {
-                // Fallback: Try getPostBySlug with fieldsets
-                try {
-                  const slugResponse = await wixClient.posts.getPostBySlug(slug, {
-                    fieldsets: ["RICH_CONTENT"],
-                  })
-                  if (slugResponse) {
-                    fetchedPost = slugResponse as Post
-                  } else {
-                    fetchedPost = basicPost as Post
-                  }
-                } catch (slugError) {
-                  fetchedPost = basicPost as Post
-                }
-              }
-            }
+          console.log('[v0] Attempting getPostBySlug with RICH_CONTENT fieldset...')
+          
+          const response = await postsClient.getPostBySlug(slug, {
+            fieldsets: ['RICH_CONTENT']
+          })
+          
+          // Use optional chaining for safe access
+          if (response?.post) { 
+            fetchedPost = response.post as Post
+            console.log('[v0] Successfully fetched post with rich content using getPostBySlug')
           } else {
-            try {
-              const slugResponse = await wixClient.posts.getPostBySlug(slug)
-              if (slugResponse) {
-                fetchedPost = slugResponse as Post
-              }
-            } catch (slugError) {
-              // Silent failure on fallback
-            }
-=======
-        // 1. Try getPostBySlug with simplified parameters
-        try {
-          if (typeof wixClient.posts.getPostBySlug === 'function') {
-            console.log('Trying getPostBySlug...')
-            
-            // Use minimal parameters to avoid parsing issues
-            const response = await wixClient.posts.getPostBySlug(slug)
-            
-            if (response.post) {
-              fetchedPost = response.post as Post
-              console.log('Successfully fetched post using getPostBySlug')
-            }
+            console.log('[v0] getPostBySlug response was null or missing post. Trying queryPosts.')
           }
         } catch (getBySlugError: any) {
-          // Extract just the error message for cleaner logging
-          const errorMessage = getBySlugError?.message || 'Unknown Wix SDK error'
-          console.log(`getPostBySlug failed (Error: ${errorMessage}). Trying queryPosts...`)
+          // This catch block executes when the API call fails
+          console.error(`[v0] getPostBySlug failed with error: ${getBySlugError.message || 'Unknown error'}. Trying queryPosts.`)
+          // Continue to the next attempt (queryPosts)
         }
 
-        // 2. Fallback to queryPosts (primary method due to getPostBySlug issues)
-        if (!fetchedPost) {
+        // --- Attempt 2: queryPosts with RICH_CONTENT Fieldset (Fallback) ---
+        if (!fetchedPost && typeof postsClient.queryPosts === 'function') {
           try {
-            if (typeof wixClient.posts.queryPosts === 'function') {
-              console.log('Trying queryPosts...')
-              const response = await wixClient.posts.queryPosts().eq('slug', slug).find()
+            console.log('[v0] Trying queryPosts with RICH_CONTENT fieldset...')
+            
+            const response = await postsClient.queryPosts()
+              .eq('slug', slug)
+              // client-side .find() does not accept an options object; fieldsets must be requested server-side or via getPostBySlug
+              .find()
 
-              if (response.items && response.items.length > 0) {
-                fetchedPost = response.items[0] as Post
-                console.log('Successfully fetched post using queryPosts')
-              } else {
-                console.log('No post found with the given slug')
-              }
+            // Use optional chaining for safe access
+            if (response?.items && response.items.length > 0) {
+              fetchedPost = response.items[0] as Post
+              console.log('[v0] Successfully fetched post using queryPosts')
+            } else {
+              console.log('[v0] queryPosts returned no items.')
             }
           } catch (queryError: any) {
-            console.error('queryPosts also failed:', queryError?.message || queryError)
+            console.error(`[v0] queryPosts failed with error: ${queryError.message || 'Unknown error'}`)
+            // Fallback failed
           }
-        }
-
-        // 3. Final fallback - try listPosts with filtering
-        if (!fetchedPost) {
-          try {
-            if (typeof wixClient.posts.listPosts === 'function') {
-              console.log('Trying listPosts as final fallback...')
-              const response = await wixClient.posts.listPosts()
-              const postsList = response.posts || []
-              
-              // Manually filter by slug
-              fetchedPost = postsList.find((p: any) => p.slug === slug) as Post
-              
-              if (fetchedPost) {
-                console.log('Successfully fetched post using listPosts + manual filtering')
-              }
-            }
-          } catch (listError: any) {
-            console.error('listPosts also failed:', listError?.message || listError)
->>>>>>> parent of 80f7212 (blog fix)
-          }
-        } catch (queryError: any) {
-          setError(`Failed to load post: ${queryError.message || "Unknown error"}`)
         }
 
         if (fetchedPost) {
@@ -314,69 +222,44 @@ export default function BlogPost({ slug }: BlogPostProps) {
           // Fetch related posts
           try {
             let relatedPostsData: Post[] = []
-<<<<<<< HEAD
-            if (wixClient.posts.queryPosts) {
+            if (typeof postsClient.queryPosts === 'function') {
+              console.log('[v0] Fetching related posts using queryPosts...')
               const postTags = fetchedPost.tags || []
               const postCategories = fetchedPost.categoryIds || []
 
-              let query = wixClient.posts.queryPosts().ne("_id", fetchedPost._id).limit(3) // Limit to 3 for better layout
-
-              if (postTags.length > 0) {
-                query = query.hasSome("hashtags", postTags)
-              } else if (postCategories.length > 0) {
-                query = query.hasSome("categoryIds", postCategories)
-=======
-            if (typeof wixClient.posts.queryPosts === 'function') {
-              console.log('Fetching related posts using queryPosts...')
-              const postTags = fetchedPost.tags || []
-              const postCategories = fetchedPost.categoryIds || []
+              let query = postsClient.queryPosts().ne('_id', fetchedPost._id).limit(6)
               
-              // Base query excluding the current post
-              let query = wixClient.posts.queryPosts().ne('_id', fetchedPost._id).limit(6)
-              
-              // Only apply filtering if there are tags or categories
               if (postTags.length > 0) {
-                // Using hashtags field, as tags field is often the slug for hashtags
-                query = query.hasSome('hashtags', postTags.slice(0, 5)) // Limit tags to avoid complex query issues
+                query = query.hasSome('hashtags', postTags) 
               } else if (postCategories.length > 0) {
-                query = query.hasSome('categoryIds', postCategories.slice(0, 5)) // Limit categories
->>>>>>> parent of 80f7212 (blog fix)
+                query = query.hasSome('categoryIds', postCategories)
               }
-
+              
               const relatedResponse = await query.find()
-              relatedPostsData = relatedResponse.items as Post[]
-<<<<<<< HEAD
+              // Use optional chaining for safe access
+              relatedPostsData = (relatedResponse?.items as Post[]) || [] 
+            } else if (typeof postsClient.listPosts === 'function') {
+              // Fallback to listPosts if queryPosts is not available (less ideal)
+              console.log('[v0] Fetching related posts using listPosts (fallback)...')
+              const relatedResponse = await postsClient.listPosts({
+                paging: { limit: 10 },
+              })
+              // Use optional chaining for safe access
+              const postsList = (relatedResponse?.posts || []) as Post[] 
+              relatedPostsData = postsList
+                .filter((p: Post) => p._id !== fetchedPost!._id)
+                .slice(0, 6) 
             }
             setRelatedPosts(relatedPostsData)
           } catch (relatedError) {
-            // Silent failure for related posts
-=======
-            } else if (typeof wixClient.posts.listPosts === 'function') {
-              // Fallback if queryPosts isn't available
-              const relatedResponse = await wixClient.posts.listPosts({
-                paging: { limit: 10 },
-              })
-              const postsList = relatedResponse.posts || []
-              relatedPostsData = postsList
-                .filter((p: any) => p._id !== fetchedPost._id)
-                .slice(0, 6) as Post[]
-            }
-            setRelatedPosts(relatedPostsData)
-          } catch (relatedError: any) {
-            console.error('Failed to fetch related posts:', relatedError?.message || relatedError)
-            // Don't set error state for related posts failure
->>>>>>> parent of 80f7212 (blog fix)
+            console.error('[v0] Failed to fetch related posts:', relatedError)
           }
         } else {
           setError("Post not found. The blog post you're looking for doesn't exist or has been removed.")
         }
       } catch (err: any) {
-<<<<<<< HEAD
-        setError(`Failed to load post: ${err.message || "Unknown error"}`)
-=======
-        console.error('Failed to fetch post (general error):', err)
-        setError(`Failed to load post: ${err.message || 'Unknown error'}`)
->>>>>>> parent of 80f7212 (blog fix)
+        console.error('[v0] Failed to fetch post (Outer Catch):', err)
+        setError(`Failed to load post. This is likely due to a network, CORS, or API Key error with the Wix SDK. Please check your Wix configuration. Error: ${err.message || 'Unknown error'}`)
       } finally {
         setIsLoading(false)
       }
@@ -386,38 +269,26 @@ export default function BlogPost({ slug }: BlogPostProps) {
   }, [slug])
 
   const handleShare = async (platform?: string) => {
-<<<<<<< HEAD
     const shareUrl = post?.url || window.location.href
-    const shareTitle = post?.title || ""
-    const shareText = post?.excerpt || ""
-=======
-    const shareUrl = window.location.href
     const shareTitle = post?.title || ''
     const shareText = post?.excerpt || ''
->>>>>>> parent of 80f7212 (blog fix)
 
     if (platform) {
       const encodedUrl = encodeURIComponent(shareUrl)
       const encodedTitle = encodeURIComponent(shareTitle)
 
       switch (platform) {
-        case "facebook":
-          window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`, "_blank")
+        case 'facebook':
+          window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`, '_blank')
           break
-        case "twitter":
-          window.open(`https://twitter.com/intent/tweet?text=${encodedTitle}&url=${encodedUrl}`, "_blank")
+        case 'twitter':
+          window.open(`https://twitter.com/intent/tweet?text=${encodedTitle}&url=${encodedUrl}`, '_blank')
           break
-        case "linkedin":
-          window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodedUrl}`, "_blank")
+        case 'linkedin':
+          window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodedUrl}`, '_blank')
           break
-<<<<<<< HEAD
-        case "whatsapp":
-          window.open(`https://wa.me/?text=${encodedTitle}%20${encodedUrl}`, "_blank")
-=======
         case 'whatsapp':
-          // Use a more standard mobile/desktop friendly format
-          window.open(`https://wa.me/?text=${encodedTitle}%20${encodedUrl}`, '_blank')
->>>>>>> parent of 80f7212 (blog fix)
+          window.open(`https://wa.me/?text=${encodedTitle}%20${encodedUrl}`, '_blank') 
           break
         default:
           break
@@ -430,7 +301,7 @@ export default function BlogPost({ slug }: BlogPostProps) {
           url: shareUrl,
         })
       } catch (error) {
-        console.log("Error sharing:", error)
+        console.log('Error sharing:', error)
       }
     } else {
       handleCopyLink()
@@ -439,15 +310,10 @@ export default function BlogPost({ slug }: BlogPostProps) {
 
   const handleCopyLink = async () => {
     try {
-<<<<<<< HEAD
       await navigator.clipboard.writeText(post?.url || window.location.href)
-      alert("Link copied to clipboard!")
-=======
-      await navigator.clipboard.writeText(window.location.href)
       alert('Link copied to clipboard!')
->>>>>>> parent of 80f7212 (blog fix)
     } catch (error) {
-      console.error("Failed to copy link:", error)
+      console.error('Failed to copy link:', error)
     }
   }
 
@@ -493,7 +359,7 @@ export default function BlogPost({ slug }: BlogPostProps) {
                 className="inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200"
               >
                 <ChevronLeft className="w-4 h-4 mr-2" />
-                Back
+                 Back
               </button>
             </div>
           </div>
@@ -506,7 +372,7 @@ export default function BlogPost({ slug }: BlogPostProps) {
     return (
       <div className="min-h-screen md:py-10 py-4 bg-gradient-to-br from-gray-50 to-white">
         <main className="container mx-auto px-4 py-12 text-center">
-          <div className="max-w-md mx-auto">
+           <div className="max-w-md mx-auto">
             <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
               <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <span className="text-2xl">📄</span>
@@ -518,7 +384,7 @@ export default function BlogPost({ slug }: BlogPostProps) {
                 className="inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200"
               >
                 <ChevronLeft className="w-4 h-4 mr-2" />
-                Back
+                 Back
               </button>
             </div>
           </div>
@@ -546,24 +412,21 @@ export default function BlogPost({ slug }: BlogPostProps) {
             </button>
           </nav>
           <div className="md:space-y-12">
-<<<<<<< HEAD
-            <div className="grid grid-cols-1 md:grid-cols-3 md:gap-4">
-              <div className="col-span-1 md:col-span-2">
-=======
             <div className='grid grid-cols-1 md:grid-cols-3 md:gap-4'>
-              <div className='col-span-2'>
->>>>>>> parent of 80f7212 (blog fix)
+              <div className='col-span-1 md:col-span-2'>
                 <article className="md:bg-white md:rounded-xs md:shadow-xs overflow-hidden">
                   <div className="p-0 md:p-4">
                     <header className="mt-5">
                       <h1 className="text-2xl md:text-3xl font-medium text-[#241d1f] mb-6 leading-tight">
                         {post.title}
                       </h1>
-
+                      
                       <div className="flex flex-wrap items-center gap-4 text-sm text-gray-500 mb-6">
                         <div className="flex items-center gap-1">
                           <Calendar className="w-4 h-4" />
-                          <time dateTime={post.firstPublishedDate}>{formatDate(post.firstPublishedDate)}</time>
+                          <time dateTime={post.firstPublishedDate}>
+                            {formatDate(post.firstPublishedDate)}
+                          </time>
                         </div>
                         <div className="flex items-center gap-1">
                           <Clock className="w-4 h-4" />
@@ -577,49 +440,33 @@ export default function BlogPost({ slug }: BlogPostProps) {
                         )}
                       </div>
 
-<<<<<<< HEAD
                       {(imageUrl || youtubeEmbedUrl) && (
                         <div className="mb-8 rounded-lg overflow-hidden border border-gray-100 shadow-sm">
                           {youtubeEmbedUrl ? (
                             <div className="aspect-w-16 aspect-h-9 w-full">
-                              <iframe
-                                src={youtubeEmbedUrl}
-                                frameBorder="0"
-                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                                allowFullScreen
-                                title={post.title}
-                                className="w-full h-full aspect-[16/9]"
-                              ></iframe>
+                                <iframe 
+                                    src={youtubeEmbedUrl} 
+                                    frameBorder="0" 
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                                    allowFullScreen
+                                    title={post.title}
+                                    className="w-full h-full aspect-[16/9]"
+                                ></iframe>
                             </div>
                           ) : imageUrl ? (
-=======
-                      {/* Cover Image/Video Section */}
-                      {youtubeEmbedUrl ? (
-                        <div className="mb-8 rounded-lg overflow-hidden aspect-[16/9]">
-                          <iframe
-                            className="w-full h-full"
-                            src={youtubeEmbedUrl}
-                            title="Embedded YouTube video"
-                            frameBorder="0"
-                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                            allowFullScreen
-                          ></iframe>
-                        </div>
-                      ) : imageUrl ? (
-                         <div className="mb-8 rounded-lg overflow-hidden">
->>>>>>> parent of 80f7212 (blog fix)
                             <img
-                              src={imageUrl}
+                              src={imageUrl || "/placeholder.svg"}
                               alt={post.title}
-                              className="w-full h-auto object-cover"
+                              className="w-full h-auto object-cover max-h-[60vh]"
                               loading="eager"
                               onError={(e) => {
                                 const target = e.target as HTMLImageElement
-                                target.style.display = "none"
+                                target.style.display = 'none'
                               }}
                             />
-                          </div>
-                      ) : null}
+                          ) : null}
+                        </div>
+                      )}
                     </header>
 
                     <div className="prose prose-lg max-w-none">
@@ -628,22 +475,13 @@ export default function BlogPost({ slug }: BlogPostProps) {
                       ) : post.content ? (
                         <div dangerouslySetInnerHTML={{ __html: post.content }} />
                       ) : post.contentText ? (
-                        <div className="whitespace-pre-wrap text-lg text-[#241d1f] leading-relaxed">
-                          {post.contentText}
-                        </div>
+                        <div className="whitespace-pre-wrap text-lg text-[#241d1f] leading-relaxed">{post.contentText}</div>
                       ) : (
                         <div className="text-center py-12">
                           <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
                             <span className="text-2xl">📝</span>
                           </div>
-<<<<<<< HEAD
-                          <p className="text-[#241d1f] italic text-lg">
-                            No content available for this post. Please check the post editor in Wix to ensure content is
-                            saved and the API is correctly configured to fetch it.
-                          </p>
-=======
-                          <p className="text-[#241d1f] italic text-lg">No content available for this post.</p>
->>>>>>> parent of 80f7212 (blog fix)
+                          <p className="text-[#241d1f] italic text-lg">No content available for this post. Please check the post editor in Wix to ensure content is saved and the API is correctly configured to fetch it.</p>
                         </div>
                       )}
                     </div>
@@ -661,28 +499,28 @@ export default function BlogPost({ slug }: BlogPostProps) {
                               <Share2 className="w-5 h-5" />
                             </button>
                             <button
-                              onClick={() => handleShare("facebook")}
+                              onClick={() => handleShare('facebook')}
                               className="p-2 text-[#241d1f] hover:text-blue-600 transition-colors"
                               aria-label="Share on Facebook"
                             >
                               <Facebook className="w-5 h-5" />
                             </button>
                             <button
-                              onClick={() => handleShare("twitter")}
+                              onClick={() => handleShare('twitter')}
                               className="p-2 text-[#241d1f] hover:text-blue-400 transition-colors"
                               aria-label="Share on Twitter"
                             >
                               <Twitter className="w-5 h-5" />
                             </button>
                             <button
-                              onClick={() => handleShare("linkedin")}
+                              onClick={() => handleShare('linkedin')}
                               className="p-2 text-[#241d1f] hover:text-blue-700 transition-colors"
                               aria-label="Share on LinkedIn"
                             >
                               <Linkedin className="w-5 h-5" />
                             </button>
                             <button
-                              onClick={() => handleShare("whatsapp")}
+                              onClick={() => handleShare('whatsapp')}
                               className="p-2 text-[#241d1f] hover:text-green-600 transition-colors"
                               aria-label="Share on WhatsApp"
                             >
@@ -697,22 +535,22 @@ export default function BlogPost({ slug }: BlogPostProps) {
                             </button>
                           </div>
                         </div>
-
+                        
                         <div className="flex items-center gap-4">
                           <button
                             onClick={() => setIsBookmarked(!isBookmarked)}
                             className={`p-2 transition-colors ${
-                              isBookmarked ? "text-blue-600" : "text-[#241d1f] hover:text-blue-600"
+                              isBookmarked ? 'text-blue-600' : 'text-[#241d1f] hover:text-blue-600'
                             }`}
                             aria-label={isBookmarked ? "Remove bookmark" : "Bookmark"}
                           >
                             <Bookmark className="w-5 h-5" fill={isBookmarked ? "currentColor" : "none"} />
                           </button>
-
+                          
                           <button
                             onClick={() => setIsLiked(!isLiked)}
                             className={`p-2 transition-colors ${
-                              isLiked ? "text-red-600" : "text-[#241d1f] hover:text-red-600"
+                              isLiked ? 'text-red-600' : 'text-[#241d1f] hover:text-red-600'
                             }`}
                             aria-label={isLiked ? "Unlike" : "Like"}
                           >
@@ -724,44 +562,35 @@ export default function BlogPost({ slug }: BlogPostProps) {
                   </div>
                 </article>
               </div>
-<<<<<<< HEAD
-              <div className="col-span-1">
+              <div className='col-span-1'>
                 {relatedPosts.length > 0 && (
                   <section className="mt-5 md:mt-0 md:bg-white md:rounded-xs md:shadow-xs md:p-4">
-                    <h2 className="text-xl md:text-2xl font-medium text-[#241d1f] mb-3 leading-tight border-b pb-2 md:border-none md:pb-0">
-                      Related Articles
-                    </h2>
-=======
-              <div className='col-span-1 bg-white md:p-4'>
-                {relatedPosts.length > 0 && (
-                  <section className="mt-5">
-                    <h2 className="text-xl md:text-3xl font-medium text-[#241d1f] mb-3 leading-tight">Related Articles</h2>
->>>>>>> parent of 80f7212 (blog fix)
+                    <h2 className="text-xl md:text-2xl font-medium text-[#241d1f] mb-3 leading-tight border-b pb-2 md:border-none md:pb-0">Related Articles</h2>
                     <div className="space-y-4">
                       {relatedPosts.map((relatedPost) => {
                         const relatedImageUrl = getWixImageUrl(
-                          relatedPost.media?.wixMedia?.image || relatedPost.coverMedia?.image,
+                          relatedPost.media?.wixMedia?.image || relatedPost.coverMedia?.image
                         )
                         return (
                           <a
                             key={relatedPost._id}
                             href={`/blog/${relatedPost.slug}`}
-                            className="flex items-center bg-gray-50 rounded-xs border border-gray-100 shadow-xs hover:shadow-xs transition-all duration-300 p-3"
+                            className="flex items-start bg-gray-50 md:bg-white rounded-xs border border-gray-100 hover:shadow-sm transition-all duration-300 p-3"
                           >
                             {relatedImageUrl && (
                               <div className="w-16 h-16 flex-shrink-0 overflow-hidden rounded-md">
                                 <img
-                                  src={relatedImageUrl}
+                                  src={relatedImageUrl || "/placeholder.svg"}
                                   alt={relatedPost.title}
                                   className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
                                   onError={(e) => {
                                     const target = e.target as HTMLImageElement
-                                    target.style.display = "none"
+                                    target.style.display = 'none'
                                   }}
                                 />
                               </div>
                             )}
-                            <h3 className="ml-3 text-base font-medium text-[#241d1f] hover:text-gray-800 transition-colors duration-200 line-clamp-2">
+                            <h3 className="ml-3 text-base font-medium text-[#241d1f] hover:text-gray-800 transition-colors duration-200 line-clamp-3">
                               {relatedPost.title}
                             </h3>
                           </a>
@@ -770,26 +599,17 @@ export default function BlogPost({ slug }: BlogPostProps) {
                     </div>
                   </section>
                 )}
-<<<<<<< HEAD
                 <div className="lg:sticky mt-8 lg:top-28">
                   <div className="bg-[#E22026] rounded-xs shadow-xl text-white p-6 text-center">
-                    <h2 className="text-2xl font-semibold mb-4 tracking-tight">Ready to Meet Your Specialist?</h2>
-                    <p className="text-base mb-6 leading-relaxed">
-                      Schedule a consultation with one of our expert doctors and take the first step toward better
-                      health.
-=======
-                <div className="lg:sticky mt-4 md:mt-0 md:py-0 md:py-10 lg:top-28 lg:min-h-[calc(100vh-7rem)]">
-                  <div className="bg-[#E22026] rounded-xs shadow-xs text-white p-4 text-center">
-                    <h2 className="text-2xl md:text-xl font-semibold mb-4 tracking-tight">
+                    <h2 className="text-2xl font-semibold mb-4 tracking-tight">
                       Ready to Meet Your Specialist?
                     </h2>
-                    <p className="text-base md:text-lg mb-6 leading-relaxed">
+                    <p className="text-base mb-6 leading-relaxed">
                       Schedule a consultation with one of our expert doctors and take the first step toward better health.
->>>>>>> parent of 80f7212 (blog fix)
                     </p>
                     <button
                       onClick={() => (window.location.href = "/contact")}
-                      className="inline-flex items-center px-6 font-medium py-2 bg-white text-red-600 rounded-xs hover:bg-red-50 hover:text-[#241d1f] transition-all duration-200 shadow-xs hover:shadow-md"
+                      className="inline-flex items-center px-6 font-medium py-3 bg-white text-red-600 rounded-lg hover:bg-red-50 hover:text-red-700 transition-all duration-200 shadow-lg hover:shadow-xl"
                     >
                       Book Now
                     </button>
