@@ -440,33 +440,7 @@ export default function BlogPost({ slug }: BlogPostProps) {
                         )}
                       </div>
 
-                      {(imageUrl || youtubeEmbedUrl) && (
-                        <div className="mb-8 rounded-lg overflow-hidden border border-gray-100 shadow-sm">
-                          {youtubeEmbedUrl ? (
-                            <div className="aspect-w-16 aspect-h-9 w-full">
-                                <iframe 
-                                    src={youtubeEmbedUrl} 
-                                    frameBorder="0" 
-                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                                    allowFullScreen
-                                    title={post.title}
-                                    className="w-full h-full aspect-[16/9]"
-                                ></iframe>
-                            </div>
-                          ) : imageUrl ? (
-                            <img
-                              src={imageUrl || "/placeholder.svg"}
-                              alt={post.title}
-                              className="w-full h-auto object-cover max-h-[60vh]"
-                              loading="eager"
-                              onError={(e) => {
-                                const target = e.target as HTMLImageElement
-                                target.style.display = 'none'
-                              }}
-                            />
-                          ) : null}
-                        </div>
-                      )}
+                     
                     </header>
 
                     <div className="prose prose-lg max-w-none">
