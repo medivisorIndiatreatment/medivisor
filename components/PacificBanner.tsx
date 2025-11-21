@@ -11,7 +11,7 @@ export default function Banner() {
         <div className="relative order-2 md:order-1 group w-full h-full flex items-end">
           <div className="w-full h-auto md:h-[calc(90vh-100px)] relative">
             <Image
-              src="/banner/Doctor-Team.png"
+              src="/banner/Doctor-Team-1.png"
               alt="Mr. Kumar Sushant - Director, Medivisor India Treatment"
               className="w-full h-full object-contain object-bottom "
               width={800}
