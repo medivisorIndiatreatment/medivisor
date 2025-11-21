@@ -114,7 +114,7 @@ export default function TravelGuidePage() {
                   <img src={tip.image} alt={tip.title} className="object-cover w-full h-full group-hover:scale-110 transition-transform duration-700" />
                 </div>
                 <CardHeader className="md:px-5 px-3 pt-4 pb-1">
-                  <CardTitle className="title-heading">{tip.title}</CardTitle>
+                  <CardTitle className="title-text">{tip.title}</CardTitle>
                 </CardHeader>
                 <CardContent className="md:px-5 px-3 pb-5 pt-0">
                   <p className="description">{tip.description}</p>

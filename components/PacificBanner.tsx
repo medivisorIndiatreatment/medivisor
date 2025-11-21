@@ -35,11 +35,14 @@ export default function Banner() {
                   <div className=" relative  justify-center z-10">
                     {/* <p className="text-sm text-center font-medium text-gray-600">Powered By</p> */}
 
-                    <div>
-                      <Link href="/pacific-patient#schedule">
-                        <img src="/hospital-logo/yasodha.png" className="md:w-60 w-40 mx-auto" />
-                      </Link>
-                    </div>
+                      <Image
+                        src="/hospital-logo/yasodha.png"
+                        alt="Yashoda Hospital"
+                        width={240}
+                        height={120}
+                        className="md:w-60 w-40 mx-auto"
+                      />
+                   
                   </div>
                 </div>
                 <h2 className="text-4xl sm:text-6xl text-center font-semibold tracking-tight text-gray-900">
@@ -88,7 +91,7 @@ export default function Banner() {
         </div>
       </div>
 
-     
+
     </div>
   );
 }

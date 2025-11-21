@@ -1,11 +1,12 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Card, CardContent } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Skeleton } from "@/components/ui/skeleton"
-import { Button } from "@/components/ui/button"
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel"
+import { Card, CardContent } from "./ui/card"
+import { Badge } from "./ui/badge"
+import Image from "next/image"
+import { Skeleton } from "./ui/skeleton"
+import { Button } from "./ui/button"
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "./ui/carousel"
 import { FileText, ExternalLink, Play } from "lucide-react"
 import { wixClient } from "@/lib/wixClient"
 import { getWixScaledToFillImageUrl, getBestCoverImage } from "@/lib/wixMedia"
@@ -86,7 +87,7 @@ export default function MediaCoverageCarousel({
       // Fetch items for the specific gallery only
       const itemsResponse = await wixClient.proGallery.listGalleryItems(SPECIFIC_GALLERY_ID)
       const galleryItems = (itemsResponse.items || []).map((item: any) => ({
-        _id: String(item.id),
+        _id: String(item.id || Math.random().toString(36).substr(2, 9)), // Fallback to random ID if undefined
         _createdDate: item.createdDate ? new Date(item.createdDate) : new Date(),
         _updatedDate: item.updatedDate ? new Date(item.updatedDate) : new Date(),
         title: item.title ?? "Untitled",
@@ -95,8 +96,10 @@ export default function MediaCoverageCarousel({
         image: item.image,
         video: item.video,
         text: item.text,
+        // Ensure we provide the required sortOrder property (fallback to item.order or 0)
+        sortOrder: Number(item.sortOrder ?? item.order ?? 0),
         galleryId: SPECIFIC_GALLERY_ID,
-        galleryName: itemsResponse.name ?? "Gallery",
+        galleryName: item.galleryName ?? "Gallery",
       }))
 
       setItems(
@@ -115,6 +118,11 @@ export default function MediaCoverageCarousel({
     fetchMediaData()
   }, [maxItems])
 
+  // Generate a unique key for each item
+  const generateItemKey = (item: GalleryItem, index: number): string => {
+    return item._id || `item-${index}-${Date.now()}`
+  }
+
   const renderMediaCard = (item: GalleryItem) => {
     const mediaType = getMediaType(item)
     const getOptimizedImageUrl = (item: GalleryItem): string => {
@@ -128,12 +136,13 @@ export default function MediaCoverageCarousel({
 
     return (
       <Card
-        key={item._id}
         className="group relative overflow-hidden rounded-xs border-2 p-2 border-gray-200 bg-white shadow-none transition-all duration-300 hover:shadow-xl"
       >
         <div className="aspect-[4/3] relative overflow-hidden">
           {mediaType === "image" && (
-            <img
+            <Image
+              width={600}
+              height={400}
               src={getOptimizedImageUrl(item)}
               alt={item.title || "Media item"}
               className="w-full h-full mb-2 object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
@@ -223,8 +232,8 @@ export default function MediaCoverageCarousel({
         ) : (
           <Carousel opts={{ align: "start", loop: true }} className="w-full">
             <CarouselContent className="-ml-4 md:-ml-6">
-              {items.map((item) => (
-                <CarouselItem key={item._id} className="pl-4 rounded-xs shadow-none md:pl-6 md:basis-1/2 lg:basis-1/4">
+              {items.map((item, index) => (
+                <CarouselItem key={generateItemKey(item, index)} className="pl-4 rounded-xs shadow-none md:pl-6 md:basis-1/2 lg:basis-1/4">
                   {renderMediaCard(item)}
                 </CarouselItem>
               ))}

@@ -71,7 +71,8 @@ export default function PartnerSection() {
                     <Image
                       src={image.src || '/placeholder.svg'}
                       alt={image.alt}
-                      layout="fill"
+                     width={1200}
+                     height={800}
                       objectFit="cover"
                       className="transition-transform duration-500 ease-in-out group-hover:scale-105"
                     />

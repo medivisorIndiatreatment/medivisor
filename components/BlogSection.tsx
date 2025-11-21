@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback, useRef } from "react"
 import { media } from "@wix/sdk"
+import Image from "next/image"
 import Link from "next/link"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -212,8 +213,13 @@ export default function BlogCarousel() {
                                   Your browser does not support the video tag.
                                 </video>
                               ) : wixImageUrl ? (
-                                <img
+                                <Image
                                   src={wixImageUrl || "/placeholder.svg"}
+                                  width={800}
+                                  height={500}
+                                  priority   // extremely important for LCP
+                                  quality={70}
+                                  sizes="100vw"
                                   alt={post.title}
                                   className="absolute top-0 left-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
                                 />
@@ -282,7 +288,7 @@ export default function BlogCarousel() {
       </div>
 
       {/* Add CSS for consistent line clamping */}
-     
+
     </section>
   )
 }

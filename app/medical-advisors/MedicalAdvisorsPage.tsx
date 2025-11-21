@@ -154,7 +154,7 @@ export default function MedicalAdvisorsPage() {
         {/* Content */}
         <div className="flex flex-col px-5 py-2 md:py-4  border  border-gray-100">
           {/* Name */}
-          <h2 className="title-text ">
+          <h2 className=" text-lg md:text-xl font-medium mb-1 text-[#241d1f]">
             {advisor.name || "Medical Advisor"}
           </h2>
 

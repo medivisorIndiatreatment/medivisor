@@ -142,7 +142,12 @@ export default function DidYouKnowSection() {
                 <Image
                   src={images[currentImage].src}
                   alt={images[currentImage].alt}
-                  fill
+               
+                  width={1200}
+                  height={700}
+                  priority   // extremely important for LCP
+                  quality={70}
+                  sizes="100vw"
                   className="w-full h-full object-cover transition-all duration-700 ease-in-out"
                 />
               </div>
@@ -170,11 +175,10 @@ export default function DidYouKnowSection() {
                   <button
                     key={index}
                     onClick={() => goToImage(index)}
-                    className={`w-2 h-2 rounded-full transition-all duration-300 ${
-                      index === currentImage
+                    className={`w-2 h-2 rounded-full transition-all duration-300 ${index === currentImage
                         ? "bg-white scale-125"
                         : "bg-white/50 hover:bg-white/75"
-                    }`}
+                      }`}
                     aria-label={`Go to image ${index + 1}`}
                   />
                 ))}
