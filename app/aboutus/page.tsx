@@ -1,6 +1,3 @@
-
-
-
 import AboutPage from './AboutPage';
 import { Metadata } from 'next';
 import { aboutMetadata } from '@/app/metadata'; // Import the specific metadata // Import the client component

@@ -3,16 +3,10 @@ import Image from 'next/image';
 import { Users, Award, Globe, Heart, Shield, Clock, Handshake, Lightbulb, MessageSquare, BriefcaseMedical, Quote } from 'lucide-react';
 import { useState } from 'react';
 import StatsSection from "@/components/StatsSection"
-import OurMission from "@/components/OurMission"
-import About from '@/components/About'
 import Banner from "@/components/BannerService"
 import TeamSilder from "@/components/teamSilder"
 import MeetOurDoctors from "@/components/MeetOurDoctors"
-import OurInitiativesSection from "@/components/OurInitiativesSection"
 import CtaSection from '@/components/CtaSection';
-import Partners from '@/components/Partners';
-import HowItWorks from '@/components/TreatmentProcess';
-import ProcessSteps from '@/components/ProcessSteps';
 import Services from "@/components/Services"
 import SafetyMeasures from '@/components/SafetyMeasures';
 import HospitalCarousel from '@/components/hospitalCompo';

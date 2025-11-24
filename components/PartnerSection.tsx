@@ -5,13 +5,13 @@ import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Pagination, Autoplay } from 'swiper/modules';
-import ContactModal from './ContactModal'; // Assuming ContactModal is in the same directory
+import ContactModal from './ContactModal';
+import { ChevronsRight } from 'lucide-react';
 
 // Import Swiper styles
 import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
-import { ChevronsRight } from 'lucide-react';
 
 export default function PartnerSection() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -19,7 +19,7 @@ export default function PartnerSection() {
   const carouselImages = [
     {
       src: '/partner.jpg',
-      alt: 'Patients receiving care 1',
+      alt: 'Patients receiving care',
     },
     {
       src: '/partner-2.jpg',
@@ -31,19 +31,14 @@ export default function PartnerSection() {
     },
   ];
 
-  const openModal = () => {
-    setIsModalOpen(true);
-  };
-
-  const closeModal = () => {
-    setIsModalOpen(false);
-  };
+  const openModal = () => setIsModalOpen(true);
+  const closeModal = () => setIsModalOpen(false);
 
   return (
     <>
-      <section className=" bg-gray-50 px-2 sm:px-6 py-6 md:py-10 lg:px-0">
+      <section className="bg-gray-50 px-2 sm:px-6 py-6 md:py-10 lg:px-0">
         <div className="container mx-auto grid grid-cols-1 md:grid-cols-12 md:gap-10 items-center">
-          {/* Carousel Section - Left Side */}
+          {/* Carousel Section */}
           <div className="order-1 md:order-2 md:mb-0 mb-8 col-span-12 md:col-span-7">
             <div className="rounded-xs shadow-xs overflow-hidden relative group">
               <Swiper
@@ -69,56 +64,58 @@ export default function PartnerSection() {
                 {carouselImages.map((image, index) => (
                   <SwiperSlide key={index}>
                     <Image
-                      src={image.src || '/placeholder.svg'}
+                      src={image.src}
                       alt={image.alt}
-                     width={1200}
-                     height={800}
-                      objectFit="cover"
-                      className="transition-transform duration-500 ease-in-out group-hover:scale-105"
+                      width={1200}
+                      height={800}
+                      className="object-cover transition-transform duration-500 ease-in-out group-hover:scale-105"
                     />
                   </SwiperSlide>
                 ))}
               </Swiper>
 
-              {/* Custom Navigation Buttons */}
-              <button className="swiper-button-prev-custom absolute left-4 top-1/2 -translate-y-1/2 z-10 bg-white/80 text-gray-800 rounded-full w-8 h-8 flex items-center justify-center transition-all duration-300 opacity-0 group-hover:opacity-100 hover:scale-110 hover:bg-white focus:outline-none">
+              {/* Custom Navigation */}
+              <button 
+                className="swiper-button-prev-custom absolute left-4 top-1/2 -translate-y-1/2 z-10 bg-white/80 text-gray-800 rounded-full w-8 h-8 flex items-center justify-center transition-all duration-300 opacity-0 group-hover:opacity-100 hover:scale-110 hover:bg-white focus:outline-none"
+                aria-label="Previous slide"
+              >
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7"></path>
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
                 </svg>
               </button>
-              <button className="swiper-button-next-custom absolute right-4 top-1/2 -translate-y-1/2 z-10 bg-white/80 text-gray-800 rounded-full w-8 h-8 flex items-center justify-center transition-all duration-300 opacity-0 group-hover:opacity-100 hover:scale-110 hover:bg-white focus:outline-none">
+              <button 
+                className="swiper-button-next-custom absolute right-4 top-1/2 -translate-y-1/2 z-10 bg-white/80 text-gray-800 rounded-full w-8 h-8 flex items-center justify-center transition-all duration-300 opacity-0 group-hover:opacity-100 hover:scale-110 hover:bg-white focus:outline-none"
+                aria-label="Next slide"
+              >
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path>
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
                 </svg>
               </button>
 
               {/* Custom Pagination */}
-              <div className="swiper-pagination-custom absolute bottom-4 w-full flex justify-center z-10 gap-2"></div>
+              <div className="swiper-pagination-custom absolute bottom-4 w-full flex justify-center z-10 gap-2" />
             </div>
           </div>
 
-          {/* Fixed Content Section - Right Side */}
+          {/* Content Section */}
           <div className="order-2 col-span-12 md:col-span-5 md:order-1 md:text-left">
             <h2 className="heading-base mb-2">Become a Partner</h2>
             <p className="description">
               Take a closer look around, and you'll see countless patients in desperate need of the right treatment. By
               joining us, you can play a vital role in guiding them toward the care they truly deserve. Your efforts won't
               just bring deep personal satisfaction — they'll also earn the heartfelt gratitude and blessings of those
-              whose lives you help transform.{" "}
-              <a
+              whose lives you help transform.{' '}
+              <button
                 onClick={openModal}
-                className="text-lg cursor-pointer inline-flex gap-x-1 items-center text-[#241d1f] hover:underline"
+                className="text-lg cursor-pointer inline-flex gap-x-1 items-center text-[#241d1f] hover:underline focus:outline-none"
               >
                 Know More <ChevronsRight className="w-4 h-4" />
-              </a>
+              </button>
             </p>
-
-
           </div>
         </div>
       </section>
 
-      {/* Contact Modal */}
       <ContactModal isOpen={isModalOpen} onClose={closeModal} />
 
       <style jsx global>{`

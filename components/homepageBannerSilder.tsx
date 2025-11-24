@@ -2,7 +2,7 @@
 'use client';
 
 import React from 'react';
-import Slider from 'react-slick';
+import Slider, { Settings } from 'react-slick';
 import Banner1 from '@/components/Hero';
 // import Banner2 from '@/components/eyeBanner';
 import Banner3 from '@/components/PacificBanner';
@@ -11,7 +11,7 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 
 const HeroSlider = () => {
-  const settings = {
+  const settings: Settings = {
     dots: true,
     infinite: true,
     speed: 1000,
