@@ -4,17 +4,12 @@ import '@/public/style.css';
 import 'keen-slider/keen-slider.min.css';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
-import { Inter } from 'next/font/google';
 import Script from 'next/script';
 import { WixAuthProvider } from '@/components/wix-auth-provider';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { Metadata } from 'next';
 import { defaultMetadata } from '@/app/metadata';
-
-const inter = Inter({ subsets: ['latin'] });
-
-// Export metadata from the configuration
 export const metadata: Metadata = defaultMetadata;
 
 export const viewport = {
@@ -33,7 +28,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
       <head>
         {/* You can add additional head elements here if needed */}
       </head>
-      <body className={inter.className}>
+      <body >
         <WixAuthProvider>
           {/* Global Scripts */}
           <Script id="gtm-script" strategy="afterInteractive">
