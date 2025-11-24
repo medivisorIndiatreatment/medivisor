@@ -2,6 +2,9 @@
 const nextConfig = {
   // output: 'export',
   trailingSlash: true,
+  experimental: {
+    optimizeCss: false,
+  },
   eslint: {
     ignoreDuringBuilds: true,
   },
@@ -10,14 +13,14 @@ const nextConfig = {
   },
   images: {
     unoptimized: true,
-    domains: ['static.wixstatic.com'],
+    domains: ["static.wixstatic.com"],
   },
   // ✅ Add redirects for old /single-post URLs
   async redirects() {
     return [
       {
-        source: "/single-post/:slug*", // match /single-post/ and 
-        destination: "/blog/:slug*",  // redirect to new blog route
+        source: "/single-post/:slug*", // match /single-post/ and
+        destination: "/blog/:slug*", // redirect to new blog route
         permanent: true, // use 308 redirect (SEO friendly)
       },
       // ✅ Add redirect for old /pacific-patient URL

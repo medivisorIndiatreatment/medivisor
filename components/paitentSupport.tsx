@@ -1,26 +1,27 @@
 "use client"
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Image from 'next/image';
 
 const LoadingSkeleton = () => (
-  <section className="py-10 bg-white animate-pulse">
+  <section className="py-10 bg-white animate-pulse" aria-label="Loading patient support information">
     <div className="container mx-auto md:px-0 px-4">
-      <div className="md:grid lg:grid-cols-12 gap-12 items-center flex flex-col-reverse md:flex-row">
+      <div className="md:grid lg:grid-cols-12 gap-8 md:gap-12 items-center flex flex-col-reverse">
         {/* Skeleton for Content */}
-        <div className="space-y-6 col-span-5 md:order-1 order-2 mt-0 md:mt-0">
-          <div className="h-10 bg-gray-200 rounded-lg w-3/4 mb-4" />
-          <div className="h-6 bg-gray-200 rounded w-full" />
-          <div className="h-6 bg-gray-200 rounded w-full" />
-          <div className="h-6 bg-gray-200 rounded w-5/6" />
-          <div className="h-6 bg-gray-200 rounded w-full" />
-          <div className="h-6 bg-gray-200 rounded w-4/5" />
+        <div className="space-y-4 md:space-y-6 col-span-5 md:order-1 order-2 mt-0 md:mt-0">
+          <div className="h-8 md:h-10 bg-gray-200 rounded-xs w-3/4 mb-2 md:mb-4" />
+          <div className="h-4 bg-gray-200 rounded w-full" />
+          <div className="h-4 bg-gray-200 rounded w-full" />
+          <div className="h-4 bg-gray-200 rounded w-5/6" />
+          <div className="h-4 bg-gray-200 rounded w-full" />
+          <div className="h-4 bg-gray-200 rounded w-4/5" />
+          <div className="h-4 bg-gray-200 rounded w-3/4" />
         </div>
 
         {/* Skeleton for Video */}
-        <div className="relative col-span-7 md:order-2 order-1">
+        <div className="relative col-span-7 md:order-2 order-1 w-full">
           <div className="relative rounded-xs overflow-hidden shadow-md">
-            <div className="relative rounded-xs shadow-lg aspect-[17/10] bg-gray-200" />
+            <div className="relative rounded-xs shadow-lg aspect-[16/9] md:aspect-[17/10] bg-gray-200" />
           </div>
         </div>
       </div>
@@ -28,14 +29,128 @@ const LoadingSkeleton = () => (
   </section>
 );
 
-export default function PaitentSupport() {
+// Lazy YouTube component with click-to-play optimization
+const LazyYouTubeEmbed = ({ 
+  videoId, 
+  title,
+  thumbnailQuality = "hqdefault" 
+}: { 
+  videoId: string; 
+  title: string;
+  thumbnailQuality?: "default" | "hqdefault" | "mqdefault" | "sddefault" | "maxresdefault";
+}) => {
+  const [isLoaded, setIsLoaded] = useState(false);
+  const [hasInteracted, setHasInteracted] = useState(false);
+  const observerRef = useRef<IntersectionObserver | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!containerRef.current || hasInteracted) return;
+
+    observerRef.current = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setIsLoaded(true);
+            observerRef.current?.disconnect();
+          }
+        });
+      },
+      { rootMargin: "100px" }
+    );
+
+    observerRef.current.observe(containerRef.current);
+
+    return () => {
+      observerRef.current?.disconnect();
+    };
+  }, [hasInteracted]);
+
+  const handlePlay = () => {
+    setHasInteracted(true);
+  };
+
+  const thumbnailUrl = `https://img.youtube.com/vi/${videoId}/${thumbnailQuality}.jpg`;
+  const embedUrl = `https://www.youtube.com/embed/${videoId}?autoplay=1&modestbranding=1&controls=1&rel=0&playsinline=1`;
+
+  return (
+    <div 
+      ref={containerRef}
+      className="relative rounded-xs overflow-hidden shadow-xs bg-gray-100"
+      itemScope
+      itemType="https://schema.org/VideoObject"
+    >
+      <meta itemProp="name" content={title} />
+      <meta itemProp="description" content="Patient support and medical journey assistance" />
+      <meta itemProp="thumbnailUrl" content={thumbnailUrl} />
+      <meta itemProp="uploadDate" content="2024-01-01" />
+      
+      {!hasInteracted ? (
+        <div 
+          className="relative cursor-pointer group aspect-[16/9] md:aspect-[17/10]"
+          onClick={handlePlay}
+          role="button"
+          aria-label={`Play video: ${title}`}
+          tabIndex={0}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              handlePlay();
+            }
+          }}
+        >
+          {/* Optimized thumbnail with loading state */}
+          <Image
+            src={thumbnailUrl}
+            alt={`Video thumbnail: ${title}`}
+            fill
+            className="object-cover transition-opacity duration-300 group-hover:opacity-90"
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 70vw"
+            priority={false}
+            loading="lazy"
+          />
+          
+          {/* Play button overlay */}
+          <div className="absolute inset-0 bg-black/20 group-hover:bg-black/30 transition-colors flex items-center justify-center">
+            <div className="w-16 h-16 md:w-20 md:h-20 bg-red-600 rounded-full flex items-center justify-center transform group-hover:scale-110 transition-transform">
+              <svg 
+                className="w-6 h-6 md:w-8 md:h-8 text-white ml-1" 
+                fill="currentColor" 
+                viewBox="0 0 24 24"
+              >
+                <path d="M8 5v14l11-7z"/>
+              </svg>
+            </div>
+          </div>
+        </div>
+      ) : (
+        // Load iframe only after interaction
+        <div className="aspect-[16/9] md:aspect-[17/10]">
+          <iframe
+            src={embedUrl}
+            title={title}
+            className="w-full h-full border-0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            allowFullScreen
+            loading="lazy"
+            referrerPolicy="strict-origin-when-cross-origin"
+            itemProp="embedUrl"
+          />
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default function PatientSupport() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     // Simulate a network request or data loading
     const timer = setTimeout(() => {
       setLoading(false);
-    }, 1500); // Adjust loading time as needed
+    }, 800); // Reduced loading time for better UX
+
     return () => clearTimeout(timer);
   }, []);
 
@@ -44,49 +159,105 @@ export default function PaitentSupport() {
   }
 
   return (
-    <section className="md:py-10 py-10 md:px-0 px-2 bg-gray-50" id="PatientSupport">
-      <div className="container mx-auto md:px-0 px-4">
-        {/* Use flex-col-reverse to place content first on mobile, then md:grid to restore original layout */}
-        <div className="md:grid lg:grid-cols-12 md:gap-12 items-center flex flex-col-reverse">
-          {/* Content Side */}
-          <div className="space-y-3 mdLspacey-6 col-span-5 md:order-1 order-2 mb-2 md:mb-0">
-            <h2 className="heading-base">
-              We Stand by Our Patients Every Step of the Way
-            </h2>
+    <>
+      <section 
+        className="md:py-12 py-8 md:px-0 px-4 bg-gray-50" 
+        id="PatientSupport"
+        itemScope
+        itemType="https://schema.org/MedicalOrganization"
+      >
+        <div className="container mx-auto md:px-0 px-2">
+          <div className="md:grid lg:grid-cols-12 md:gap-12 gap-8 items-center flex flex-col-reverse">
+            
+            {/* Content Side - SEO Optimized */}
+            <div className="space-y-4 md:space-y-6 col-span-5 md:order-1 order-2 mb-2 md:mb-0">
+              <h1 className="heading-base" itemProp="name">
+                We Stand by Our Patients Every Step of the Way
+              </h1>
 
-            <p className="description">
-              Medivisor takes pride in providing unwavering support to our patients
-              throughout their journey. From the moment they step foot in the
-              Delhi airport, our dedicated team ensures that they are never left
-              to navigate their medical experience alone.
-            </p>
+              <div itemProp="description">
+                <p className="description mb-4">
+                  Medivisor takes pride in providing unwavering support to our patients
+                  throughout their journey. From the moment they step foot in the
+                  Delhi airport, our dedicated team ensures that they are never left
+                  to navigate their medical experience alone.
+                </p>
 
-            <p className="description">
-              At every juncture of their treatment process, at least one Medivisor
-              staff member is by their side, offering escorting, guidance, and
-              assistance every step of the way. Our commitment is to ensure that
-              patients feel supported and cared for at all times, allowing them to
-              focus on their recovery with peace of mind.
-            </p>
+                <p className="description">
+                  At every juncture of their treatment process, at least one Medivisor
+                  staff member is by their side, offering escorting, guidance, and
+                  assistance every step of the way. Our commitment is to ensure that
+                  patients feel supported and cared for at all times, allowing them to
+                  focus on their recovery with peace of mind.
+                </p>
+              </div>
+
+              {/* Additional SEO-rich content */}
+              <div className="hidden" itemProp="serviceArea" itemType="https://schema.org/Country">
+                <span itemProp="name">India</span>
+              </div>
+              <meta itemProp="medicalSpecialty" content="Medical Tourism" />
+            </div>
+
+            {/* Video Side - Performance Optimized */}
+            <div className="relative md:col-span-7 w-full mt-0 md:mt-0 md:order-2 order-1">
+              <LazyYouTubeEmbed 
+                videoId="94RNiXZj8_8"
+                title="Medivisor Patient Support Journey - Comprehensive Medical Assistance"
+                thumbnailQuality="maxresdefault"
+              />
+            </div>
+
           </div>
-
-          {/* Video Side */}
-         <div className="relative md:col-span-7 w-full mt-5 md:mt-0 md:order-2 order-1">
-  <div className="relative rounded-xs overflow-hidden shadow-md">
-    <div className="relative rounded-xs shadow-lg">
-      <iframe
-        src="https://www.youtube.com/embed/94RNiXZj8_8?modestbranding=1&controls=0&rel=0"
-        title="YouTube video player"
-        className="w-full aspect-[17/10]"
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-        allowFullScreen
-      ></iframe>
-    </div>
-  </div>
-</div>
-
         </div>
-      </div>
-    </section>
+      </section>
+
+      {/* Structured Data for SEO */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "MedicalOrganization",
+            "name": "Medivisor Patient Support",
+            "description": "Comprehensive medical tourism support and patient care services in India",
+            "url": "https://medivisorindiatreatment.com",
+            "serviceArea": {
+              "@type": "Country",
+              "name": "India"
+            },
+            "medicalSpecialty": "Medical Tourism",
+            "serviceType": "Patient Support and Medical Assistance",
+            "hasOfferCatalog": {
+              "@type": "OfferCatalog",
+              "name": "Medical Tourism Services",
+              "itemListElement": [
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Airport Pickup and Assistance"
+                  }
+                },
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Medical Treatment Coordination"
+                  }
+                },
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "24/7 Patient Support"
+                  }
+                }
+              ]
+            }
+          })
+        }}
+      />
+    </>
   );
 }

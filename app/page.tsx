@@ -4,7 +4,6 @@
 
 import { useState, useEffect } from "react";
 import Head from "next/head";
-
 import HomepageBannerSilder from "@/components/homepageBannerSilder";
 import Partners from "@/components/Partners";
 import TreatmentServices from "@/components/TreatmentServices";
