@@ -4,51 +4,25 @@
 import React from 'react';
 import Slider, { Settings } from 'react-slick';
 import Banner1 from '@/components/Hero';
-// import Banner2 from '@/components/eyeBanner';
+import Banner2 from '@/components/eyeBanner'; // Assuming this is now active or you want to use it
 import Banner3 from '@/components/PacificBanner';
 
-import "slick-carousel/slick/slick.css";
-import "slick-carousel/slick/slick-theme.css";
+import 'slick-carousel/slick/slick.css';
+import 'slick-carousel/slick/slick-theme.css';
 
 const HeroSlider = () => {
-  const settings: Settings = {
-    dots: true,
-    infinite: true,
-    speed: 1000,
-    slidesToShow: 1,
-    slidesToScroll: 1,
-    autoplay: true,
-    autoplaySpeed: 5000,
-    pauseOnHover: true,
-    fade: true,
-    arrows: true,
-    adaptiveHeight: true, // ✅ dynamic height per slide
-    cssEase: 'cubic-bezier(0.645, 0.045, 0.355, 1)',
-    waitForAnimate: true,
-    swipe: true,
-    touchThreshold: 10,
-    responsive: [
-      {
-        breakpoint: 768,
-        settings: {
-          arrows: false, // ✅ hide arrows on mobile
-          dots: false, // ✅ hide dots on mobile
-          speed: 800,
-          adaptiveHeight: true,
-        },
-      },
-      {
-        breakpoint: 480,
-        settings: {
-          arrows: false,
-          dots: false,
-          speed: 600,
-          adaptiveHeight: true,
-        },
-      },
-    ],
-  };
+  // 1. Define all your slide components/content here
+  const slides = [
+    { key: 'banner1', component: <Banner1 />, link: '/' },
+    // Uncomment these to test with multiple slides:
+    // { key: 'banner2', component: <a href="/fiji-eye-test "><Banner2 /></a>, link: '/fiji-eye-test' },
+    // { key: 'banner3', component: <a href="/pacific-patient"><Banner3 /></a>, link: '/pacific-patient' },
+  ];
 
+  // 2. Check the number of slides
+  const isSingleSlide = slides.length <= 1;
+
+  // --- Custom Arrow Components ---
   const NextArrow = (props: any) => {
     const { className, style, onClick } = props;
     return (
@@ -94,28 +68,64 @@ const HeroSlider = () => {
       </div>
     );
   };
+  // --- End Custom Arrow Components ---
 
-  settings.nextArrow = <NextArrow />;
-  settings.prevArrow = <PrevArrow />;
+  const settings: Settings = {
+    // 3. Conditional settings based on slide count
+    dots: !isSingleSlide,
+    arrows: !isSingleSlide,
+    nextArrow: !isSingleSlide ? <NextArrow /> : undefined,
+    prevArrow: !isSingleSlide ? <PrevArrow /> : undefined,
+
+    // Original settings
+    infinite: true,
+    speed: 1000,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+    autoplay: !isSingleSlide, // Only autoplay if there's more than one slide
+    autoplaySpeed: 5000,
+    pauseOnHover: true,
+    fade: true,
+    adaptiveHeight: true, // ✅ dynamic height per slide
+    cssEase: 'cubic-bezier(0.645, 0.045, 0.355, 1)',
+    waitForAnimate: true,
+    swipe: true,
+    touchThreshold: 10,
+    responsive: [
+      {
+        breakpoint: 768,
+        settings: {
+          // On mobile, always hide arrows/dots (unless you want them for single slide)
+          arrows: false,
+          dots: false,
+          speed: 800,
+          adaptiveHeight: true,
+        },
+      },
+      {
+        breakpoint: 480,
+        settings: {
+          arrows: false,
+          dots: false,
+          speed: 600,
+          adaptiveHeight: true,
+        },
+      },
+    ],
+  };
 
   return (
     <div className="hero-slider relative w-full mx-auto overflow-hidden">
       <Slider {...settings}>
-        <div key="banner1">
-          <Banner1 />
-        </div>
-        {/* <div key="banner2">
-          <a href="/fiji-eye-test ">
-            <Banner2 />
-          </a>
-        </div> */}
-        {/* <div key="banner3">
-          <a href="/pacific-patient">
-            <Banner3 />
-          </a>
-        </div> */}
+        {/* 4. Map over the slides array to render them */}
+        {slides.map((slide) => (
+          <div key={slide.key}>
+            {slide.component}
+          </div>
+        ))}
       </Slider>
 
+      {/* 5. Keep the global CSS for styling when dots/arrows ARE visible */}
       <style jsx global>{`
         /* Hide default slick arrows since we're using custom ones */
         .hero-slider .slick-prev:before,
@@ -162,7 +172,7 @@ const HeroSlider = () => {
           transform: scale(1.2);
         }
 
-        /* Mobile adjustments */
+        /* Mobile adjustments (still necessary as they override desktop settings) */
         @media (max-width: 768px) {
           .hero-slider .slick-prev,
           .hero-slider .slick-next {
