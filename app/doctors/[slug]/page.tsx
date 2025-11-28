@@ -615,7 +615,7 @@ const PrimarySpecialtyAndTreatments = ({
            
               className={classNames(
                 "p-3 rounded-full bg-white shadow-lg transition-opacity duration-200 pointer-events-auto",
-                "disabled:opacity-40 disabled:cursor-not-allowed",
+                "disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer",
                 "ml-[-1rem]" // Keeping this for the offset from the content, but the button should now be visible within the container due to px-6. Let's remove to bring it inside the 4px padding.
               )}
               aria-label="Previous"
@@ -627,7 +627,7 @@ const PrimarySpecialtyAndTreatments = ({
         
               className={classNames(
                 "p-3 rounded-full bg-white shadow-lg transition-opacity duration-200 pointer-events-auto",
-                "disabled:opacity-40 disabled:cursor-not-allowed",
+                "disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer",
                 "mr-[-1rem]" // Same here.
               )}
               aria-label="Next"
@@ -752,7 +752,7 @@ const AffiliatedBranchesList = ({
               disabled={prevBtnDisabled}
               className={classNames(
                 "p-3 rounded-full bg-white shadow-lg transition-opacity duration-200 pointer-events-auto",
-                "disabled:opacity-40 disabled:cursor-not-allowed",
+                "disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer",
               )}
               aria-label="Previous"
             >
@@ -763,7 +763,7 @@ const AffiliatedBranchesList = ({
               disabled={nextBtnDisabled}
               className={classNames(
                 "p-3 rounded-full bg-white shadow-lg transition-opacity duration-200 pointer-events-auto",
-                "disabled:opacity-40 disabled:cursor-not-allowed",
+                "disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer",
               )}
               aria-label="Next"
             >
@@ -990,7 +990,7 @@ const SimilarDoctorsList = ({
               disabled={prevBtnDisabled}
               className={classNames(
                 "p-3 rounded-full bg-white shadow-lg transition-opacity duration-200 pointer-events-auto",
-                "disabled:opacity-40 disabled:cursor-not-allowed",
+                "disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer",
               )}
               aria-label="Previous"
             >
@@ -1001,7 +1001,7 @@ const SimilarDoctorsList = ({
               disabled={nextBtnDisabled}
               className={classNames(
                 "p-3 rounded-full bg-white shadow-lg transition-opacity duration-200 pointer-events-auto",
-                "disabled:opacity-40 disabled:cursor-not-allowed",
+                "disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer",
               )}
               aria-label="Next"
             >
@@ -1417,7 +1417,7 @@ export default function DoctorDetail({ params }: { params: Promise<{ slug: strin
           <Users className="w-16 h-16 text-gray-300 mx-auto" />
           <h2 className="text-2xl md:text-3xl font-medium text-gray-900 leading-tight">Doctor Not Found</h2>
           <p className="text-base text-gray-700 leading-relaxed font-light">{error || "The requested doctor could not be found. Please check the URL or try searching again."}</p>
-          <Link href="/doctors" className="inline-block w-full bg-gray-700 text-white px-6 py-3 rounded-xs hover:bg-gray-800 transition-all font-medium shadow-sm focus:outline-none focus:ring-2 focus:ring-gray-400/50">
+          <Link href="/hospitals/?view=doctors" className="inline-block w-full bg-gray-700 text-white px-6 py-3 rounded-xs hover:bg-gray-800 transition-all font-medium shadow-sm focus:outline-none focus:ring-2 focus:ring-gray-400/50">
             Go to Doctors Search
           </Link>
         </div>

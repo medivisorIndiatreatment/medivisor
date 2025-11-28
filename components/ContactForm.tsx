@@ -17,7 +17,7 @@ const cn = (...classes: (string | boolean | undefined | null)[]) => classes.filt
 
 // Define the primary accent color class for consistency
 const ACCENT_CLASS = "text-gray-700 focus-visible:ring-gray-700 focus:ring-gray-700 focus:border-gray-700";
-const BUTTON_BG_CLASS = "bg-gray-700 hover:bg-gray-800 focus:ring-gray-700";
+const BUTTON_BG_CLASS = "bg-[#E22026] hover:bg-[#74BF44] focus:ring-gray-700";
 const TAB_ACTIVE_CLASS = "border-gray-700 text-gray-700"; // For the active tab line
 
 // 1. Mock Country Data and Calling Code Logic (Replaces country-list and libphonenumber-js)
@@ -409,7 +409,7 @@ export default function ContactForm() {
                 type="submit" 
                 disabled={status.state === "submitting"} 
                 // Primary button with red accent, white text, and shadow
-                className={cn("w-full font-medium text-white py-2 shadow-md", BUTTON_BG_CLASS)}
+                className={cn("w-full md:font-medium text-white py-2 shadow-md", BUTTON_BG_CLASS)}
               >
                 {status.state === "submitting" ? "Sending Request..." : 
                (activeTab === "hospital"? "Submit Hospital Request": "Submit Consultation Request")}

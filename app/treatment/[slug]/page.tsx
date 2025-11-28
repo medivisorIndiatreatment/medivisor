@@ -1049,7 +1049,7 @@ export default function TreatmentPage({ params }: TreatmentPageProps) {
           <h2 className={`text-2xl font-extralight text-[#241d1f] ${inter.variable}`}>Treatment Not Found</h2>
           <p className={`text-[#241d1f]/70 leading-relaxed font-extralight ${inter.variable}`}>{error || "The requested treatment could not be found. Please check the URL or try searching again."}</p>
           <Link
-            href="/treatment"
+            href="/Hospitals/?view=treatments"
             className="inline-block w-full bg-[#74BF44] text-white px-6 py-3 rounded-sm hover:bg-[#74BF44]/90 transition-all font-extralight ${inter.variable} shadow-sm focus:outline-none focus:ring-2 focus:ring-[#74BF44]/50"
           >
             Browse All Treatments

@@ -55,17 +55,39 @@ interface Hospital {
 // Data Fetching
 // =================================================================
 
+// 1. Define the expected shape of the API response (assuming the API returns an object 
+//    containing an 'items' array).
+interface HospitalAPIResponse {
+  items: Hospital[];
+  totalCount?: number; // Optional: include other properties if they exist
+}
+
 async function fetchMasterHospitalData(): Promise<Hospital[]> {
-  const response = await fetch('/api/hospitals?fetchMaster=true', {
+  // Use a `try...catch` block to handle errors more cleanly, 
+  // though the existing `if (!response.ok)` handles server errors well.
+  
+  const response = await fetch('/api/hospitals?pageSize=50', { 
     cache: 'no-store'
   });
 
   if (!response.ok) {
-    throw new Error(`Failed to fetch hospital data: ${response.statusText}`);
+    // 👇 The error handling is already good, keep it robust
+    const errorBody = await response.text();
+    console.error("API Response Status:", response.status);
+    console.error("API Response Body:", errorBody);
+    throw new Error(`Failed to fetch hospital data: ${response.statusText}. Response body: ${errorBody.substring(0, 100)}`);
   }
 
-  const data = await response.json();
-  return data.items || [];
+  // 2. Add type assertion for the JSON response for better type safety
+  const data: HospitalAPIResponse = await response.json();
+  
+  // 3. Ensure `data` is an object and has an `items` property before returning
+  if (!data || !Array.isArray(data.items)) {
+      console.error("API response structure is invalid:", data);
+      throw new Error("Invalid data structure received from hospital API.");
+  }
+  
+  return data.items;
 }
 
 // =================================================================
@@ -167,7 +189,7 @@ export default function Header() {
     fetchMasterHospitalData()
       .then(setAllHospitals)
       .catch(error => {
-        console.error("Failed to fetch hospital data:", error);
+        console.error("Failed to fetch hospital data for header filter:", error); // Updated log message
       });
   }, []);
 
@@ -310,7 +332,7 @@ export default function Header() {
             </div>
 
             {/* CTA & Mobile Menu Toggle */}
-            <div className="flex w-1/6 items-center justify-end gap-3">
+            <div className="flex w-full md:w-1/6 items-center justify-end gap-3">
               <button
                 className="bg-[#E22026] cursor-pointer md:block hidden hover:bg-[#74BF44] text-white font-medium px-5 py-2 rounded-md shadow-md transition-all"
                 onClick={openModal}

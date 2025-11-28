@@ -249,20 +249,31 @@ const DataMappers = {
 
 // REFERENCE MAPPER
 const ReferenceMapper = {
+  // FIX: Refined logic for multiReference to ensure robust handling of single references, nulls, and IDs.
   multiReference: (field: any, ...nameKeys: string[]): any[] => {
-    if (!field) return []
-    if (!Array.isArray(field)) field = [field].filter(Boolean)
-
-    return field
+    let items = []
+    if (field) {
+        items = Array.isArray(field) ? field : [field]
+    }
+    
+    return items
+      .filter(Boolean) // Remove null, undefined, 0, "" from the array
       .map((ref: any) => {
-        if (typeof ref === "string") return { _id: ref }
+        // Ensure the reference is an object or a string ID
+        if (typeof ref !== "object" && typeof ref !== "string") return null
+        
+        // Handle direct string ID reference
+        if (typeof ref === "string") return { _id: ref, name: "ID Reference" } 
+        
+        // Handle object reference
         const name = getValue(ref, ...nameKeys) || "Unknown"
         const id = ref._id || ref.ID || ref.data?._id
+        
         return name && id ? { _id: id, name } : null
       })
       .filter(Boolean)
   },
-
+  
   extractIds: (refs: any[]): string[] =>
     refs.map((r) => (typeof r === "string" ? r : r?._id || r?.ID || r?.data?._id)).filter(Boolean) as string[],
 
@@ -770,6 +781,8 @@ export async function GET(req: Request) {
     })
   } catch (error: any) {
     console.error("API Error:", error)
-    return NextResponse.json({ error: "Failed to fetch hospitals", details: error.message }, { status: 500 })
+    // Ensure the returned error message is concise and includes details for debugging
+    const errorMessage = error.message || "An unknown error occurred on the server."
+    return NextResponse.json({ error: "Failed to fetch hospitals", details: errorMessage }, { status: 500 })
   }
 }

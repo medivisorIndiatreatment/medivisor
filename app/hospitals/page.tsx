@@ -12,6 +12,7 @@ import {
   Building2,
   Award,
   MapPin,
+  ChevronDownIcon,
   Stethoscope,
   Home,
   X,
@@ -1028,12 +1029,12 @@ const FilterSidebar = ({ filters, showFilters, setShowFilters, clearFilters, upd
 
   return (
     <div
-      className={`fixed inset-0 z-40 md:sticky md:top-0 md:h-screen md:w-64 lg:w-72 md:flex-shrink-0 md:pt-0 transform ${showFilters ? "translate-x-0 bg-white backdrop-blur-sm" : "-translate-x-full"} md:translate-x-0 transition-transform duration-300 ease-in-out border-r border-gray-100 overflow-y-auto`}
+      className={`fixed inset-0 z-40 md:sticky md:top-16 md:h-screen md:w-64 lg:w-72 md:flex-shrink-0 md:pt-0 transform ${showFilters ? "translate-x-0 bg-white backdrop-blur-sm" : "-translate-x-full"} md:translate-x-0 transition-transform duration-300 ease-in-out border-r border-gray-100 overflow-y-auto`}
     >
       <div className="p-4 md:p-4 h-full overflow-y-auto bg-white md:bg-gray-50">
         <div className="flex justify-between items-center mb-4 border-b border-gray-200 pb-2 sticky top-0 z-10">
-          <h3 className="text-lg font-medium text-gray-900 flex items-center gap-2">
-            <Filter className="w-5 h-5 text-gray-400" />
+          <h3 className="text-lg font-medium text-gray-700 flex items-center gap-2">
+            <Filter className="w-5 h-5 text-gray-600" />
             Search  {activeFilterKey}
           </h3>
         </div>
@@ -1415,19 +1416,39 @@ const ViewToggle = ({ view, setView }: { view: "hospitals" | "doctors" | "treatm
 )
 
 const Sorting = ({ sortBy, setSortBy }: { sortBy: "all" | "popular" | "az" | "za", setSortBy: (sortBy: "all" | "popular" | "az" | "za") => void }) => (
-  <div className="flex items-center gap-3">
-    <label className="text-sm text-gray-500 hidden sm:block font-normal">Sort by:</label>
+  // Assuming you use Heroicons or a similar library
+
+// ... inside your component
+<div className="flex items-center gap-3">
+  <label className="text-sm text-gray-700 hidden sm:block font-normal">Sort by:</label>
+  
+  {/* 👇 Start of the custom wrapper for the select and icon */}
+  <div className="relative">
     <select
       value={sortBy}
       onChange={(e) => setSortBy(e.target.value as "all" | "popular" | "az" | "za")}
-      className="border border-gray-200 rounded-xs px-4 py-2 text-sm focus:ring-1 focus:ring-gray-100 focus:border-gray-300 bg-white shadow-xs appearance-none pr-8 cursor-pointer text-gray-700"
+      className="
+        border border-gray-200 rounded-xs px-4 py-2 text-sm focus:ring-1 
+        focus:ring-gray-100 focus:border-gray-300 bg-white shadow-xs 
+        pr-8 cursor-pointer text-gray-700
+        appearance-none  /* 👈 This hides the default OS arrow */
+      "
     >
       <option value="all">All (A to Z)</option>
       <option value="popular">Popular</option>
       <option value="az">A to Z</option>
       <option value="za">Z to A</option>
     </select>
+    
+    {/* 👇 The custom down arrow icon */}
+    {/* Note: It's absolutely positioned to the right and centered vertically */}
+    <ChevronDownIcon 
+        className="absolute right-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-470 pointer-events-none" 
+        aria-hidden="true" 
+    />
   </div>
+  {/* 👆 End of the custom wrapper */}
+</div>
 )
 
 const ResultsHeader = ({
@@ -1466,8 +1487,8 @@ const MobileFilterButton = ({ setShowFilters }: { setShowFilters: (show: boolean
 )
 
 const BreadcrumbNav = () => (
-  <nav aria-label="Breadcrumb" className="container border-t border-gray-50 bg-gray-50 mx-auto px-4 sm:px-6 lg:px-8">
-    <ol className="flex items-center px-2 md:px-0 space-x-1 py-4 text-base text-gray-500 font-normal">
+  <nav aria-label="Breadcrumb" className="container border-y border-gray-200 bg-gray-50 mx-auto px-4 sm:px-6 lg:px-8">
+    <ol className="flex items-center px-2 md:px-0 space-x-1 py-2 text-base text-gray-500 font-normal">
       <li>
         <Link href="/" className="flex items-center hover:text-gray-700 transition-colors">
           <Home className="w-4 h-4 mr-1 text-gray-400" />

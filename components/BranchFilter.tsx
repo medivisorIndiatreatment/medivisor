@@ -151,7 +151,7 @@ const SearchDropdown = ({
           <button 
             type="button"
             onClick={onClear}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+            className="absolute right-3 bg-white top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
           >
             <X className="w-4 h-4" />
           </button>
@@ -256,7 +256,7 @@ const BranchFilter = ({ allHospitals, initialSearch = "" }: BranchFilterProps) =
             if (name !== 'Unknown') treatments.set(id, name)
           })
           
-          // Treatments nested under hospital.branches.specialists (THE REQUIRED ADDITION)
+          // Treatments nested under hospital.branches.specialists
           branch.specialists?.forEach((specialist: SpecialistData) => {
               specialist.treatments?.forEach((treatment: TreatmentData) => {
                   const name = extractProperName(treatment)
@@ -347,8 +347,10 @@ const BranchFilter = ({ allHospitals, initialSearch = "" }: BranchFilterProps) =
     
     if (!trimmedQuery) return
 
+    // Enhanced logic: Find a match using slugs for better tolerance to casing and spacing
+    const querySlug = generateSlug(trimmedQuery)
     const matchingOption = availableOptions.find(option => 
-      option.name.toLowerCase() === trimmedQuery.toLowerCase()
+      generateSlug(option.name) === querySlug
     )
 
     if (matchingOption) {
@@ -366,7 +368,7 @@ const BranchFilter = ({ allHospitals, initialSearch = "" }: BranchFilterProps) =
         <SearchDropdown
           value={query}
           onChange={setQuery}
-          placeholder="Search Doctors, Hospitals, treatments,  cities, specialties..."
+          placeholder="Search by name, city, treatment, or specialty..."
           options={availableOptions}
           onOptionSelect={handleOptionSelect}
           onClear={clearSearch}
