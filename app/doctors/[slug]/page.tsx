@@ -33,7 +33,7 @@ import {
 } from "lucide-react"
 import HospitalSearch from "@/components/BranchFilter"
 import Link from "next/link"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation" // MODIFIED: Added useSearchParams
 import classNames from "classnames"
 import ContactForm from "@/components/ContactForm"
 import { Inter } from "next/font/google"
@@ -46,7 +46,7 @@ const inter = Inter({
 })
 
 const EMBLA_CLASSES = {
-  container: "embla__container flex touch-pan-y ml-[-1rem]",
+  container: "embla__container flex touch-pan-y", // REMOVED ml-[-1rem]
   slide: "embla__slide flex-[0_0_auto] min-w-0 pl-4",
   viewport: "overflow-hidden"
 }
@@ -609,14 +609,14 @@ const PrimarySpecialtyAndTreatments = ({
           </div>
         </div>
         {relatedTreatments.length > 3 && (
-          <div className="absolute top-1/2 left-0 right-0 transform -translate-y-1/2 flex justify-between pointer-events-none px-2 md:px-0">
+          <div className="absolute top-1/2 left-0 right-0 transform -translate-y-1/2 flex justify-between pointer-events-none px-6"> {/* Changed px-2 md:px-0 to px-6 */}
             <button
               onClick={scrollPrev}
-              disabled={prevBtnDisabled}
+           
               className={classNames(
                 "p-3 rounded-full bg-white shadow-lg transition-opacity duration-200 pointer-events-auto",
                 "disabled:opacity-40 disabled:cursor-not-allowed",
-                "ml-[-1rem]"
+                "ml-[-1rem]" // Keeping this for the offset from the content, but the button should now be visible within the container due to px-6. Let's remove to bring it inside the 4px padding.
               )}
               aria-label="Previous"
             >
@@ -624,11 +624,11 @@ const PrimarySpecialtyAndTreatments = ({
             </button>
             <button
               onClick={scrollNext}
-              disabled={nextBtnDisabled}
+        
               className={classNames(
                 "p-3 rounded-full bg-white shadow-lg transition-opacity duration-200 pointer-events-auto",
                 "disabled:opacity-40 disabled:cursor-not-allowed",
-                "mr-[-1rem]"
+                "mr-[-1rem]" // Same here.
               )}
               aria-label="Next"
             >
@@ -746,14 +746,13 @@ const AffiliatedBranchesList = ({
           </div>
         </div>
         {filteredBranches.length > 3 && (
-          <div className="absolute top-1/2 left-0 right-0 transform -translate-y-1/2 flex justify-between pointer-events-none px-2 md:px-0">
+          <div className="absolute top-1/2 left-0 right-0 transform -translate-y-1/2 flex justify-between pointer-events-none px-6"> {/* Changed px-2 md:px-0 to px-6 */}
             <button
               onClick={scrollPrev}
               disabled={prevBtnDisabled}
               className={classNames(
                 "p-3 rounded-full bg-white shadow-lg transition-opacity duration-200 pointer-events-auto",
                 "disabled:opacity-40 disabled:cursor-not-allowed",
-                "ml-[-1rem]"
               )}
               aria-label="Previous"
             >
@@ -765,7 +764,6 @@ const AffiliatedBranchesList = ({
               className={classNames(
                 "p-3 rounded-full bg-white shadow-lg transition-opacity duration-200 pointer-events-auto",
                 "disabled:opacity-40 disabled:cursor-not-allowed",
-                "mr-[-1rem]"
               )}
               aria-label="Next"
             >
@@ -782,17 +780,23 @@ const SimilarDoctorsList = ({
   similarDoctors,
   cityFilter,
   branchFilter,
-  doctorFilter
+  doctorFilter,
+  specializationQuery, // PROP: Holds the specialization ID or slug
+  cityOptions, // PASSING NEW PROP
+  updateSubFilter // PASSING NEW PROP
 }: {
   similarDoctors: ExtendedDoctorType[],
   cityFilter: FilterValue,
   branchFilter: FilterValue,
-  doctorFilter: FilterValue
+  doctorFilter: FilterValue,
+  specializationQuery: string, // NOW THIS WILL HOLD THE CURRENT DOCTOR'S PRIMARY SPECIALIZATION ID/SLUG
+  cityOptions: { id: string; name: string }[], // PASSING NEW PROP
+  updateSubFilter: (key: FilterKey, subKey: 'id' | 'query', value: string) => void // PASSING NEW PROP
 }) => {
   const [emblaRef, emblaApi] = useEmblaCarousel({ loop: false, align: 'start', dragFree: false, containScroll: 'keepSnaps' } as EmblaOptionsType)
   const [prevBtnDisabled, setPrevBtnDisabled] = useState(true)
   const [nextBtnDisabled, setNextBtnDisabled] = useState(true)
-  const [searchTerm, setSearchTerm] = useState('')
+  const [searchTerm, setSearchTerm] = useState(doctorFilter.query) // Initialize with current doctorFilter query
 
   const globallyFilteredDoctors = useMemo(() => {
     let filtered = similarDoctors
@@ -806,13 +810,12 @@ const SimilarDoctorsList = ({
       )
     }
     if (cityFilter.id || cityFilter.query) {
+      const cityId = cityFilter.id
+      const cityQuery = cityFilter.query.toLowerCase()
       filtered = filtered.filter(d =>
-        d.locations.some((loc: any) =>
-          loc.cities.some((c: any) =>
-            cityFilter.id ? c.cityName === cityFilter.id :
-              c.cityName?.toLowerCase().includes(cityFilter.query.toLowerCase())
-          )
-        )
+        d.locations.some((loc: any) => loc.cities.some((c: any) =>
+          cityId ? c.cityName === cityId : c.cityName?.toLowerCase().includes(cityQuery)
+        ))
       )
     }
     if (branchFilter.id || branchFilter.query) {
@@ -824,14 +827,13 @@ const SimilarDoctorsList = ({
         return d.locations.some(loc => loc.branchName?.toLowerCase().includes(branchFilter.query.toLowerCase()))
       })
     }
-    if (doctorFilter.id || doctorFilter.query) {
-      filtered = filtered.filter(d =>
-        doctorFilter.id ? d.doctorName === doctorFilter.id :
-          d.doctorName?.toLowerCase().includes(doctorFilter.query.toLowerCase())
-      )
-    }
+    // We explicitly exclude the doctorFilter.id logic here to prevent filtering by a selected doctor's ID, 
+    // as the purpose is to search for *similar* doctors, and the 'doctor' filter logic is handled 
+    // by the internal searchTerm state, which should only be used for query filtering in this context.
+    // The main doctor filter is controlled by the outer component's state, but for similarity search, 
+    // we use the local searchTerm state.
     return filtered
-  }, [similarDoctors, searchTerm, cityFilter, branchFilter, doctorFilter])
+  }, [similarDoctors, searchTerm, cityFilter, branchFilter])
 
   const filteredDoctors = useMemo(() => globallyFilteredDoctors, [globallyFilteredDoctors])
 
@@ -850,7 +852,7 @@ const SimilarDoctorsList = ({
   }, [emblaApi])
 
   const doctorOptions = useMemo(() => {
-    return filteredDoctors
+    return similarDoctors // Use all similar doctors for the dropdown options
       .map(d => {
         let firstSpecialty = "General Practitioner"
         if (d.specialization) {
@@ -870,12 +872,55 @@ const SimilarDoctorsList = ({
         }
       })
       .sort((a, b) => a.name.localeCompare(b.name))
-  }, [filteredDoctors])
+  }, [similarDoctors])
 
   const handleDoctorSelect = useCallback((id: string) => {
+    // This is for navigation to the selected doctor's page.
     const doctorSlug = generateSlug(id)
     window.location.href = `/doctors/${doctorSlug}`
   }, [])
+
+  const handleCityFilterChange = (value: string) => {
+    // Only update the query on change for local filtering in the dropdown
+    updateSubFilter('city', 'query', value)
+    updateSubFilter('city', 'id', '')
+  }
+
+  // --- UPDATED CITY REDIRECT LOGIC ---
+  const handleCityOptionSelect = useCallback((id: string) => {
+    // Start with the base URL
+    let url = `/hospitals?view=doctors`
+
+    // 1. Append the selected city (id is the cityName, which should be in lowercase for the URL)
+    url += `&city=${encodeURIComponent(id.toLowerCase())}`
+    
+    // 2. Append the current doctor's primary specialization (specializationQuery prop)
+    if (specializationQuery) {
+      // specializationQuery now holds the specialization slug (e.g., 'cardiologist')
+      url += `&specialization=${encodeURIComponent(specializationQuery.toLowerCase())}`
+    }
+
+    // Redirect to the hospitals page with the selected city and specialization as search filters
+    window.location.href = url
+  }, [specializationQuery])
+  // --- END OF UPDATED CITY REDIRECT LOGIC ---
+
+  const handleCityClear = () => {
+    updateSubFilter('city', 'id', '')
+    updateSubFilter('city', 'query', '')
+  }
+
+  const handleDoctorSearchChange = (value: string) => {
+    setSearchTerm(value)
+    // Update the parent doctor filter query as well
+    updateSubFilter('doctor', 'query', value)
+  }
+
+  const handleDoctorSearchClear = () => {
+    setSearchTerm("")
+    updateSubFilter('doctor', 'query', '')
+  }
+
 
   if (filteredDoctors.length === 0) {
     return (
@@ -900,17 +945,31 @@ const SimilarDoctorsList = ({
     
             Similar Doctors ({filteredDoctors.length})
           </h2>
-          <div className="relative w-full md:w-80">
-            <SearchDropdown
-              value={searchTerm}
-              onChange={setSearchTerm}
-              placeholder="Search doctors..."
-              options={doctorOptions}
-              selectedOption={null}
-              onOptionSelect={handleDoctorSelect}
-              onClear={() => setSearchTerm("")}
-              type="doctor"
-            />
+          <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto"> {/* Added flex container for filters */}
+            <div className="relative w-full sm:w-48">
+              <SearchDropdown
+                value={cityFilter.query}
+                onChange={handleCityFilterChange}
+                placeholder="Filter by City..."
+                options={cityOptions}
+                selectedOption={cityFilter.id}
+                onOptionSelect={handleCityOptionSelect} // USES REDIRECT
+                onClear={handleCityClear}
+                type="city"
+              />
+            </div>
+            <div className="relative w-full sm:w-48">
+              <SearchDropdown
+                value={searchTerm}
+                onChange={handleDoctorSearchChange}
+                placeholder="Search doctors..."
+                options={doctorOptions}
+                selectedOption={null}
+                onOptionSelect={handleDoctorSelect}
+                onClear={handleDoctorSearchClear}
+                type="doctor"
+              />
+            </div>
           </div>
         </div>
       </div>
@@ -925,14 +984,13 @@ const SimilarDoctorsList = ({
           </div>
         </div>
         {filteredDoctors.length > 3 && (
-          <div className="absolute top-1/2 left-0 right-0 transform -translate-y-1/2 flex justify-between pointer-events-none px-2 md:px-0">
+          <div className="absolute top-1/2 left-0 right-0 transform -translate-y-1/2 flex justify-between pointer-events-none px-6"> {/* Changed px-2 md:px-0 to px-6 */}
             <button
               onClick={scrollPrev}
               disabled={prevBtnDisabled}
               className={classNames(
                 "p-3 rounded-full bg-white shadow-lg transition-opacity duration-200 pointer-events-auto",
                 "disabled:opacity-40 disabled:cursor-not-allowed",
-                "ml-[-1rem]"
               )}
               aria-label="Previous"
             >
@@ -944,7 +1002,6 @@ const SimilarDoctorsList = ({
               className={classNames(
                 "p-3 rounded-full bg-white shadow-lg transition-opacity duration-200 pointer-events-auto",
                 "disabled:opacity-40 disabled:cursor-not-allowed",
-                "mr-[-1rem]"
               )}
               aria-label="Next"
             >
@@ -1022,6 +1079,7 @@ export default function DoctorDetail({ params }: { params: Promise<{ slug: strin
   })
 
   const router = useRouter()
+  const searchParams = useSearchParams() // ADDED: Retrieve search parameters
 
   const updateSubFilter = useCallback((key: FilterKey, subKey: 'id' | 'query', value: string) => {
     setFilters(prev => {
@@ -1039,6 +1097,35 @@ export default function DoctorDetail({ params }: { params: Promise<{ slug: strin
       doctor: { id: '', query: '' }
     })
   }, [])
+
+  // ADDED: useEffect to read URL query parameters and initialize filters
+  useEffect(() => {
+    const cityParam = searchParams.get('city')
+    const specializationParam = searchParams.get('specialization')
+
+    // Only apply URL params if at least one parameter is present
+    if (cityParam || specializationParam) {
+      setFilters(prev => {
+        let newFilters: Filters = { ...prev }
+
+        // 1. Handle City Filter
+        // Check if city filter is currently empty to prevent overriding user-applied filters
+        if (cityParam && !prev.city.id && !prev.city.query) {
+          // Set city as a query string for filtering the related content (Branches, Similar Doctors)
+          newFilters.city = { id: '', query: cityParam.toLowerCase() } // Ensure query is lowercase
+        }
+
+        // 2. Handle Specialization/Treatment Filter
+        // Check if treatment filter is currently empty
+        if (specializationParam && !prev.treatment.id && !prev.treatment.query) {
+          // Map 'specialization' from URL to the 'treatment' filter's query field
+          newFilters.treatment = { id: '', query: specializationParam.toLowerCase() } // Ensure query is lowercase
+        }
+
+        return newFilters
+      })
+    }
+  }, [searchParams]) // Rerun when search params change
 
   useEffect(() => {
     const doctorId = filters.doctor.id
@@ -1127,6 +1214,15 @@ export default function DoctorDetail({ params }: { params: Promise<{ slug: strin
 
   const doctorSpecialtyNames = useMemo(() => specializationDisplay.map(s => s.name), [specializationDisplay])
 
+  // FIX: Force the use of the proper name (slugified) for the specialization query parameter
+  const primarySpecializationQueryValue = useMemo(() => {
+    if (!specializationDisplay.length) return '';
+    const primarySpec = specializationDisplay[0];
+    
+    // Always return the proper name (slugified) for a cleaner, human-readable URL parameter.
+    return generateSlug(primarySpec.name);
+  }, [specializationDisplay]);
+
   const allCities = useMemo(() => {
     const cSet = new Set<string>()
     allHospitals.forEach(h => {
@@ -1214,10 +1310,12 @@ export default function DoctorDetail({ params }: { params: Promise<{ slug: strin
     )
 
     candidates = candidates.filter(d => {
-      const matchesCity = !filters.city.id && !filters.city.query ||
+      const cityId = filters.city.id
+      const cityQuery = filters.city.query.toLowerCase()
+      const matchesCity = !cityId && !cityQuery ||
         d.locations.some((loc: any) => loc.cities.some((c: any) =>
-          filters.city.id ? c.cityName === filters.city.id :
-            c.cityName?.toLowerCase().includes(filters.city.query.toLowerCase())
+          cityId ? c.cityName === cityId :
+            c.cityName?.toLowerCase().includes(cityQuery)
         ))
 
       const matchesBranch = !filters.branch.id && !filters.branch.query ||
@@ -1230,7 +1328,15 @@ export default function DoctorDetail({ params }: { params: Promise<{ slug: strin
           })
         )
 
-      return matchesCity && matchesBranch
+      const doctorQuery = filters.doctor.query.toLowerCase()
+      const matchesDoctorQuery = !doctorQuery ||
+        d.doctorName?.toLowerCase().includes(doctorQuery) ||
+        d.specialization?.some((s: any) =>
+          typeof s === 'object' ? s.name?.toLowerCase().includes(doctorQuery) : s.toLowerCase().includes(doctorQuery)
+        )
+
+
+      return matchesCity && matchesBranch && matchesDoctorQuery
     })
 
     return candidates
@@ -1239,7 +1345,7 @@ export default function DoctorDetail({ params }: { params: Promise<{ slug: strin
         const expB = parseInt(b.experienceYears) || 0
         return expB - expA
       })
-  }, [allHospitals, doctor, specializationDisplay, filters.city, filters.branch])
+  }, [allHospitals, doctor, specializationDisplay, filters.city, filters.branch, filters.doctor.query])
 
   const doctorBranches = useMemo(() => {
     if (!doctor) return []
@@ -1463,6 +1569,9 @@ export default function DoctorDetail({ params }: { params: Promise<{ slug: strin
                 cityFilter={filters.city}
                 branchFilter={filters.branch}
                 doctorFilter={filters.doctor}
+                specializationQuery={primarySpecializationQueryValue} // UPDATED: Now always passes the proper name slug
+                cityOptions={cityOptions}
+                updateSubFilter={updateSubFilter}
               />}
             </main>
 

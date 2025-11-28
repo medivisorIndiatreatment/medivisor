@@ -1,6 +1,4 @@
 // app/api/hospitals/route.ts
-// This is the unchanged route.ts file as provided, assuming no updates are needed beyond what's already there.
-
 import { NextResponse } from "next/server"
 import { wixClient } from "@/lib/wixClient"
 
@@ -13,6 +11,20 @@ const COLLECTIONS = {
   SPECIALTIES: "SpecialistsMaster",
   DEPARTMENTS: "Department",
   TREATMENTS: "TreatmentMaster",
+}
+
+// ==============================
+// HELPER FUNCTIONS
+// ==============================
+
+// Helper to convert a string (like a hospital name) into a URL-safe slug
+const generateSlug = (name: string): string => {
+  return name
+    .toLowerCase()
+    .trim()
+    .replace(/[^\w\s-]/g, "")
+    .replace(/\s+/g, "-")
+    .replace(/-+/g, "-")
 }
 
 // RICH TEXT EXTRACTOR - BULLETPROOF
@@ -291,6 +303,33 @@ const DataFetcher = {
       }
     }
     return Array.from(ids)
+  },
+
+  // FIX: New function to handle slug lookup for detail pages (q parameter)
+  async searchHospitalBySlug(slug: string): Promise<string[]> {
+    if (!slug) return []
+
+    // 1. Try a direct text search first, just in case
+    const directSearchIds = await this.searchIds(COLLECTIONS.HOSPITALS, ["hospitalName"], slug)
+    if (directSearchIds.length) return directSearchIds
+
+    // 2. Fallback to fetching a large batch and comparing slugs
+    try {
+        const res = await wixClient.items
+            .query(COLLECTIONS.HOSPITALS)
+            .limit(500) // Fetch a reasonably large set to cover most
+            .find()
+
+        const matchingHospital = res.items.find(item => {
+            const hospitalName = getValue(item, "hospitalName", "Hospital Name") || ""
+            return generateSlug(hospitalName) === slug
+        })
+
+        return matchingHospital ? [matchingHospital._id!] : []
+    } catch(e) {
+        console.warn("Slug search fallback failed:", e)
+        return []
+    }
   },
 
   async fetchByIds(collection: string, ids: string[], mapper: (i: any) => any) {
@@ -698,15 +737,27 @@ export async function GET(req: Request) {
       query = query.hasSome("_id", finalHospitalIds)
     }
 
+    // FIX: Updated logic to handle slug lookup for 'q' parameter
     if (params.q || hospitalIdsFromText.length > 0) {
-      const qIds = params.q
-        ? await DataFetcher.searchIds(COLLECTIONS.HOSPITALS, ["hospitalName"], params.q)
-        : hospitalIdsFromText
+      let qIds: string[] = []
+
+      if (params.q) {
+        // Use the new slug search logic for the 'q' parameter
+        qIds = await DataFetcher.searchHospitalBySlug(params.q);
+      } else {
+        // If params.q is absent, use the IDs found from params.hospitalText
+        qIds = hospitalIdsFromText
+      }
+
       if (qIds.length === 0) return NextResponse.json({ items: [], total: 0 })
+      
+      // Perform intersection with filter results (if any)
       const intersection = finalHospitalIds.length > 0 ? finalHospitalIds.filter((id) => qIds.includes(id)) : qIds
+      
       if (intersection.length === 0) return NextResponse.json({ items: [], total: 0 })
       query = query.hasSome("_id", intersection)
     }
+    // END FIX
 
     const result = await query.find()
     const enriched = await enrichHospitals(result.items, filterIds)

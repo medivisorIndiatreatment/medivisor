@@ -12,10 +12,9 @@ interface UniversalOption {
   label: string;
 }
 
-interface HospitalData {
-  hospitalName?: string;
-  branches?: BranchData[];
-  doctors?: DoctorData[];
+interface SpecialistData {
+  _id: string;
+  name: string;
   treatments?: TreatmentData[];
 }
 
@@ -24,6 +23,7 @@ interface BranchData {
   branchName?: string;
   city?: any;
   treatments?: any[];
+  specialists?: SpecialistData[]; // Added specialists to BranchData
 }
 
 interface DoctorData {
@@ -35,6 +35,14 @@ interface DoctorData {
 interface TreatmentData {
   _id?: string;
   name?: string;
+}
+
+interface HospitalData {
+  hospitalName?: string;
+  branches?: BranchData[];
+  doctors?: DoctorData[];
+  treatments?: TreatmentData[]; // Treatments directly under hospital
+  specialists?: SpecialistData[]; // Specialists directly under hospital
 }
 
 interface BranchFilterProps {
@@ -59,8 +67,15 @@ const extractProperName = (item: any): string => {
     return item
   }
   
+  // Adjusted logic to prioritize names based on potential structure
   if (typeof item === 'object') {
-    return item.name || item.specializationName || item.treatmentName || item.doctorName || item.cityName || item.branchName || 'Unknown'
+    // Check for nested name properties first, common in API objects
+    if (item.name) return item.name
+    if (item.cityName) return item.cityName
+    if (item.branchName) return item.branchName
+    if (item.doctorName) return item.doctorName
+    if (item.specializationName) return item.specializationName
+    if (item.treatmentName) return item.treatmentName // For cases like `item.treatmentName`
   }
   
   return 'Unknown'
@@ -122,14 +137,14 @@ const SearchDropdown = ({
   return (
     <div ref={dropdownRef} className="relative w-full max-w-md mx-auto">
       <div className="relative">
-        <Search className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
+        <Search className="w-4 h-4 text-gray-400 absolute left-2 top-1/2 -translate-y-1/2" />
         <input
           type="text"
           value={value}
           onChange={(e) => { onChange(e.target.value); setIsOpen(true); }}
           onFocus={() => setIsOpen(true)}
           placeholder={placeholder}
-          className="w-full pl-10 pr-10 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-900 placeholder-gray-500 text-sm"
+          className="w-full pl-7 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-900 placeholder-gray-500 text-sm"
           autoComplete="off" 
         />
         {value && (
@@ -199,6 +214,7 @@ const BranchFilter = ({ allHospitals, initialSearch = "" }: BranchFilterProps) =
       // Add specializations
       const specs = new Map<string, string>()
       allHospitals.forEach(hospital => {
+        // From hospital.doctors
         hospital.doctors?.forEach((doctor: DoctorData) => {
           if (doctor?.specialization) {
             const specList = Array.isArray(doctor.specialization) ? doctor.specialization : [doctor.specialization]
@@ -209,6 +225,14 @@ const BranchFilter = ({ allHospitals, initialSearch = "" }: BranchFilterProps) =
             })
           }
         })
+        // From hospital.branches.specialists (assuming specialists also have a specialization name)
+        hospital.branches?.forEach((branch: BranchData) => {
+            branch.specialists?.forEach((specialist: SpecialistData) => {
+                const id = specialist?._id || generateSlug(specialist.name)
+                const name = extractProperName(specialist)
+                if (id && name !== 'Unknown') specs.set(id, name)
+            })
+        })
       })
       specs.forEach((name, id) => {
         options.push({ id, name, type: 'specialty', label: 'Specialty' })
@@ -217,17 +241,28 @@ const BranchFilter = ({ allHospitals, initialSearch = "" }: BranchFilterProps) =
       // Add treatments
       const treatments = new Map<string, string>()
       allHospitals.forEach(hospital => {
+        // Treatments directly under hospital
         hospital.treatments?.forEach((treatment: TreatmentData) => {
           if (treatment.name) {
             const id = treatment._id || generateSlug(treatment.name)
             treatments.set(id, treatment.name)
           }
         })
+        // Treatments under hospital.branches (from the original structure)
         hospital.branches?.forEach((branch: BranchData) => {
           branch.treatments?.forEach((treatment: any) => {
             const name = extractProperName(treatment)
             const id = treatment?._id || generateSlug(name)
             if (name !== 'Unknown') treatments.set(id, name)
+          })
+          
+          // Treatments nested under hospital.branches.specialists (THE REQUIRED ADDITION)
+          branch.specialists?.forEach((specialist: SpecialistData) => {
+              specialist.treatments?.forEach((treatment: TreatmentData) => {
+                  const name = extractProperName(treatment)
+                  const id = treatment?._id || generateSlug(name)
+                  if (name !== 'Unknown') treatments.set(id, name)
+              })
           })
         })
       })
@@ -326,12 +361,12 @@ const BranchFilter = ({ allHospitals, initialSearch = "" }: BranchFilterProps) =
   }
 
   return (
-    <div className="w-80">
+    <div className="w-1/2">
       <form onSubmit={handleSubmit} className="flex justify-center">
         <SearchDropdown
           value={query}
           onChange={setQuery}
-          placeholder="Search doctors, specialties, treatments, cities..."
+          placeholder="Search Doctors, Hospitals, treatments,  cities, specialties..."
           options={availableOptions}
           onOptionSelect={handleOptionSelect}
           onClear={clearSearch}

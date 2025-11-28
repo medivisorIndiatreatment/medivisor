@@ -194,7 +194,7 @@ export default function Header() {
       >
         <nav className="flex justify-between container mx-auto items-center px-4 lg:px-0">
           {/* Logo */}
-          <Link href="/" className="flex-shrink-0">
+          <Link href="/" className="flex-shrink-0 w-[200px] ">
             <Image
               src="/Medivisor-logo.svg"
               alt="Medivisor India Treatment Logo"
@@ -207,13 +207,13 @@ export default function Header() {
           </Link>
 
           {/* Navigation */}
-          <div className="flex items-center gap-4">
+          <div className="flex w-full md:ml-10 items-center justify-between gap-4">
             <div
-              className={`fixed inset-0 bg-white md:static md:bg-transparent transition-transform duration-500 ease-in-out md:translate-x-0 md:flex md:items-center md:gap-8 ${isMenuOpen ? 'translate-x-0' : 'translate-x-full'
+              className={`fixed inset-0 w-full bg-white md:static md:bg-transparent transition-transform duration-500 ease-in-out md:translate-x-0 md:flex md:items-center md:gap-8 ${isMenuOpen ? 'translate-x-0' : 'translate-x-full'
                 } z-40`}
             >
               {/* Mobile Header */}
-              <div className="flex justify-between items-center px-4 py-4 md:hidden border-b border-gray-200">
+              <div className="flex justify-between w-full items-center px-4 py-4 md:hidden border-b border-gray-200">
                 <Image
                   src="/Medivisor-logo.svg"
                   alt="Medivisor India Treatment Logo"
@@ -233,7 +233,7 @@ export default function Header() {
               {/* <BranchFilter allHospitals={allHospitals} /> */}
 
               {/* Navigation Items */}
-              <ul className="flex flex-col md:flex-row gap-2 md:gap-8 px-6 md:px-0 pt-6 md:pt-0">
+              <ul className="flex w-full flex-col md:flex-row gap-2 md:gap-8 px-6 md:px-0 pt-6 md:pt-0">
                 {navItems.map((item) => (
                   <li
                     key={item.label}
@@ -310,7 +310,7 @@ export default function Header() {
             </div>
 
             {/* CTA & Mobile Menu Toggle */}
-            <div className="flex items-center gap-3">
+            <div className="flex w-1/6 items-center justify-end gap-3">
               <button
                 className="bg-[#E22026] cursor-pointer md:block hidden hover:bg-[#74BF44] text-white font-medium px-5 py-2 rounded-md shadow-md transition-all"
                 onClick={openModal}

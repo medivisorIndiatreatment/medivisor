@@ -15,6 +15,11 @@ import { useMemo, useState, useEffect } from "react"
 // Utility function to join class names (simplified version of cn from lib/utils)
 const cn = (...classes: (string | boolean | undefined | null)[]) => classes.filter(Boolean).join(' ');
 
+// Define the primary accent color class for consistency
+const ACCENT_CLASS = "text-gray-700 focus-visible:ring-gray-700 focus:ring-gray-700 focus:border-gray-700";
+const BUTTON_BG_CLASS = "bg-gray-700 hover:bg-gray-800 focus:ring-gray-700";
+const TAB_ACTIVE_CLASS = "border-gray-700 text-gray-700"; // For the active tab line
+
 // 1. Mock Country Data and Calling Code Logic (Replaces country-list and libphonenumber-js)
 const MOCK_COUNTRY_DATA: { name: string, code: string, dial: string }[] = [
   { name: "United States", code: "US", dial: "+1" },
@@ -87,17 +92,19 @@ const UserPlusIcon = (props: React.SVGProps<SVGSVGElement>) => (
 );
 
 // --- Component Replacements (Simplified Input/Button/Textarea for standalone functionality) ---
-// Note: Reduced size of inputs/text area slightly (h-10 instead of h-12 for input)
 const Input: React.FC<React.InputHTMLAttributes<HTMLInputElement>> = ({ className, ...props }) => (
-    <input className={cn("flex w-full rounded-md border border-gray-300 bg-white px-3 py-1.5 text-xs ring-offset-white file:border-0 file:bg-transparent file:text-xs file:font-medium placeholder:text-gray-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-600 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 transition-all h-10", className)} {...props} />
+    // Cleaned up Input: standardized height (h-10), subtle gray border, red focus ring
+    <input className={cn("flex w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm ring-offset-white file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-gray-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 transition-all h-10", ACCENT_CLASS, className)} {...props} />
 );
 
 const Textarea: React.FC<React.TextareaHTMLAttributes<HTMLTextAreaElement>> = ({ className, ...props }) => (
-    <textarea className={cn("flex min-h-[90px] w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-xs ring-offset-white placeholder:text-gray-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-600 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 transition-all", className)} {...props} />
+    // Cleaned up Textarea: subtle gray border, red focus ring
+    <textarea className={cn("flex min-h-[100px] w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm ring-offset-white placeholder:text-gray-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 transition-all", ACCENT_CLASS, className)} {...props} />
 );
 
 const Button: React.FC<React.ButtonHTMLAttributes<HTMLButtonElement>> = ({ className, children, ...props }) => (
-    <button className={cn("inline-flex items-center justify-center whitespace-nowrap rounded-md text-xs font-semibold ring-offset-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-600 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 h-10 px-4 py-2", className)} {...props}>
+    // Cleaned up Button: standard height (h-10), consistent look
+    <button className={cn("inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-semibold ring-offset-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-70 h-10 px-4 py-2", ACCENT_CLASS, className)} {...props}>
         {children}
     </button>
 );
@@ -143,6 +150,7 @@ export default function ContactForm() {
   useEffect(() => {
     const fetchUserCountry = async () => {
       try {
+        // Mock IP API call
         const response = await fetch('https://ipapi.co/json/');
         if (!response.ok) throw new Error('Failed to fetch');
         const data = await response.json();
@@ -241,14 +249,10 @@ export default function ContactForm() {
 
   const TabButton = ({ type, icon: Icon, label }: { type: ConnectionType, icon: React.FC<React.SVGProps<SVGSVGElement>>, label: string }) => {
     const isActive = activeTab === type;
-    const isHospital = type === 'hospital';
     
-    // Use Red theme for the active tab accent
-    const activeClasses = isHospital 
-        ? "border-gray-600 text-gray-600" 
-        : "border-gray-300 text-gray-700";
-        
-    const inactiveClasses = "border-transparent text-gray-800 hover:text-gray-700 hover:border-gray-200";
+    // Updated tab classes for a cleaner look
+    const activeClasses = TAB_ACTIVE_CLASS + " border-b-2"; // Red line under active tab
+    const inactiveClasses = "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-200";
 
     return (
       <button
@@ -258,43 +262,43 @@ export default function ContactForm() {
           setStatus({ state: "idle" }); // Reset status when switching tabs
         }}
         className={cn(
-          "flex-1 flex items-center justify-center p-3 text-xs font-semibold transition-colors border-b-2",
+          "flex-1 flex items-center justify-center p-3 text-base font-medium transition-colors border-b-2 -mb-[1px] hover:bg-gray-50", // -mb-[1px] corrects for border overlap
           isActive
             ? activeClasses
             : inactiveClasses,
         )}
       >
-        <Icon className="w-4 h-4 mr-2" />
+        {/* <Icon className="w-4 h-4 mr-2" /> */}
         {label}
       </button>
     );
   };
 
   return (
-    <div className="w-full h-fit rounded-xs shadow-xs sticky top-4 lg:top-16">
-      <div className="bg-white rounded-s shadow-xs border border-gray-100 overflow-hidden">
+    // Enhanced container styling: slightly stronger shadow and rounded corners
+    <div className="w-full h-fit rounded-lg shadow-lg sticky top-4 lg:top-16">
+      <div className="bg-white rounded-lg overflow-hidden border border-gray-200">
         
         {/* Tab Selector */}
-        <div className="flex border-b border-gray-100">
+        <div className="flex border-b border-gray-200 bg-gray-50">
          
           <TabButton 
             type="medivisor" 
             icon={UserPlusIcon} 
-            label="Medivisor" 
+            label=" Medivisor" 
           />
            <TabButton 
             type="hospital" 
             icon={BuildingIcon} 
-            label="Hospital" 
+            label=" Hospital" 
           />
         </div>
 
         {/* Form Content */}
-        <div className="p-5 md:p-4">
-          <h2 className="text-lg font-medium text-gray-800 mb-3">
-        {activeTab === "hospital" ? "Connect with Hospital" : "Connect with Medivisor"}
-
-          </h2>
+        <div className="p-6">
+          {/* <h2 className="text-xl font-semibold text-gray-800 mb-4">
+        {activeTab === "hospital" ? "Hospital/Clinic Partnership" : "Personal Medical Consultation"}
+          </h2> */}
           <form onSubmit={onSubmit} className="space-y-4" noValidate>
             
             <div className="grid gap-4">
@@ -305,7 +309,7 @@ export default function ContactForm() {
                 name="name" 
                 value={form.name} 
                 onChange={onChange} 
-                placeholder="Full Name / Company Representative" 
+                placeholder="Enter Your Full Name " 
                 required 
               />
 
@@ -316,13 +320,13 @@ export default function ContactForm() {
                 name="email"
                 value={form.email}
                 onChange={onChange}
-                placeholder="Email Address (e.g., contact@hospital.com)"
+                placeholder=" Enter Your Email Address "
                 required
               />
 
               {/* Contact Details Header and Country/WhatsApp Group */}
-              <div className="grid gap-2">
-                <p className="text-xs font-medium text-gray-700">Contact Details (WhatsApp is preferred)</p>
+              <div className="grid gap-2 pt-2">
+                <p className="text-sm font-medium text-gray-700">Contact Details (WhatsApp is preferred)</p>
                 
                 {/* Country Select */}
                 <div className="relative">
@@ -330,8 +334,8 @@ export default function ContactForm() {
                     aria-label="Country"
                     value={form.countryIso}
                     onChange={onCountryChange}
-                    // Reduced h-10 to h-9 for slightly smaller appearance
-                    className="appearance-none block w-full h-9 rounded-md border border-gray-300 bg-white px-3 text-xs text-gray-700 focus:outline-none focus:ring-1 focus:ring-red-600 focus:border-red-600 transition-all cursor-pointer"
+                    // Standardized select styling (h-10) with red focus ring
+                    className={cn("appearance-none block w-full h-10 rounded-md border border-gray-300 bg-white px-3 text-sm text-gray-700 focus:outline-none focus:ring-1 transition-all cursor-pointer", ACCENT_CLASS)}
                   >
                     <option value="" disabled>Select Country</option>
                     {countries.map((c) => (
@@ -341,19 +345,19 @@ export default function ContactForm() {
                     ))}
                   </select>
                   <span className="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none text-gray-400">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
                   </span>
                 </div>
 
-                <div className="flex gap-x-2">
+                <div className="flex gap-x-3">
                   {/* Country Code Select */}
-                  <div className="relative w-16 flex-shrink-0">
+                  <div className="relative w-20 flex-shrink-0">
                     <select
                       aria-label="Dial Code"
                       value={form.countryCode}
                       onChange={onDialCodeChange}
-                      // Reduced h-10 to h-9
-                      className="appearance-none block w-full h-10 rounded-md border border-gray-300 bg-gray-50 py-1.5 px-2 text-xs text-gray-700 focus:outline-none focus:ring-1 focus:ring-red-600 focus:border-red-600 transition-all cursor-pointer"
+                      // Standardized select styling (h-10) with gray background for distinction
+                      className={cn("appearance-none block w-full h-10 rounded-md border border-gray-300 bg-gray-50 py-1.5 px-2 text-sm text-gray-700 focus:outline-none focus:ring-1 transition-all cursor-pointer", ACCENT_CLASS)}
                     >
                       {uniqueDialCodes.map((dial) => (
                         <option key={dial} value={dial}>
@@ -362,7 +366,7 @@ export default function ContactForm() {
                       ))}
                     </select>
                     <span className="absolute right-2 top-1/2 transform -translate-y-1/2 pointer-events-none text-gray-400">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
                     </span>
                   </div>
                   
@@ -379,7 +383,7 @@ export default function ContactForm() {
                     className="flex-1"
                   />
                 </div>
-                <p className="text-xs text-gray-600 mt-0">Enter digits only. We'll combine this with your country code.</p>
+                <p className="text-xs text-gray-500 mt-1">Enter digits only. We'll combine this with your country code.</p>
               </div>
 
 
@@ -394,30 +398,31 @@ export default function ContactForm() {
                     ? "E.g., We are a 500-bed hospital in [City, Country] looking to integrate your medical AI services."
                     : "E.g., I need advice on my recent diagnosis of [Condition] and want to understand my treatment options."
                 }
-                rows={4} // Reduced rows
+                rows={4} 
                 required
-                className="min-h-[100px]"
+                className="min-h-[120px]" // Slightly taller for more professional feel
               />
             </div>
 
-            <div className="flex flex-col space-y-3">
+            <div className="flex flex-col space-y-3 pt-2">
               <Button 
                 type="submit" 
                 disabled={status.state === "submitting"} 
-                // Primary button color set to Red: #E22026 (or close Tailwind equivalent)
-                className="w-full bg-gray-700 text-white py-2 rounded-xs text-xs hover:bg-gray-800 transition-all font-medium shadow-xs focus:outline-none focus:ring-2 focus:ring-gray-400/50"
+                // Primary button with red accent, white text, and shadow
+                className={cn("w-full font-medium text-white py-2 shadow-md", BUTTON_BG_CLASS)}
               >
                 {status.state === "submitting" ? "Sending Request..." : 
-                (activeTab === 'hospital' ? "Submit Partnership Request" : "Submit Consultation Request")}
+               (activeTab === "hospital"? "Submit Hospital Request": "Submit Consultation Request")}
+
               </Button>
               <p
                 className={cn(
-                  "text-xs text-center",
+                  "text-sm text-center", // Slightly larger text for status
                   status.state === "success"
-                    ? "text-green-600"
+                    ? "text-green-600 font-semibold"
                     : status.state === "error"
-                      ? "text-red-600 font-medium"
-                      : "text-gray-800",
+                      ? "text-red-600 font-semibold"
+                      : "text-gray-500",
                 )}
                 role="status"
                 aria-live="polite"

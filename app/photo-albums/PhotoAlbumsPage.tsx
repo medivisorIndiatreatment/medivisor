@@ -161,12 +161,12 @@ export default function GalleryPage() {
               {stripHtmlTags(moment.title_fld) || "Untitled"}
             </CardTitle>
             <div className="flex items-center gap-x-2 description-1">
-              {moment.firstPublishedDate && (
+              {/* {moment.firstPublishedDate && (
                 <div className="flex items-center gap-1">
                   <Calendar className="h-4 w-4" />
                   {new Date(moment.firstPublishedDate).toLocaleDateString()}
                 </div>
-              )}
+              )} */}
               {moment.location && (
                 <div className="flex items-center gap-1 truncate">
                   <MapPin className="h-3 w-3" />

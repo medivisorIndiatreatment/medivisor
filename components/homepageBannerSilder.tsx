@@ -109,11 +109,11 @@ const HeroSlider = () => {
             <Banner2 />
           </a>
         </div> */}
-        <div key="banner3">
+        {/* <div key="banner3">
           <a href="/pacific-patient">
             <Banner3 />
           </a>
-        </div>
+        </div> */}
       </Slider>
 
       <style jsx global>{`

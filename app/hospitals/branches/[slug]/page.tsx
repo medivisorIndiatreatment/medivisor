@@ -1224,6 +1224,12 @@ export default function BranchDetail({ params }: { params: Promise<{ slug: strin
                 <section className={`bg-gray-50 p-4 rounded-xs shadow-xs border border-gray-100 ${inter.variable} font-light`}>
                   <h2 className="text-2xl md:text-xl font-medium text-gray-900 tracking-tight flex items-center mb-2">About {branch.branchName}</h2>
                   {renderRichText(branch.description)}
+                  {/* UPDATED: Added dynamic Link with hospitalSlug */}
+                <div className="mt-1">
+                    <Link href={`/hospitals/${hospitalSlug}`} className="border-b border-gray-600 text-gray-700 hover:text-gray-900 transition-colors">
+                    Read about the {hospital.hospitalName} 
+                  </Link>
+                </div>
                 </section>
               )}
 
