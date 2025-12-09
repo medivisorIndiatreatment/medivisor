@@ -5,7 +5,32 @@
 import { useState, useEffect, useCallback, useMemo, useRef, use } from "react"
 import Image from "next/image"
 // Assuming this type exists in the project. If not, you must define it here.
-import type { HospitalWithBranchPreview } from "@/types/hospital"
+// import type { HospitalWithBranchPreview } from "@/types/hospital"
+
+// Define the type locally if not available from @/types/hospital
+type HospitalWithBranchPreview = {
+  _id: string;
+  hospitalName: string;
+  slug?: string;
+  hospitalImage?: string | null;
+  logo?: string | null;
+  yearEstablished?: number;
+  description?: string;
+  branches?: Array<{
+    _id: string;
+    branchName: string;
+    branchImage?: string | null;
+    logo?: string | null;
+    isMain?: boolean;
+    city?: Array<{ name?: string; cityName?: string }>;
+    totalBeds?: number;
+    yearEstablished?: number;
+    doctors?: any[];
+    treatments?: any[];
+    accreditation?: any[];
+  }>;
+  accreditations?: any[];
+}
 import {
   Hospital,
   Building2,
@@ -496,8 +521,8 @@ const EmblaCarousel = ({ items, title, icon: Icon, type }: { items: any[], title
     containScroll: 'trimSnaps',
     // Responsive breakpoints for better mobile viewing
     breakpoints: {
-      '(min-width: 640px)': { slidesToScroll: 2, slidesToScroll: 2 },
-      '(min-width: 1024px)': { slidesToScroll: 3, slidesToScroll: 3 },
+      '(min-width: 640px)': { slidesToScroll: 2 },
+      '(min-width: 1024px)': { slidesToScroll: 3 },
     },
   })
 
