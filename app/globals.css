@@ -96,13 +96,16 @@ body {
   @apply text-[17px] text-[#241d1f];
 }
 .font_4{
-  font-size: 24px;
+  font-size: 22px;
   font-weight: 400;
 
   margin-top: 10px;
   
   color: #241d1f;
   font-family: 'Poppins', sans-serif !important;
+}
+.font_8 strong{
+  font-weight: 600;
 }
 .font_8{
   font-size: 16px;

@@ -1134,19 +1134,19 @@ export default function TreatmentPage({ params }: TreatmentPageProps) {
 
   return (
     <div className={`min-h-screen bg-gray-50 font-extralight ${inter.variable}`}>
-      <section className="relative w-full h-[50vh] md:h-[70vh]">
+      <section className="relative w-full h-[50vh] md:h-[80vh]">
         {heroImage ? (
           <Image
             src={heroImage}
             alt={`${treatment.name} treatment`}
             fill
             priority
-            className="object-cover object-center"
+            className="object-cover object-top"
           />
         ) : (
           <div className="w-full h-full bg-gradient-to-br from-gray-200 via-gray-300 to-gray-200" />
         )}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent z-0" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent z-0" />
         <div className="absolute bottom-0 left-0 w-full z-10 px-4 pb-12 text-white">
           <div className="container mx-auto space-y-4">
             <h1 className={`text-3xl md:text-4xl lg:text-5xl font-extralight leading-tight ${inter.variable}`}>
@@ -1168,7 +1168,7 @@ export default function TreatmentPage({ params }: TreatmentPageProps) {
           <div className=" grid md:grid-cols-12 gap-8">
             <main className="space-y-4 col-span-12 lg:col-span-9" >
               <section className={`bg-white rounded-sm border border-gray-100 p-4 mb-4 shadow-xs transition-all ${inter.variable} font-extralight`}>
-                {/* <h2 className="text-2xl md:text-xl font-medium text-gray-900 tracking-tight flex items-center mb-2">About This Treatment</h2> */}
+               
                 <div>
                   {/* FIXED: Called RichTextDisplay as a JSX tag to follow Rules of Hooks */}
                   {treatment.description && <RichTextDisplay htmlContent={treatment.description} />}
