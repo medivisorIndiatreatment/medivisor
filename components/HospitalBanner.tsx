@@ -93,9 +93,12 @@ export default function CleanHeroBanner({
         <div className="grid relative md:grid-cols-2 justify-items-start">
 
           {/* Main Content Area */}
-         <div className="absolute inset-0 md:hidden bg-gradient-to-b from-transparent via-transparent to-black/70 [background-size:100%_220%] [background-position:0_66.67%]"></div>
+          <div className="absolute inset-0 md:hidden
+  bg-gradient-to- from-white/60 via-black/10 to-black/70
+  backdrop-blur-xs">
+          </div>
 
-          <div className='mb-5 relative z-30 px-4'>
+          <div className='mb-5 pt-5 relative z-30 px-4'>
             <div className="space-y-2 lg:space-y-3">
 
               {/* Top Span Text */}

@@ -1465,8 +1465,8 @@ const HospitalCard = ({ branch }: { branch: BranchType & { hospitalName: string;
 
   return (
     <Link href={`/search/hospitals/${slug}`} className="block">
-      <article className="group bg-white rounded-xs shadow-xs transition-all duration-300 overflow-hidden cursor-pointer h-full flex flex-col hover:shadow-sm border border-gray-100">
-        <div className="relative h-48 overflow-hidden bg-gray-50">
+      <article className="group bg-white rounded-xs shadow-lg md:mb-0 mb-5 md:shadow-xs transition-all duration-300 overflow-hidden cursor-pointer h-full flex flex-col hover:shadow-sm border border-gray-300 md:border-gray-100">
+        <div className="relative h-72 md:h-48 overflow-hidden bg-gray-50">
           {hospitalLogoUrl && (
             <div className="absolute bottom-2 left-2 z-10">
               <img
@@ -1506,10 +1506,10 @@ const HospitalCard = ({ branch }: { branch: BranchType & { hospitalName: string;
 
         <div className="p-3 flex-1 flex flex-col space-y-2">
           <header className="space-y-1">
-            <h2 className="text-lg font-medium leading-tight line-clamp-2 text-gray-900 group-hover:text-gray-800 transition-colors">
+            <h2 className="md:text-lg text-2xl font-medium leading-tight line-clamp-2 text-gray-900 group-hover:text-gray-800 transition-colors">
               {branch.branchName}
             </h2>
-            <div className="flex items-center text-sm text-gray-700 font-normal">
+            <div className="flex items-center text-lg md:text-sm text-gray-700 font-normal">
               <span>{primaryCity}{primaryState ? `, ${primaryState}` : ""}</span>,
               <span className="ml-1"> {primarySpecialty} Speciality</span>
             </div>
@@ -1518,16 +1518,16 @@ const HospitalCard = ({ branch }: { branch: BranchType & { hospitalName: string;
           <footer className="border-t border-gray-100 pt-2 mt-auto">
             <div className="grid grid-cols-3 gap-3">
               <div className="text-center rounded-xs bg-gray-50 p-2 border border-gray-50 space-y-0">
-                <p className="text-sm font-medium text-gray-700">{branch.yearEstablished ?? '?'}</p>
-                <p className="text-sm text-gray-700">Estd.</p>
+                <p className=" text-base md:text-sm font-medium text-gray-700">{branch.yearEstablished ?? '?'}</p>
+                <p className=" text-base md:text-sm text-gray-700">Estd.</p>
               </div>
               <div className="text-center rounded-xs bg-gray-50 p-2 border border-gray-50 space-y-0">
-                <p className="text-sm font-medium text-gray-700">{branch.totalBeds ?? '?'}+</p>
-                <p className="text-sm text-gray-700">Beds</p>
+                <p className=" text-base md:text-sm font-medium text-gray-700">{branch.totalBeds ?? '?'}+</p>
+                <p className=" text-base md:text-sm text-gray-700">Beds</p>
               </div>
               <div className="text-center rounded-xs bg-gray-50 p-2 border border-gray-50 space-y-0">
-                <p className="text-sm font-medium text-gray-700">{branch.noOfDoctors ?? '?'}+</p>
-                <p className="text-sm text-gray-700">Doctors</p>
+                <p className=" text-base md:text-sm font-medium text-gray-700">{branch.noOfDoctors ?? '?'}+</p>
+                <p className=" text-base md:text-sm text-gray-700">Doctors</p>
               </div>
 
 
@@ -1607,8 +1607,8 @@ const DoctorCard = ({ doctor }: { doctor: ExtendedDoctorType }) => {
 
   return (
     <Link href={`/doctors/${slug}`} className="block">
-      <article className="group bg-white rounded-xs shadow-xs transition-all duration-300 overflow-hidden cursor-pointer h-full flex flex-col hover:shadow-sm border border-gray-100">
-        <div className="relative h-48 overflow-hidden bg-gray-50">
+      <article className="group bg-white xs md:mb-0 mb-5 rounded-xs shadow-lg md:shadow-xs transition-all duration-300 overflow-hidden cursor-pointer h-full flex flex-col hover:shadow-sm border border-gray-100">
+        <div className="relative h-72 md:h-48 overflow-hidden bg-gray-50">
           {doctor.popular && (
             <span className="absolute top-3 right-3 z-10 inline-flex items-center text-sm bg-gray-50 text-gray-600 font-medium px-3 py-2 rounded-xs shadow-sm border border-gray-100">
               <Star className="w-3 h-3 mr-1 fill-gray-300 text-gray-400" />Popular
@@ -1631,22 +1631,23 @@ const DoctorCard = ({ doctor }: { doctor: ExtendedDoctorType }) => {
 
         <div className="p-3 flex-1 flex flex-col space-y-2">
           <header className="space-y-2 flex-1 min-h-0">
-            <h2 className="text-lg font-medium leading-tight line-clamp-2 text-gray-900 group-hover:text-gray-800 transition-colors">
+            <h2 className="md:text-lg text-2xl font-medium leading-tight line-clamp-2 text-gray-900 group-hover:text-gray-800 transition-colors">
               {doctor.doctorName}
             </h2>
-            <p className="text-sm text-gray-900 font-normal flex items-center gap-2 line-clamp-1">
-              {specializationDisplay} {/* --- UPDATED SPECIALIST DISPLAY --- */}
-            </p>
+           
           </header>
 
-          <div className="space-y-2">
-            <p className="text-sm text-gray-900 font-normal flex items-center gap-2">
+          <div className="space-y-2 flex gap-x-2">
+             <p className=" text-base md:text-sm text-gray-900 font-normal flex items-center gap-2 line-clamp-1">
+              {specializationDisplay} {/* --- UPDATED SPECIALIST DISPLAY --- */}
+            </p>
+            <p className=" text-base md:text-sm text-gray-900 font-normal flex items-center gap-2">
               {doctor.experienceYears} Years Exp.
             </p>
           </div>
 
           <footer className="border-t border-gray-100 pt-2">
-            <p className="text-sm text-gray-900 font-normal flex items-center gap-2 line-clamp-1">
+            <p className="text-base md:text-sm text-gray-900 font-normal flex items-center gap-2 line-clamp-1">
               <MapPin className="w-4 h-4 flex-shrink-0 text-gray-400" />
               {primaryLocationDisplay}
             </p>
@@ -1682,8 +1683,8 @@ const TreatmentCard = ({ treatment }: { treatment: ExtendedTreatmentType }) => {
 
   return (
     <Link href={`/treatment/${slug}`} className="block">
-      <article className="group bg-white rounded-xs shadow-xs transition-all duration-300 overflow-hidden cursor-pointer h-full flex flex-col hover:shadow-sm border border-gray-100">
-        <div className="relative h-48 overflow-hidden bg-gray-50">
+      <article className="group bg-white rounded-xs md:mb-0 mb-5 shadow-lg md:shadow-xs transition-all duration-300 overflow-hidden cursor-pointer h-full flex flex-col hover:shadow-sm border border-gray-100">
+        <div className="relative h-72 md:h-48 overflow-hidden bg-gray-50">
           {treatment.popular && (
             <span className="absolute top-3 right-3 z-10 inline-flex items-center text-sm bg-gray-50 text-gray-600 font-medium px-3 py-2 rounded-xs shadow-sm border border-gray-100">
               <Star className="w-3 h-3 mr-1 fill-gray-300 text-gray-400" />Popular
@@ -1706,13 +1707,13 @@ const TreatmentCard = ({ treatment }: { treatment: ExtendedTreatmentType }) => {
 
         <div className="p-3 flex-1 flex flex-col space-y-1">
           <header className="space-y-2 flex-1 min-h-0">
-            <h2 className="text-base font-medium leading-tight line-clamp-1 my-2 text-gray-900 group-hover:text-gray-800 transition-colors">
+            <h2 className="md:text-base text-2xl font-medium leading-tight line-clamp-1 my-2 text-gray-900 group-hover:text-gray-800 transition-colors">
               {treatment.name}
             </h2>
 
             {treatment.category && (
               <div className="flex flex-wrap gap-1 pt-1">
-                <span className="inline-block bg-gray-50 line-clamp-1 text-gray-600 text-sm px-3 py-2 rounded-xs font-medium border border-gray-100">
+                <span className="inline-block bg-gray-50 line-clamp-1 text-gray-600 text-base md:text-sm px-3 py-2 rounded-xs font-medium border border-gray-100">
                   {treatment.category}
                 </span>
               </div>
@@ -1720,7 +1721,7 @@ const TreatmentCard = ({ treatment }: { treatment: ExtendedTreatmentType }) => {
           </header>
 
           <footer className="border-t border-gray-200 pt-2 flex flex-col gap-2">
-            <p className="text-sm text-gray-700 font-normal flex items-center gap-1">
+            <p className="text-base md:text-sm text-gray-700 font-normal flex items-center gap-1">
               <DollarSign className="w-4 h-4 flex-shrink-0 text-gray-700" />
               Starting from <span className="font-medium text-gray-900">{primaryLocation.cost || 'Inquire'}</span>
             </p>

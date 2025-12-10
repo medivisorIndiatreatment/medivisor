@@ -581,8 +581,8 @@ const EmblaCarousel = ({ items, title, icon: Icon, type }: { items: any[], title
 
 // Breadcrumb Component
 const Breadcrumb = ({ hospitalName, hospitalSlug }: { hospitalName: string, hospitalSlug: string }) => (
-  <div className={`container mx-auto px-4 bg-white sm:px-6 lg:px-8 font-light border-b border-gray-100 shadow-sm`}>
-    <nav className="flex md:py-3.5" aria-label="Breadcrumb">
+  <div className={`container mx-auto px-4 bg-white sm:px-6  lg:px-8 font-light border-b border-gray-100 shadow-sm`}>
+    <nav className="flex md:py-3.5 py-2" aria-label="Breadcrumb">
       <ol className="inline-flex items-center space-x-2">
         <li className="flex items-center">
           <Link href="/" className="text-sm font-medium text-gray-500 hover:text-gray-600 transition-colors flex items-center gap-1">
@@ -616,7 +616,7 @@ const RichTextDisplay = ({ htmlContent, className = "" }: { htmlContent: string;
     // This is the SVG markup for the CheckCircle icon, stylized with inline CSS
     // to match the requested w-5 h-5 text-[#74BF44] flex-shrink-0.
     const iconSvgHtml = 
-      `<span style="display: inline-flex; align-items: flex-start; margin-right: 0.75rem; flex-shrink: 0; min-width: 1.25rem; height: 1.25rem;">` +
+      `<span style="display: inline-flex; align-items: flex-center; margin-top: 4px !important; margin-right: 0.75rem; flex-shrink: 0; min-width: 1.25rem; height: 1.25rem;">` +
       `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5" style="color:#74BF44; width: 1.25rem; height: 1.25rem;">` + 
       `<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3L22 4"/>` + 
       `</svg></span>`;
@@ -624,7 +624,7 @@ const RichTextDisplay = ({ htmlContent, className = "" }: { htmlContent: string;
     // 2. Define the new structure for the <li> content wrapper
     // We use a flex div inside the <li> to correctly position the icon next to the text.
     // The "min-w" and "height" styles on the span ensure the icon reserves space even if text wraps.
-    const liContentWrapperStart = `<div style="display: flex; align-items: flex-start;">${iconSvgHtml}<span style="flex: 1;">`;
+    const liContentWrapperStart = `<div style="display: flex; align-items: flex-center;">${iconSvgHtml}<span style="flex: 1;">`;
     const liContentWrapperEnd = `</span></div>`;
 
     // 3. Regex to replace content inside <li>...</li> tags.
@@ -734,7 +734,7 @@ const HospitalDetailSkeleton = () => (
           <main className="lg:col-span-9 space-y-10 md:space-y-8">
 
             {/* Description Skeleton (Keep elevated container) */}
-            <div className="bg-white rounded-xl border border-gray-100 p-8 shadow-md animate-pulse">
+            <div className="bg-white rounded-xl border border-gray-100 p-4 md:p-8 shadow-md animate-pulse">
               <div className="h-7 w-64 bg-gray-200 rounded-lg mb-6" />
               <div className="space-y-3">
                 <div className="h-4 w-full bg-gray-100 rounded" />
@@ -746,7 +746,7 @@ const HospitalDetailSkeleton = () => (
 
             {/* Sections Skeleton */}
             {[...Array(3)].map((_, i) => (
-              <div key={i} className="space-y-6 pt-4 bg-white rounded-xl border border-gray-100 p-8 shadow-md">
+              <div key={i} className="space-y-6 pt-4 bg-white rounded-xl border border-gray-100 p-4 md:p-8 shadow-md">
                 <div className="h-8 w-72 bg-gray-200 rounded mb-4" />
                 <div className="flex gap-6 overflow-hidden">
                   {[...Array(3)].map((_, j) => (
@@ -804,7 +804,7 @@ const BranchesSection = ({ hospital, selectedCity, allCityOptions, visibleBranch
   if (!hospital.branches || hospital.branches.length === 0) return null
 
   return (
-    <section className="space-y-4 bg-white rounded-xl border border-gray-100 p-8 shadow-md">
+    <section className="space-y-4 bg-white rounded-xl border border-gray-100 p-4 md:p-8 shadow-md">
       <div className="flex flex-wrap justify-between items-center gap-4">
         <h2 className={`text-2xl font-semibold text-gray-900 flex items-center gap-3`}>
           <Building2 className="w-6 h-6 text-gray-600" />
@@ -1012,12 +1012,9 @@ export default function HospitalDetail({ params }: { params: Promise<{ slug: str
 
               {/* Description Section */}
               {rawDescription && (
-                <section className="bg-white rounded-xl border border-gray-100 p-8 shadow-md">
+                <section className="bg-white rounded-xl border border-gray-100 p-4 md:p-8 shadow-md">
                   {/* MODIFIED: Changed heading to use serif font for visual consistency */}
-                  <h2 className={`text-2xl font-medium text-gray-900 mb-3 flex items-center gap-3`}>
-                    {/* <ClipboardList className="w-6 h-6 text-gray-600 flex-shrink-0" /> */}
-                    About {hospital.hospitalName}
-                  </h2>
+             
                   <RichTextDisplay
                     htmlContent={rawDescription}
                     className="mt-0"
@@ -1043,7 +1040,7 @@ export default function HospitalDetail({ params }: { params: Promise<{ slug: str
 
               {/* Doctors Section */}
               {uniqueDoctors.length > 0 && (
-                <section className="bg-white rounded-xl border border-gray-100 p-8 shadow-md">
+                <section className="bg-white rounded-xl border border-gray-100 p-4 md:p-8 shadow-md">
                   <EmblaCarousel
                     items={uniqueDoctors}
                     title="Featured Specialist Doctors"
@@ -1055,7 +1052,7 @@ export default function HospitalDetail({ params }: { params: Promise<{ slug: str
 
               {/* Treatments Section */}
               {uniqueTreatments.length > 0 && (
-                <section className="bg-white rounded-xl border border-gray-100 p-8 shadow-md">
+                <section className="bg-white rounded-xl border border-gray-100 p-4 md:p-8 shadow-md">
                   <EmblaCarousel
                     items={uniqueTreatments}
                     title="Popular Treatments & Procedures"
@@ -1067,7 +1064,7 @@ export default function HospitalDetail({ params }: { params: Promise<{ slug: str
 
               {/* Similar Hospitals Section */}
               {similarHospitals.length > 0 && (
-                <section className="bg-white rounded-xl border border-gray-100 p-8 shadow-md">
+                <section className="bg-white rounded-xl border border-gray-100 p-4 md:p-8 shadow-md">
                   <EmblaCarousel
                     items={similarHospitals}
                     title="Similar Hospitals Nearby"

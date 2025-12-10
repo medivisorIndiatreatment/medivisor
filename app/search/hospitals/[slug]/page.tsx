@@ -94,16 +94,16 @@ const getShortDescription = (richContent: any, maxLength: number = 100): string 
 // RichTextDisplay Component (Styling refined for Serif Font)
 // The error is in how this component is CALLED, but the component itself is fine.
 const RichTextDisplay = ({ htmlContent, className = "" }: { htmlContent: string; className?: string }) => {
-  
+
   // MODIFIED: Function to replace <li> tags in <ul> with the CheckCircle icon HTML
   const transformListItems = (html: string): string => {
     // 1. Define the HTML for the Lucide CheckCircle icon with the required styling
     // This is the SVG markup for the CheckCircle icon, stylized with inline CSS
     // to match the requested w-5 h-5 text-[#74BF44] flex-shrink-0.
-    const iconSvgHtml = 
+    const iconSvgHtml =
       `<span style="display: inline-flex; align-items: flex-start; margin-right: 3px; flex-shrink: 0; min-width: 1.25rem; height: 1.25rem;">` +
-      `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5" style="color:#74BF44; width: 1rem; margin-top: 5px; height: 1rem;">` + 
-      `<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3L22 4"/>` + 
+      `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5" style="color:#74BF44; width: 1rem; margin-top: 5px; height: 1rem;">` +
+      `<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3L22 4"/>` +
       `</svg></span>`;
 
     // 2. Define the new structure for the <li> content wrapper
@@ -115,52 +115,52 @@ const RichTextDisplay = ({ htmlContent, className = "" }: { htmlContent: string;
     // 3. Regex to replace content inside <li>...</li> tags.
     // Matches an opening <li> tag (with optional attributes), captures content (non-greedily), and the closing </li> tag.
     // The `s` flag allows `.` to match newlines.
-    
+
     // Replace the content inside <li> tags (targeting only `<ul>` items for safety)
     let transformedHtml = html.replace(
-        /(<ul>.*?)(<li([^>]*)>)(.*?)(<\/li>)/gs, 
-        (match, ulStart, liOpenTag, liAttrs, liContent, liCloseTag) => {
-            // Trim whitespace from content
-            const trimmedContent = liContent.trim();
-            
-            // Check if content is NOT empty and NOT already wrapped
-            // NOTE: Checking for a substring of the icon HTML is a quick way to avoid double-wrapping, 
-            // though not foolproof for all malformed HTML.
-            if (trimmedContent.length > 0 && !trimmedContent.includes(iconSvgHtml)) {
-                // Reconstruct the <li> tag, but wrap content with the new structure
-                // We keep ulStart and liOpenTag as is, then insert the new content structure, then liCloseTag
-                return ulStart + liOpenTag + liContentWrapperStart + trimmedContent + liContentWrapperEnd + liCloseTag;
-            }
-            
-            // If content is empty or already wrapped, return the original match (ulStart + li...).
-            return match;
+      /(<ul>.*?)(<li([^>]*)>)(.*?)(<\/li>)/gs,
+      (match, ulStart, liOpenTag, liAttrs, liContent, liCloseTag) => {
+        // Trim whitespace from content
+        const trimmedContent = liContent.trim();
+
+        // Check if content is NOT empty and NOT already wrapped
+        // NOTE: Checking for a substring of the icon HTML is a quick way to avoid double-wrapping, 
+        // though not foolproof for all malformed HTML.
+        if (trimmedContent.length > 0 && !trimmedContent.includes(iconSvgHtml)) {
+          // Reconstruct the <li> tag, but wrap content with the new structure
+          // We keep ulStart and liOpenTag as is, then insert the new content structure, then liCloseTag
+          return ulStart + liOpenTag + liContentWrapperStart + trimmedContent + liContentWrapperEnd + liCloseTag;
         }
+
+        // If content is empty or already wrapped, return the original match (ulStart + li...).
+        return match;
+      }
     );
-    
+
     // Fallback: If it's a simple list not contained in a UL block, apply the transformation 
     // to any remaining top-level <li> tags. This is less ideal but necessary if content structure is flat.
     transformedHtml = transformedHtml.replace(/<li([^>]*)>(.*?)<\/li>/gs, (match, liAttrs, liContent) => {
-        const trimmedContent = liContent.trim();
-        if (trimmedContent.length > 0 && !trimmedContent.includes(iconSvgHtml)) {
-            return `<li${liAttrs}>${liContentWrapperStart}${trimmedContent}${liContentWrapperEnd}</li>`;
-        }
-        return match;
+      const trimmedContent = liContent.trim();
+      if (trimmedContent.length > 0 && !trimmedContent.includes(iconSvgHtml)) {
+        return `<li${liAttrs}>${liContentWrapperStart}${trimmedContent}${liContentWrapperEnd}</li>`;
+      }
+      return match;
     });
 
     return transformedHtml;
   }
-  
+
   const modifiedHtml = useMemo(() => {
     let cleanHtml = htmlContent;
 
     // Apply the list item transformation
     cleanHtml = transformListItems(cleanHtml);
-    
+
     // IMPORTANT SECURITY NOTE: 
     // In a real application, you must use a library like DOMPurify 
     // here to sanitize the HTML before using dangerouslySetInnerHTML.
     // Example: return DOMPurify.sanitize(cleanHtml);
-    
+
     return cleanHtml;
   }, [htmlContent]);
 
@@ -273,9 +273,9 @@ const BranchCard = ({ data }: { data: any }) => {
   const accImage = accreditation?.[0] ? getWixImageUrl(accreditation[0].image) : null
 
   return (
-    <Link href={`/search/hospitals/${fullSlug}`} className="block h-full focus:outline-none focus:ring-2 focus:ring-gray-400/50 border border-gray-100 rounded-xs shadow-xs bg-white hover:shadow-sm transition-shadow relative flex flex-col overflow-hidden">
+    <Link href={`/search/hospitals/${fullSlug}`} className="block h-full focus:outline-none focus:ring-2 focus:ring-gray-400/50 border border-gray-200 md:border-gray-100 rounded-xs shadow-lg md:shadow-xs bg-white hover:shadow-sm transition-shadow relative flex flex-col overflow-hidden">
       {/* Hospital Image Section */}
-      <div className="relative w-full h-48 bg-gray-50">
+      <div className="relative w-full h-72 md:h-48 bg-gray-50">
         {hospitalImg ? (
           <img
             src={hospitalImg}
@@ -383,8 +383,8 @@ const DoctorCard = ({ doctor }: { doctor: any }) => {
 
   const doctorSlug = generateSlug(doctor.doctorName)
   return (
-    <Link href={`/doctors/${doctorSlug}`} className="group flex flex-col h-full bg-white border border-gray-100 rounded-xs shadow-sm hover:shadow-md overflow-hidden transition-all focus:outline-none focus:ring-2 focus:ring-gray-400/50">
-      <div className="relative h-60 overflow-hidden bg-gray-50 rounded-t-lg">
+    <Link href={`/doctors/${doctorSlug}`} className="group flex flex-col h-full bg-white border md:border-gray-100 border-gray-200 rounded-xs shadow-lg md:shadow-sm hover:shadow-md overflow-hidden transition-all focus:outline-none focus:ring-2 focus:ring-gray-400/50">
+      <div className="relative h-72 md:h-60 overflow-hidden bg-gray-50 rounded-t-lg">
         {doctorImage ? (
           <img
             src={doctorImage}
@@ -400,12 +400,12 @@ const DoctorCard = ({ doctor }: { doctor: any }) => {
         )}
       </div>
       <div className={`p-3 flex-1 flex flex-col ${inter.variable} font-light`}>
-        <h3 className="text-xl md:text-base font-medium text-gray-900 leading-tight mb-1 line-clamp-1">{doctor.doctorName}</h3>
+        <h3 className="text-2xl md:text-base font-medium text-gray-900 leading-tight mb-1 line-clamp-1">{doctor.doctorName}</h3>
         <div className=" gap-1">
-          <p className="text-gray-700 text-sm flex items-center ">{specializationDisplay}</p>
+          <p className="text-gray-700 text-base md:text-sm flex items-center ">{specializationDisplay}</p>
           {doctor.experienceYears && (
 
-            <p className="text-gray-700 text-sm  flex items-center ">
+            <p className="text-gray-700 text-base md:text-sm  flex items-center ">
 
               {doctor.experienceYears} years of exp
             </p>
@@ -425,8 +425,8 @@ const TreatmentCard = ({ item }: { item: any }) => {
   const itemSlug = generateSlug(itemName) // Generate slug from the actual name used
 
   return (
-    <Link href={`/treatment/${itemSlug}`} className="group flex flex-col h-full bg-white border border-gray-100 rounded-xs shadow-sm hover:shadow-md overflow-hidden transition-all focus:outline-none focus:ring-2 focus:ring-gray-400/50">
-      <div className="relative h-48 overflow-hidden bg-gray-50 rounded-t-lg">
+    <Link href={`/treatment/${itemSlug}`} className="group flex flex-col h-full bg-white border md:border-gray-100 border-gray-200 rounded-xs shadow-lg md:shadow-sm hover:shadow-md overflow-hidden transition-all focus:outline-none focus:ring-2 focus:ring-gray-400/50">
+      <div className="relative h-72 md:h-48 overflow-hidden bg-gray-50 rounded-t-lg">
         {treatmentImage ? (
           <img
             src={treatmentImage}
@@ -443,7 +443,7 @@ const TreatmentCard = ({ item }: { item: any }) => {
       </div>
       <div className="p-4 flex-1 flex flex-col  font-light">
         {/* Use itemName for display */}
-        <h3 className="text-xl md:text-base font-medium text-gray-900 leading-tight mb-1 line-clamp-1">{itemName}</h3>
+        <h3 className="text-2xl md:text-base font-medium text-gray-900 leading-tight mb-1 line-clamp-1">{itemName}</h3>
         {/* ADDED: Display specialist/department for context */}
         {/* {item.specialistName && (
             <p className="text-sm text-gray-700 mt-1 line-clamp-1">Specialist: {item.specialistName}</p>
@@ -1221,7 +1221,7 @@ export default function BranchDetail({ params }: { params: Promise<{ slug: strin
   // 3. FILTERED LIST FOR SLIDER/CARDS (Only similar/nearby branches)
   // This block must be outside the conditional return blocks for Hooks to run consistently.
   const currentCities = branch?.city?.map((c: any) => c?.cityName).filter(Boolean) || []
-  
+
   const similarBranches = useMemo(() => {
     if (!allHospitals || !branch) return []
 
@@ -1252,7 +1252,7 @@ export default function BranchDetail({ params }: { params: Promise<{ slug: strin
   // 4. COMPREHENSIVE LIST FOR SEARCH DROPDOWN (All branches everywhere)
   const allHospitalBranches = useMemo(() => {
     if (!allHospitals) return []
-    
+
     return allHospitals
       .filter((h: any) => h.branches)
       .flatMap((h: any) =>
@@ -1270,7 +1270,7 @@ export default function BranchDetail({ params }: { params: Promise<{ slug: strin
       // ADDED: A-Z Sorting for the comprehensive search list
       .sort((a: any, b: any) => (a.branchName || '').localeCompare(b.branchName || ''))
   }, [allHospitals])
-  
+
   const currentCityDisplay = currentCities.length > 0 ? currentCities.join(', ') : 'Nearby Locations'
   // --- Conditional Rendering / Loading States ---
 
@@ -1335,12 +1335,12 @@ export default function BranchDetail({ params }: { params: Promise<{ slug: strin
   const hospitalLogo = getHospitalLogo(hospital.logo)
   const hospitalSlug = generateSlug(hospital.hospitalName)
 
-  
+
   const firstSpecialtyName = branch.specialization?.[0]?.name || 'N/A'
 
   return (
     <div className={`min-h-screen bg-white ${inter.variable} font-light`}>
-      <section className="relative w-full h-[80vh] bg-gray-50">
+      <section className="relative w-full h-[50vh] md:h-[80vh] bg-gray-50">
         {heroImage && (
           <img
             src={heroImage}
@@ -1371,11 +1371,11 @@ export default function BranchDetail({ params }: { params: Promise<{ slug: strin
             </div>
           </div>
         )}
-        <div className="absolute bottom-0 left-0 right-0 z-10 pb-12 text-white">
-          <div className="container mx-auto px-6 space-y-3">
-            <div className="flex gap-x-4 items-center">
+        <div className="absolute bottom-0 left-0 right-0 z-10 md:pb-12 pb-5 text-white">
+          <div className="container mx-auto md:px-6 space-y-3">
+            <div className="md:flex gap-x-4 items-center">
               {hospitalLogo && (
-                <div className="relative w-16 h-16 bg-white rounded-full p-2 shadow-lg flex-shrink-0">
+                <div className="relative w-16 h-auto md:h-16 bg-white md:rounded-full p-2 shadow-lg flex-shrink-0">
                   <img
                     src={hospitalLogo}
                     alt={`${hospital.hospitalName} logo`}
@@ -1385,18 +1385,22 @@ export default function BranchDetail({ params }: { params: Promise<{ slug: strin
                 </div>
               )}
               <div className="flex-1">
-                <h1 className="text-3xl md::text-4xl font-medium text-white mb-1 leading-tight">{branch.branchName}</h1>
-                <div className="flex flex-wrap gap-x-2 mt-0 text-lg text-white/80">
+                <h1 className="text-2xl md:text-4xl font-medium text-white mb-1 leading-tight">{branch.branchName}</h1>
+                <div className="flex flex-wrap gap-x-2 mt-0 text-lg md:text-white/80">
                   {branch.specialization?.slice(0, 3).map((spec: any) => <span key={spec._id}>{spec.name} Speciality</span>)}
                   {branch.specialization?.length > 3 && <span className="text-white/60">+{branch.specialization.length - 3} more</span>}
                 </div>
               </div>
             </div>
-            <div className="flex flex-wrap ml-5 gap-3 mt-2">
+            <div className="flex flex-wrap md:ml-5 gap-3 mt-2">
               {branch.address && (
-                <span className="flex items-center gap-2 text-sm text-white/90">
-                  <MapPin className="w-4 h-4" />
-                  {branch.address}
+                <span className="flex items-center gap-2 text-lg md:text-sm md:text-white/90">
+                  <div className="md:w-4 w-5 h-5 md:h-4" >
+                    <MapPin className="md:w-4 w-8 h-8 md:h-4" />
+                  </div>
+                  <div className="ml-2">
+                    {branch.address}
+                  </div>
                 </span>
               )}
               {branch.emergencyContact && (
@@ -1412,10 +1416,10 @@ export default function BranchDetail({ params }: { params: Promise<{ slug: strin
 
       <Breadcrumb hospitalName={hospital.hospitalName} branchName={branch.branchName} hospitalSlug={hospitalSlug} />
 
-      <section className="py-10 relative z-10">
-        <div className="container mx-auto px-6">
-          <div className="grid lg:grid-cols-12 gap-8">
-            <main className="lg:col-span-9 space-y-4">
+      <section className="py-10 w-full  relative z-10">
+        <div className="container mx-auto px-4 md:px-6">
+          <div className="md:grid lg:grid-cols-12 col-grid-2 g-4 md:gap-8">
+            <main className="lg:col-span-9 col-span-1  space-y-4">
               <div className={`bg-gray-50 p-4 rounded-xs shadow-xs border border-gray-100 ${inter.variable} font-light`}>
                 <h2 className="text-2xl md:text-xl font-medium text-gray-900 tracking-tight flex items-center  mb-3">Quick Overview</h2>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -1430,8 +1434,8 @@ export default function BranchDetail({ params }: { params: Promise<{ slug: strin
               </div>
 
               {branch.description && (
-                <section className={`bg-gray-50 p-4 rounded-xs shadow-xs border border-gray-100 ${inter.variable} font-light`}>
-                  <h2 className="text-2xl md:text-3xl font-medium text-gray-900 tracking-tight flex items-center mb-2">About {branch.branchName}</h2>
+                <section className={`bg-gray-50 p-4 rounded-xs shadow-xs w-full border border-gray-100 ${inter.variable} font-light`}>
+                  {/* <h2 className="text-2xl md:text-3xl font-medium text-gray-900 tracking-tight flex items-center mb-2">About {branch.branchName}</h2> */}
                   {/* FIX: Change function call to JSX component call to prevent hook order violation */}
                   <RichTextDisplay htmlContent={branch.description.html || branch.description} />
                   {/* UPDATED: Added dynamic Link with hospitalSlug */}
@@ -1445,7 +1449,7 @@ export default function BranchDetail({ params }: { params: Promise<{ slug: strin
 
               {/* UPDATED: Use sortedFacilities array */}
               {sortedFacilities.length > 0 && (
-                <section className={`bg-gray-50 p-4 rounded-xs shadow-xs border border-gray-100 ${inter.variable} font-light`}>
+                <section className={`bg-gray-50 p-4  rounded-xs shadow-xs border border-gray-100 ${inter.variable} font-light`}>
                   <h2 className="text-2xl md:text-3xl font-medium text-gray-900 tracking-tight mb-8 flex items-center gap-3">
                     <Building2 className="w-7 h-7" />
                     Key Facilities
@@ -1471,7 +1475,7 @@ export default function BranchDetail({ params }: { params: Promise<{ slug: strin
               />
             </main>
 
-            <aside className="lg:col-span-3 space-y-8">
+            <aside className="lg:col-span-3 col-span-1 space-y-8">
 
               <ContactForm />
             </aside>
