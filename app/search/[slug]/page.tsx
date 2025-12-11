@@ -26,6 +26,7 @@ type HospitalWithBranchPreview = {
     totalBeds?: number;
     yearEstablished?: number;
     doctors?: any[];
+    noOfDoctors?: string; // ADDED: Field for doctor count string from API
     treatments?: any[];
     accreditation?: any[];
   }>;
@@ -304,7 +305,7 @@ const HeroSection = ({ hospital, accreditations }: { hospital: HospitalWithBranc
 
 // Simple Stat Box for Branch Card
 const StatBox = ({ value, label, showPlus = true }: { value: string | number, label: string, showPlus?: boolean }) => (
-  <div className='text-center flex flex-col items-center justify-center px-1 py-1.5 bg-gray-50 rounded-lg border border-gray-100'>
+  <div className='text-center flex flex-col items-center justify-center px-1 py-1.5 bg-gray-50 rounded-xs border border-gray-100'>
     <p className="text-sm font-medium text-gray-800 leading-tight">
       {value}
       {value !== 'N/A' && showPlus && '+'}
@@ -325,19 +326,23 @@ const BranchCard = ({ branch, hospitalSlug }: { branch: any, hospitalSlug: strin
   const branchNameDisplay = branch.isMain ? `${branch.branchName || 'Unnamed Branch'} (Main)` : (branch.branchName || 'Unnamed Branch')
   const linkHref = `/search/hospitals/${branchSlug}`
 
-  const specialties = useMemo(() => {
-    const specSet = new Set<string>()
-    branch.doctors?.forEach((d: any) => {
-      d.specialization?.forEach((s: any) => {
-        const specName = typeof s === 'object' ? s?.name : s
-        if (specName) specSet.add(specName)
-      })
-    })
-    return Array.from(specSet)
-  }, [branch.doctors])
+  // MODIFIED: Prioritized 'noOfDoctors' field from the API response for the count.
+  // The 'noOfDoctors' field is a string (e.g., "170"), which is what we display directly.
+  const doctorsCount = branch.noOfDoctors || branch.doctors?.length || 'N/A' 
+  
+  // const specialties = useMemo(() => {
+  //   const specSet = new Set<string>()
+  //   branch.doctors?.forEach((d: any) => {
+  //     d.specialization?.forEach((s: any) => {
+  //       const specName = typeof s === 'object' ? s?.name : s
+  //       if (specName) specSet.add(specName)
+  //     })
+  //   })
+  //   return Array.from(specSet)
+  // }, [branch.doctors])
 
   const firstCityName = branch.city?.[0]?.name || branch.city?.[0]?.cityName || 'N/A'
-  const specialtyCount = specialties.length
+  // const specialtyCount = specialties.length
   const bedsCount = branch.totalBeds || 'N/A'
   const estdYear = branch.yearEstablished || 'N/A'
 
@@ -345,7 +350,7 @@ const BranchCard = ({ branch, hospitalSlug }: { branch: any, hospitalSlug: strin
     <Link
       href={linkHref}
       aria-label={`View details for ${branchNameDisplay} in ${firstCityName}`}
-      className={`block h-full border border-gray-100 rounded-xl shadow-md bg-white hover:shadow-lg transition-all duration-300 relative flex flex-col overflow-hidden group transform hover:-translate-y-0.5`}
+      className={`block h-full border border-gray-100 rounded-xs shadow-xs bg-white hover:shadow-sm transition-all duration-300 relative flex flex-col overflow-hidden group transform hover:-translate-y-0.5`}
     >
       <div className="relative w-full h-48 bg-gray-100">
         <ImageWithFallback
@@ -361,7 +366,7 @@ const BranchCard = ({ branch, hospitalSlug }: { branch: any, hospitalSlug: strin
             <img
               src={accImage}
               alt="Accreditation badge"
-              className="w-8 h-8 object-contain rounded-full"
+              className="w-6 h-6 object-contain rounded-full"
             />
           </div>
         )}
@@ -369,7 +374,7 @@ const BranchCard = ({ branch, hospitalSlug }: { branch: any, hospitalSlug: strin
 
       <div className={`p-4 flex-1 flex flex-col justify-between font-light`}>
         <div className="mb-3">
-          <h3 className="text-lg font-semibold text-gray-900 leading-snug group-hover:text-gray-700 transition-colors">{branchNameDisplay}</h3>
+          <h3 className="text-lg font-medium text-gray-900 leading-snug group-hover:text-gray-700 transition-colors">{branchNameDisplay}</h3>
           <p className="text-sm text-gray-600 mt-1 flex items-center gap-1.5">
             <MapPin className="w-4 h-4 text-red-500 flex-shrink-0" />
             {firstCityName}
@@ -377,10 +382,11 @@ const BranchCard = ({ branch, hospitalSlug }: { branch: any, hospitalSlug: strin
         </div>
 
         {/* Updated StatBox to use subtle gray/white theme */}
-        <div className="grid grid-cols-3 gap-3">
+        <div className="grid grid-cols-3 gap-2">
           <StatBox value={estdYear} label="Estd." showPlus={false} />
           <StatBox value={bedsCount} label="Beds" />
-          <StatBox value={specialtyCount === 0 ? 'N/A' : specialtyCount} label="Specialities" />
+          {/* MODIFIED: Uses doctorsCount which now prioritizes 'noOfDoctors' */}
+          <StatBox value={doctorsCount} label="Doctors" /> 
         </div>
       </div>
     </Link>
@@ -831,7 +837,7 @@ const BranchesSection = ({ hospital, selectedCity, allCityOptions, visibleBranch
         )}
       </div>
 
-      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 pt-4">
+      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 pt-4">
         {visibleBranches.map(branch => (
           <BranchCard key={branch._id} branch={branch} hospitalSlug={hospitalSlug} />
         ))}
@@ -985,7 +991,8 @@ export default function HospitalDetail({ params }: { params: Promise<{ slug: str
         titlesSeen.add(acc.title);
         unique.push(acc);
       }
-    });
+    }
+    );
     return unique;
   }, [hospital]);
 

@@ -317,7 +317,7 @@ const BranchCard = ({ data }: { data: any }) => {
 
         {/* Title: Only Branch Name (UPDATED: Removed group/hospital name) */}
         <div className="mb-1">
-          <h3 className="text-2xl md:text-base font-medium text-gray-900 leading-tight">{branchName}</h3>
+          <h3 className="text-2xl md:text-lg font-medium text-gray-900 leading-tight">{branchName}</h3>
         </div>
 
         {/* Subtitle: City, Specialty */}
@@ -400,7 +400,7 @@ const DoctorCard = ({ doctor }: { doctor: any }) => {
         )}
       </div>
       <div className={`p-3 flex-1 flex flex-col ${inter.variable} font-light`}>
-        <h3 className="text-2xl md:text-2xl md:text-base font-medium text-gray-900 leading-tight mb-1 line-clamp-1">{doctor.doctorName}</h3>
+        <h3 className="text-2xl md:text-2xl md:text-lg font-medium text-gray-900 leading-tight mb-1 line-clamp-1">{doctor.doctorName}</h3>
         <div className=" gap-1">
           <p className="text-gray-700 text-base md:text-sm flex items-center ">{specializationDisplay}</p>
           {doctor.experienceYears && (
@@ -443,7 +443,7 @@ const TreatmentCard = ({ item }: { item: any }) => {
       </div>
       <div className="p-4 flex-1 flex flex-col  font-light">
         {/* Use itemName for display */}
-        <h3 className="text-2xl md:text-2xl md:text-base font-medium text-gray-900 leading-tight mb-1 line-clamp-1">{itemName}</h3>
+        <h3 className="text-2xl md:text-2xl md:text-lg font-medium text-gray-900 leading-tight mb-1 line-clamp-1">{itemName}</h3>
         {/* ADDED: Display specialist/department for context */}
         {/* {item.specialistName && (
             <p className="text-sm text-gray-700 mt-1 line-clamp-1">Specialist: {item.specialistName}</p>
