@@ -140,6 +140,7 @@ const DataMappers = {
     _id: item._id || item.ID,
     branchName: getValue(item, "branchName", "Branch Name") || "Unknown Branch",
     address: getValue(item, "address", "Address"),
+    // This correctly maps the City reference ID, which is later enriched
     city: ReferenceMapper.multiReference(item.city, "cityName", "city name", "name"),
     specialty: ReferenceMapper.multiReference(item.specialty, "specialization", "Specialty Name", "title", "name"),
     accreditation: ReferenceMapper.multiReference(item.accreditation, "title", "Title"),
@@ -198,11 +199,13 @@ const DataMappers = {
     }
   },
 
+  // **FIX APPLIED HERE:** Ensure 'state' and 'country' always resolve to a string
+  // to prevent null/empty values in the final API response.
   city: (item: any) => ({
     _id: item._id,
     cityName: getValue(item, "cityName", "city name", "name") || "Unknown City",
-    state: getValue(item, "state", "State"),
-    country: getValue(item, "country", "Country") || "India",
+    state: getValue(item, "state", "State") || "Unknown State", // Changed to use "Unknown State" default
+    country: getValue(item, "country", "Country") || "Unknown Country", // Changed to use "Unknown Country" default
   }),
 
   accreditation: (item: any) => ({
@@ -574,6 +577,7 @@ async function enrichHospitals(
 
   const [doctors, cities, accreditations, treatments, enrichedSpecialists] = await Promise.all([
     DataFetcher.fetchDoctors(Array.from(doctorIds)),
+    // DataMappers.city is now updated to provide robust defaults for state/country
     DataFetcher.fetchByIds(COLLECTIONS.CITIES, Array.from(cityIds), DataMappers.city),
     DataFetcher.fetchByIds(COLLECTIONS.ACCREDITATIONS, Array.from(accreditationIds), DataMappers.accreditation),
     DataFetcher.fetchTreatmentsWithFullData(Array.from(treatmentIds)),
@@ -613,6 +617,8 @@ async function enrichHospitals(
     const enrichedBranches = filteredBranches.map((b) => ({
       ...b,
       doctors: b.doctors.map((d: any) => doctors[d._id] || d),
+      // This line correctly replaces the ID reference with the full city object, 
+      // which now has robust state and country values due to the fix in DataMappers.city.
       city: b.city.map((c: any) => cities[c._id] || c),
       accreditation: b.accreditation.map((a: any) => accreditations[a._id] || a),
       specialists: b.specialists.map((s: any) => enrichedSpecialists[s._id] || s),

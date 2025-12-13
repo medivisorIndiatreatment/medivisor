@@ -1,4 +1,4 @@
-// app/hospitals/page.tsx (or app/search/page.tsx)
+// app/hospitals/page.tsx
 "use client"
 
 import React, { useState, useEffect, useCallback, useMemo, useRef, Suspense } from "react"
@@ -19,20 +19,6 @@ import {
   Users,
   Star
 } from "lucide-react"
-
-// =============================================================================
-// GLOBAL STYLES (For Marquee Keyframes) - Required for animation
-// =============================================================================
-const GlobalStyles = () => (
-  <style jsx global>{`
-    /* Renaming keyframes for safety/clarity */
-    @keyframes marquee-scroll {
-      0% { transform: translateX(0); }
-      /* Animate by 50% since the content is duplicated once */
-      100% { transform: translateX(-50%); } 
-    }
-  `}</style>
-)
 
 // =============================================================================
 // TYPES & UTILITIES
@@ -193,14 +179,8 @@ interface FilterState {
   sortBy: "all" | "popular" | "az" | "za"
 }
 
-interface Specialization {
-  name?: string;
-  title?: string;
-  _id?: string;
-}
-
 // =============================================================================
-// FILTER LOGIC & DATA TRANSFORMATION
+// FILTER LOGIC
 // =============================================================================
 
 const getVisibleFiltersByView = (view: FilterState['view']): FilterKey[] => {
@@ -476,8 +456,7 @@ const useHospitalsData = () => {
     const fetchData = async () => {
       setLoading(true)
       try {
-        // NOTE: Replace with your actual API endpoint if different
-        const res = await fetch(`/api/hospitals?pageSize=1000`) 
+        const res = await fetch(`/api/hospitals?pageSize=1000`)
         if (!res.ok) throw new Error("Failed to fetch hospital data")
         const data = await res.json() as ApiResponse
         setAllHospitals(data.items)
@@ -506,6 +485,9 @@ const useHospitalsData = () => {
     }
 
     let branches = getMatchingBranches(allHospitals, genericBranchFilters, allExtendedTreatments)
+    const filteredBranchesIds = new Set(branches.map(b => b._id))
+    const filteredHospitalIds = new Set(branches.map(b => b.hospitalId))
+
     let matchingBranchIds: string[] | null = null
     if (currentFilters.branch.id || currentFilters.branch.query) {
       matchingBranchIds = branches.map(b => b._id).filter(Boolean)
@@ -540,44 +522,36 @@ const useHospitalsData = () => {
       doctors = doctors.filter(d => matchesSpecialization(d.specialization, "", lowerQuery))
     }
 
-    // --- LOGIC FIX: EXACT DOCTOR FILTERING BY TREATMENT ---
-    // If a treatment is selected, we must look for doctors (specialists) linked to that treatment
     let matchingLocationKeysForDoctors: Set<string> | null = null
-    
+    let matchingSpecialtyNamesForDoctors = new Set<string>()
     if (currentFilters.treatment.id || currentFilters.treatment.query) {
       const lowerTreatQuery = currentFilters.treatment.query.toLowerCase()
-      const matchingTreatmentIds = new Set<string>()
-      
-      allExtendedTreatments.forEach(t => {
-         if ((currentFilters.treatment.id && t._id === currentFilters.treatment.id) || 
-             (lowerTreatQuery && (t.name ?? '').toLowerCase().includes(lowerTreatQuery))) {
-             matchingTreatmentIds.add(t._id)
-         }
+      const matchingTreatments = allExtendedTreatments.filter(t =>
+        (currentFilters.treatment.id && t._id === currentFilters.treatment.id) ||
+        (lowerTreatQuery && (t.name ?? '').toLowerCase().includes(lowerTreatQuery))
+      )
+
+      matchingTreatments.forEach(t => {
+        t.departments.forEach(d => matchingSpecialtyNamesForDoctors.add(d.name.toLowerCase()))
       })
 
-      if (matchingTreatmentIds.size > 0) {
-        // 1. Find the specialists in branches who perform these treatments
-        const allowedDoctorIds = new Set<string>()
-        
-        allHospitals.forEach(h => {
-            h.branches.forEach(b => {
-                b.specialists?.forEach(s => {
-                    if (s.treatments?.some(t => matchingTreatmentIds.has(t._id))) {
-                        allowedDoctorIds.add(s._id)
-                    }
-                })
-            })
-        })
-
-        // 2. Filter the doctor list strictly by those IDs
-        doctors = doctors.filter(d => allowedDoctorIds.has(d.baseId))
-        
-        // 3. Setup location matching (existing logic)
-        const matchingTreatments = allExtendedTreatments.filter(t => matchingTreatmentIds.has(t._id))
+      if (matchingTreatments.length > 0) {
         matchingLocationKeysForDoctors = new Set(matchingTreatments.flatMap(t => t.branchesAvailableAt.map(loc => `${loc.hospitalId}-${loc.branchId || 'no-branch'}`)))
-      } else {
-        // Treatment found in list but has no ID matches or query returned no treatments
-        if (currentFilters.treatment.id) doctors = []
+      }
+
+      if (matchingSpecialtyNamesForDoctors.size > 0) {
+        const deptMatch = (d: ExtendedDoctorType) => (d.specialization || []).some((spec: any) =>
+          (spec.department || []).some((dept: any) => matchingSpecialtyNamesForDoctors.has(dept.name.toLowerCase()))
+        )
+        if (matchingLocationKeysForDoctors && matchingLocationKeysForDoctors.size > 0) {
+          doctors = doctors.filter(d =>
+            d.locations.some(loc => matchingLocationKeysForDoctors!.has(`${loc.hospitalId}-${loc.branchId || 'no-branch'}`)) && deptMatch(d)
+          )
+        } else {
+          doctors = doctors.filter(deptMatch)
+        }
+      } else if (currentFilters.treatment.id) {
+        doctors = []
       }
     }
 
@@ -647,8 +621,7 @@ const useHospitalsData = () => {
 
     if (matchingBranchIds) {
       treatments = treatments.filter(t =>
-        t.branchesAvailableAt.some(loc => matchingBranchIds!.includes(loc.branchId || '')
-        )
+        t.branchesAvailableAt.some(loc => matchingBranchIds!.includes(loc.branchId || ''))
       )
     }
 
@@ -713,7 +686,7 @@ const useHospitalsData = () => {
         contextBranches.forEach(b => {
           (b.city || []).forEach((item: any) => {
             const id = item._id
-            const name = item.cityName
+            const name = `${item.cityName}${item.state ? `, ${item.state}` : ''}`
             if (id && name) map.set(id, name)
           })
         })
@@ -721,7 +694,9 @@ const useHospitalsData = () => {
         contextDoctors.forEach(d => {
           (d.filteredLocations || d.locations).forEach(loc => {
             loc.cities.forEach(c => {
-              if (c._id && c.cityName) map.set(c._id, c.cityName)
+              const id = c._id
+              const name = `${c.cityName}${c.state ? `, ${c.state}` : ''}`
+              if (id && name) map.set(id, name)
             })
           })
         })
@@ -729,7 +704,9 @@ const useHospitalsData = () => {
         contextTreatments.forEach(t => {
           (t.filteredBranchesAvailableAt || t.branchesAvailableAt).forEach(loc => {
             loc.cities.forEach(c => {
-              if (c._id && c.cityName) map.set(c._id, c.cityName)
+              const id = c._id
+              const name = `${c.cityName}${c.state ? `, ${c.state}` : ''}`
+              if (id && name) map.set(id, name)
             })
           })
         })
@@ -891,107 +868,6 @@ const useHospitalsData = () => {
 // UI COMPONENTS
 // =============================================================================
 
-// --- REFACTORED COMPONENT: SCROLLABLE CARD HEADING (JS/Ref Controlled) ---
-const ScrollableTitle = ({ text, className, isHovered }: { text: string; className?: string, isHovered: boolean }) => {
-  const containerRef = useRef<HTMLDivElement>(null) // Ref to measure container width
-  const [isOverflowing, setIsOverflowing] = useState(false)
-  const [duration, setDuration] = useState(0)
-
-  // Constant scroll speed (pixels per second)
-  const SCROLL_SPEED = 40 
-
-  const checkOverflow = useCallback(() => {
-    // 1. Create a temporary element to measure the un-truncated text width accurately
-    const tempDiv = document.createElement('div');
-    tempDiv.style.position = 'absolute';
-    tempDiv.style.visibility = 'hidden';
-    tempDiv.style.whiteSpace = 'nowrap';
-    // Copy the relevant font classes for accurate measurement
-    tempDiv.className = className || ''; 
-    tempDiv.textContent = text;
-    
-    document.body.appendChild(tempDiv);
-    
-    const contentWidth = tempDiv.scrollWidth;
-    const containerWidth = containerRef.current?.clientWidth || 0;
-
-    document.body.removeChild(tempDiv);
-    
-    const overflow = contentWidth > containerWidth
-    setIsOverflowing(overflow)
-    
-    if (overflow) {
-      // Calculate duration: (Total content width / pixels per second)
-      const newDuration = contentWidth / SCROLL_SPEED
-      // Clamp duration between 8 and 20 seconds
-      setDuration(Math.max(8, Math.min(20, newDuration))) 
-    } else {
-      setDuration(0)
-    }
-  }, [className, text])
-
-  // Check overflow on mount and when text or container size changes
-  useEffect(() => {
-    checkOverflow()
-    window.addEventListener('resize', checkOverflow)
-    return () => window.removeEventListener('resize', checkOverflow)
-  }, [checkOverflow, text]) 
-
-  const shouldAnimate = isHovered && isOverflowing
-  
-  return (
-    // Outer container for proper height setting and clipping
-    <div 
-        ref={containerRef}
-        className={`relative overflow-hidden w-full ${className}`}
-        // Using `h-6` (tailwinds default for `text-lg` line-height) or similar fixed height for consistency
-        style={{ height: '1.5em' }} 
-    >
-        {/* 1. Static/Truncated View (Visible by default, hidden on hover/animation) */}
-        <div 
-            className={`truncate transition-opacity duration-300`}
-            style={{ 
-                opacity: shouldAnimate ? 0 : 1, 
-                // Hide the element completely when not visible to prevent layout issues
-                height: shouldAnimate ? 0 : 'auto', 
-                pointerEvents: shouldAnimate ? 'none' : 'auto'
-            }}
-        >
-            {text}
-        </div>
-
-        {/* 2. Scrolling View (Hidden by default, visible on hover/animation) */}
-        <div 
-            className={`absolute inset-0 flex items-center whitespace-nowrap transition-opacity duration-300`}
-            style={{ 
-                opacity: shouldAnimate ? 1 : 0, 
-                // Reset positioning when not animating to prevent content overlap
-                top: shouldAnimate ? '0' : '50%', 
-                transform: shouldAnimate ? 'none' : 'translateY(-50%)' 
-            }}
-        >
-            {/* The scrolling element */}
-            <span
-                style={{
-                    display: 'inline-block',
-                    animationName: 'marquee-scroll',
-                    animationTimingFunction: 'linear',
-                    animationIterationCount: 'infinite',
-                    animationDuration: shouldAnimate ? `${duration}s` : 'none',
-                    animationPlayState: shouldAnimate ? 'running' : 'paused',
-                }}
-            >
-                {/* Duplicate text for seamless loop */}
-                <span>{text}</span>
-                {/* Add a fixed space between duplicates to avoid words merging */}
-                {isOverflowing && <span style={{ paddingLeft: '2rem' }}>{text}</span>}
-            </span>
-        </div>
-    </div>
-  )
-}
-
-
 type OptionType = { id: string; name: string }
 
 interface FilterDropdownProps {
@@ -1000,13 +876,11 @@ interface FilterDropdownProps {
   filters: FilterState
   updateSubFilter: (key: FilterKey, subKey: "id" | "query", value: string) => void
   options: OptionType[]
-  className?: string;
-  mobile?: boolean;
-  autoFocus?: boolean;
-  onFocus?: (element: HTMLInputElement) => void;
+  // Added a placeholder 'mobile' prop to suppress linter error on mobile
+  mobile?: boolean 
 }
 
-const FilterDropdown = React.memo(({ placeholder, filterKey, filters, updateSubFilter, options, className, onFocus }: FilterDropdownProps) => {
+const FilterDropdown = React.memo(({ placeholder, filterKey, filters, updateSubFilter, options }: FilterDropdownProps) => {
   const [showOptions, setShowOptions] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
   const filter = filters[filterKey] as FilterValue
@@ -1048,17 +922,16 @@ const FilterDropdown = React.memo(({ placeholder, filterKey, filters, updateSubF
     setShowOptions(false)
   }
 
-  const handleFocus = (e: React.FocusEvent<HTMLInputElement>) => {
+  const handleFocus = () => {
     if (filter.id) {
       updateSubFilter(filterKey, "id", "")
       updateSubFilter(filterKey, "query", "")
     }
     setShowOptions(true)
-    if (onFocus) onFocus(e.target);
   }
 
   return (
-    <div className={`relative ${className || ''}`} ref={dropdownRef}>
+    <div className="relative" ref={dropdownRef}>
       <div className="relative">
         <input
           type="text"
@@ -1100,10 +973,6 @@ const FilterDropdown = React.memo(({ placeholder, filterKey, filters, updateSubF
 })
 FilterDropdown.displayName = 'FilterDropdown'
 
-
-// Helper type to correctly define props for FilterSidebar
-type HospitalsData = ReturnType<typeof useHospitalsData>;
-
 const FilterSidebar = ({ 
   filters, 
   showFilters, 
@@ -1111,8 +980,13 @@ const FilterSidebar = ({
   clearFilters, 
   updateSubFilter, 
   availableOptions, 
-  getFilterValueDisplay, // <-- Correctly receive prop
-}: HospitalsData) => { // <-- Use the correct type here
+  getFilterValueDisplay, 
+  filteredBranches, 
+  filteredDoctors, 
+  filteredTreatments 
+}: ReturnType<typeof useHospitalsData> & { 
+  getFilterValueDisplay: ReturnType<typeof useHospitalsData>['getFilterValueDisplay'] 
+}) => {
   const filterOptions: { value: FilterKey, label: string, isPrimary: boolean }[] = useMemo(() => {
     switch (filters.view) {
       case "hospitals":
@@ -1144,7 +1018,6 @@ const FilterSidebar = ({
   }, [filters.view])
 
   const hasAppliedFilters = useMemo(() =>
-    // ERROR FIX: getFilterValueDisplay is now correctly available from props/scope
     filterOptions.some(opt => getFilterValueDisplay(opt.value, filters, availableOptions)) ||
     (filters.city.id || filters.city.query),
     [filters, availableOptions, filterOptions, getFilterValueDisplay]
@@ -1183,8 +1056,7 @@ const FilterSidebar = ({
     const handleResize = () => {
       const visualViewport = window.visualViewport
       if (visualViewport) {
-        // Simple check to detect keyboard open: viewport height shrinks significantly
-        const isKeyboardVisible = visualViewport.height < window.innerHeight * 0.7 
+        const isKeyboardVisible = visualViewport.height < window.innerHeight * 0.7
         setKeyboardVisible(isKeyboardVisible)
         
         // Auto-scroll active input into view when keyboard opens
@@ -1223,8 +1095,10 @@ const FilterSidebar = ({
         // Calculate scroll position
         const scrollTop = container.scrollTop
         const elementTop = elementRect.top - containerRect.top + scrollTop
-        // 80px padding from top
-        const targetScroll = elementTop - 80 
+        const elementBottom = elementRect.bottom - containerRect.top + scrollTop
+        
+        // Scroll to position element at top (with some padding)
+        const targetScroll = elementTop - 80 // 80px padding from top
         
         container.scrollTo({
           top: targetScroll,
@@ -1235,7 +1109,7 @@ const FilterSidebar = ({
   }
 
   // Handle filter focus for auto-scroll
-  const handleFilterFocus = (element: HTMLInputElement) => {
+  const handleFilterFocus = (key: FilterKey, element: HTMLInputElement) => {
     // Store ref to active filter element
     activeFilterRef.current = element.closest('.filter-section') as HTMLDivElement
     scrollToActiveFilter()
@@ -1299,7 +1173,7 @@ const FilterSidebar = ({
                     updateSubFilter={updateSubFilter}
                     options={availableOptions[key]}
                     className="w-full"
-                    onFocus={handleFilterFocus}
+                    // onFocus={handleFilterFocus} // Removed desktop onFocus
                   />
                 </div>
               )
@@ -1346,7 +1220,7 @@ const FilterSidebar = ({
                 {cityValue && (
                   <div className="flex items-center justify-between group">
                     <div className="flex items-center gap-2 min-w-0 flex-1">
-                      <span className="text-xs text-gray-500">City</span>
+                      <span className="text-xs text-gray-500">City/State</span>
                       <span className="text-sm text-gray-900 font-medium truncate">{cityValue}</span>
                     </div>
                     <button
@@ -1533,8 +1407,8 @@ const FilterSidebar = ({
                           updateSubFilter={updateSubFilter}
                           options={availableOptions[key]}
                           mobile
-                          autoFocus={filterOptions.length === 1}
-                          onFocus={handleFilterFocus}
+                          // autoFocus={filterOptions.length === 1} // Removing autoFocus for accessibility
+                          // onFocus={(element) => handleFilterFocus(key, element)} // Only required if custom focus logic is needed
                         />
                       </div>
                     </div>
@@ -1578,11 +1452,86 @@ const FilterSidebar = ({
   )
 }
 // =============================================================================
-// CARD COMPONENTS
+// HELPER COMPONENTS (UPDATED MARQUEE LOGIC)
+// =============================================================================
+
+const ScrollableTitle = ({ text, className, isHovered }: { text: string; className?: string; isHovered: boolean }) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const textRef = useRef<HTMLSpanElement>(null);
+  const [isOverflowing, setIsOverflowing] = useState(false);
+  const [animationDuration, setAnimationDuration] = useState('0s');
+  // Removed internal isHovered state
+
+  useEffect(() => {
+    const checkOverflow = () => {
+      // Must use requestAnimationFrame for reliable measurements if component is mounted/re-rendered quickly
+      const rAF = window.requestAnimationFrame(() => {
+        if (containerRef.current && textRef.current) {
+          const containerWidth = containerRef.current.clientWidth;
+          const textWidth = textRef.current.scrollWidth;
+          
+          if (textWidth > containerWidth) {
+            setIsOverflowing(true);
+            // Calculate duration: Longer text = longer duration (slower scroll speed)
+            const duration = textWidth / 50; 
+            setAnimationDuration(`${Math.max(duration, 5)}s`);
+          } else {
+            setIsOverflowing(false);
+            setAnimationDuration('0s');
+          }
+        }
+      });
+      return () => window.cancelAnimationFrame(rAF);
+    };
+
+    checkOverflow();
+    window.addEventListener('resize', checkOverflow);
+    
+    return () => window.removeEventListener('resize', checkOverflow);
+  }, [text]);
+
+  // Combine conditions for the active animation state, using the prop
+  const isMarqueeActive = isOverflowing && isHovered;
+
+  return (
+    // 1. Container: Always hides overflow, used for measurement.
+    <div
+      ref={containerRef}
+      className={`relative w-full overflow-hidden ${className}`}
+      // Removed onMouseEnter/onMouseLeave
+    >
+      {/* 2. Content Wrapper */}
+      <div 
+        className={`whitespace-nowrap inline-block ${!isMarqueeActive ? 'truncate w-full' : ''}`}
+        style={{
+          // Apply animation only when active
+          animation: isMarqueeActive ? `marquee ${animationDuration} linear infinite` : 'none',
+          // Ensure it starts from the correct position when not active
+          transform: 'translateX(0)',
+        }}
+      >
+        {/* The first text element for content and measurement */}
+        <span ref={textRef} className="inline-block pr-8">
+          {text}
+        </span>
+        
+        {/* Duplicate text for seamless looping marquee effect, only rendered when marquee is active */}
+        {isMarqueeActive && (
+          <span className="inline-block pr-8">
+            {text}
+          </span>
+        )}
+      </div>
+    </div>
+  );
+};
+
+// =============================================================================
+// CARD COMPONENTS (UPDATED WITH HOVER STATE)
 // =============================================================================
 
 const HospitalCard = ({ branch }: { branch: BranchType & { hospitalName: string; hospitalLogo: string | null; hospitalId: string } }) => {
-  const [isHovered, setIsHovered] = useState(false); // NEW: Manage hover state
+  const [isHovered, setIsHovered] = useState(false); // ADDED hover state
   const slug = generateSlug(`${branch.branchName}`)
   const imageUrl = getWixImageUrl(branch.branchImage)
   const primaryCity = branch.city?.[0]?.cityName || ""
@@ -1592,13 +1541,12 @@ const HospitalCard = ({ branch }: { branch: BranchType & { hospitalName: string;
   const accreditationLogoUrl = getWixImageUrl(branch.accreditation?.[0]?.image)
 
   return (
-    <Link 
-      href={`/search/hospitals/${slug}`} 
-      className="block"
-      onMouseEnter={() => setIsHovered(true)} // NEW: Handle hover
-      onMouseLeave={() => setIsHovered(false)} // NEW: Handle un-hover
-    >
-      <article className="group bg-white rounded-xs shadow-lg md:mb-0 mb-5 md:shadow-xs transition-all duration-300 overflow-hidden cursor-pointer h-full flex flex-col hover:shadow-sm border border-gray-300 md:border-gray-100">
+    <Link href={`/search/hospitals/${slug}`} className="block">
+      <article 
+        className="group bg-white rounded-xs shadow-lg md:mb-0 mb-5 md:shadow-xs transition-all duration-300 overflow-hidden cursor-pointer h-full flex flex-col hover:shadow-sm border border-gray-300 md:border-gray-100"
+        onMouseEnter={() => setIsHovered(true)} // ADDED handler
+        onMouseLeave={() => setIsHovered(false)} // ADDED handler
+      >
         <div className="relative h-72 md:h-48 overflow-hidden bg-gray-50">
           {hospitalLogoUrl && (
             <div className="absolute bottom-2 left-2 z-10">
@@ -1639,16 +1587,20 @@ const HospitalCard = ({ branch }: { branch: BranchType & { hospitalName: string;
 
         <div className="p-3 flex-1 flex flex-col space-y-2">
           <header className="space-y-1 md:h-16">
-            {/* Using ScrollableTitle Component and passing isHovered prop */}
-            <ScrollableTitle 
-                text={branch.branchName} 
-                className="md:text-lg text-2xl font-medium leading-tight text-gray-900 transition-colors"
-                isHovered={isHovered} // NEW PROP
-            />
-            
-            <div className="flex items-center text-lg md:text-sm text-gray-700 font-normal">
-              <span>{primaryCity}{primaryState ? `, ${primaryState}` : ""}</span>,
-              <span className="ml-1"> {primarySpecialty} Speciality</span>
+            <h2 className="md:text-lg text-2xl font-medium leading-tight text-gray-900 transition-colors w-full">
+              <ScrollableTitle text={branch.branchName} isHovered={isHovered} /> {/* PASSED prop */}
+            </h2>
+            <div className="flex flex-col text-lg md:text-sm text-gray-700 font-normal gap-0.5">
+              <div className="flex items-center gap-1.5 text-gray-900 font-medium">
+                <MapPin className="w-3.5 h-3.5 flex-shrink-0 text-gray-500" />
+                <span>
+                  {/* Updated: Ensure city and state display correctly */}
+                  {primaryCity}{primaryState ? `, ${primaryState}` : ""}
+                </span>
+              </div>
+              <div className="text-gray-500 text-xs pl-5">
+                 {primarySpecialty} Speciality
+              </div>
             </div>
           </header>
 
@@ -1677,9 +1629,9 @@ const HospitalCard = ({ branch }: { branch: BranchType & { hospitalName: string;
 }
 
 const DoctorCard = ({ doctor }: { doctor: ExtendedDoctorType }) => {
-  const [isHovered, setIsHovered] = useState(false); // NEW: Manage hover state
+  const [isHovered, setIsHovered] = useState(false); // ADDED hover state
   // Helper to safely extract the name/title from a specialization object or return the string
-  const getSpecializationName = (s: Specialization): string => {
+  const getSpecializationName = (s: any): string => {
     if (typeof s === "object" && s !== null) {
       return (s as any).name || (s as any).title || "";
     }
@@ -1716,7 +1668,7 @@ const DoctorCard = ({ doctor }: { doctor: ExtendedDoctorType }) => {
   const slug = generateSlug(`${doctor.doctorName}`);
   const imageUrl = getWixImageUrl(doctor.profileImage);
 
-  // FIXED: Branch count logic + clean display 
+  // ⭐ UPDATED: Location logic to include state name and display count
   const primaryLocationDisplay = useMemo(() => {
     const locations = doctor.filteredLocations || doctor.locations;
 
@@ -1724,33 +1676,35 @@ const DoctorCard = ({ doctor }: { doctor: ExtendedDoctorType }) => {
       return "Location not specified";
     }
 
-    // Always pick first location (index 0)
-    // NOTE: Your original code used locations[1] || locations[0], which might be a bug 
-    // if you always intend to show the FIRST location (index 0). I kept your original logic here.
-    const first = locations[1] || locations[0];
+    const first = locations[0]; // Use the first location consistently
 
-    const branch = first.branchName ? ` ${first.branchName}` : "";
-    const city = first?.cities?.[0]?.cityName ? `, ${first.cities[0].cityName}` : "";
+    const cityData = first?.cities?.[0];
+    let locationString = first.branchName || first.hospitalName || "Unknown Location";
 
-    let primary = `${branch}${city}`;
+    if (cityData?.cityName) {
+      locationString += `, ${cityData.cityName}`;
+      if (cityData.state) {
+        locationString += `, ${cityData.state}`; // Add the state name
+      }
+    }
+    
+    const remainingCount = locations.length - 1;
 
-    // Hide count if only 1 branch
-    if (locations.length > 2) {
-      primary += ` +${locations.length - 2} more`;
+    if (remainingCount > 0) {
+      locationString += ` (+${remainingCount} more)`;
     }
 
-    return primary;
+    return locationString;
   }, [doctor.filteredLocations, doctor.locations]);
 
 
   return (
-    <Link 
-      href={`/doctors/${slug}`} 
-      className="block"
-      onMouseEnter={() => setIsHovered(true)} // NEW: Handle hover
-      onMouseLeave={() => setIsHovered(false)} // NEW: Handle un-hover
-    >
-      <article className="group bg-white xs md:mb-0 mb-5 rounded-xs shadow-lg md:shadow-xs transition-all duration-300 overflow-hidden cursor-pointer h-full flex flex-col hover:shadow-sm border border-gray-100">
+    <Link href={`/doctors/${slug}`} className="block">
+      <article 
+        className="group bg-white xs md:mb-0 mb-5 rounded-xs shadow-lg md:shadow-xs transition-all duration-300 overflow-hidden cursor-pointer h-full flex flex-col hover:shadow-sm border border-gray-100"
+        onMouseEnter={() => setIsHovered(true)} // ADDED handler
+        onMouseLeave={() => setIsHovered(false)} // ADDED handler
+      >
         <div className="relative h-72 md:h-48 overflow-hidden bg-gray-50">
           {doctor.popular && (
             <span className="absolute top-3 right-3 z-10 inline-flex items-center text-sm bg-gray-50 text-gray-600 font-medium px-3 py-2 rounded-xs shadow-sm border border-gray-100">
@@ -1774,17 +1728,15 @@ const DoctorCard = ({ doctor }: { doctor: ExtendedDoctorType }) => {
 
         <div className="p-3 flex-1 flex flex-col space-y-2">
           <header className="space-y-2 flex-1 min-h-0">
-            {/* Using ScrollableTitle Component and passing isHovered prop */}
-            <ScrollableTitle 
-                text={doctor.doctorName} 
-                className="md:text-lg text-2xl font-medium leading-tight text-gray-900 transition-colors"
-                isHovered={isHovered} // NEW PROP
-            />
+            <h2 className="md:text-lg text-2xl font-medium leading-tight text-gray-900 transition-colors">
+              <ScrollableTitle text={doctor.doctorName} isHovered={isHovered} /> {/* PASSED prop */}
+            </h2>
+           
           </header>
 
           <div className="flex gap-x-2">
              <p className=" text-base md:text-sm text-gray-900 font-normal flex items-center gap-2 line-clamp-1">
-              {specializationDisplay} {/* --- UPDATED SPECIALIST DISPLAY --- */}
+              {specializationDisplay}
             </p>
             <p className=" text-base md:text-sm text-gray-900 font-normal flex items-center gap-2">
               {doctor.experienceYears} Years Exp.
@@ -1804,10 +1756,11 @@ const DoctorCard = ({ doctor }: { doctor: ExtendedDoctorType }) => {
 }
 
 const TreatmentCard = ({ treatment }: { treatment: ExtendedTreatmentType }) => {
-  const [isHovered, setIsHovered] = useState(false); // NEW: Manage hover state
+  const [isHovered, setIsHovered] = useState(false); // ADDED hover state
   const slug = generateSlug(treatment.name)
   const imageUrl = getWixImageUrl(treatment.treatmentImage)
 
+  // ⭐ UPDATED: Location logic to include state name and display count
   const primaryLocation = useMemo(() => {
     const availLocs = treatment.filteredBranchesAvailableAt || treatment.branchesAvailableAt
 
@@ -1816,25 +1769,39 @@ const TreatmentCard = ({ treatment }: { treatment: ExtendedTreatmentType }) => {
     }
 
     const firstLoc = availLocs[0]
-    const hospitalBranch = firstLoc.branchName
+    
+    let locationString = firstLoc.branchName
       ? `${firstLoc.hospitalName}, ${firstLoc.branchName}`
       : firstLoc.hospitalName
-    const city = firstLoc.cities?.[0]?.cityName || ""
+
+    const cityData = firstLoc.cities?.[0]
+    
+    if (cityData?.cityName) {
+        locationString += `, ${cityData.cityName}`;
+        if (cityData.state) {
+            locationString += `, ${cityData.state}`; // Add the state name
+        }
+    }
+
+    const remainingCount = availLocs.length - 1;
+
+    if (remainingCount > 0) {
+      locationString += ` (+${remainingCount} more)`;
+    }
 
     return {
-      name: `${hospitalBranch}${city ? `, ${city}` : ''}`,
+      name: locationString,
       cost: firstLoc.cost || treatment.cost,
     }
   }, [treatment])
 
   return (
-    <Link 
-      href={`/treatment/${slug}`} 
-      className="block"
-      onMouseEnter={() => setIsHovered(true)} // NEW: Handle hover
-      onMouseLeave={() => setIsHovered(false)} // NEW: Handle un-hover
-    >
-      <article className="group bg-white rounded-xs md:mb-0 mb-5 shadow-lg md:shadow-xs transition-all duration-300 overflow-hidden cursor-pointer h-full flex flex-col hover:shadow-sm border border-gray-100">
+    <Link href={`/treatment/${slug}`} className="block">
+      <article 
+        className="group bg-white rounded-xs md:mb-0 mb-5 shadow-lg md:shadow-xs transition-all duration-300 overflow-hidden cursor-pointer h-full flex flex-col hover:shadow-sm border border-gray-100"
+        onMouseEnter={() => setIsHovered(true)} // ADDED handler
+        onMouseLeave={() => setIsHovered(false)} // ADDED handler
+      >
         <div className="relative h-72 md:h-48 overflow-hidden bg-gray-50">
           {treatment.popular && (
             <span className="absolute top-3 right-3 z-10 inline-flex items-center text-sm bg-gray-50 text-gray-600 font-medium px-3 py-2 rounded-xs shadow-sm border border-gray-100">
@@ -1858,14 +1825,9 @@ const TreatmentCard = ({ treatment }: { treatment: ExtendedTreatmentType }) => {
 
         <div className="p-3 flex-1 flex flex-col space-y-1">
           <header className="space-y-2 flex-1 min-h-0">
-             {/* Using ScrollableTitle Component and passing isHovered prop */}
-             <div className="my-2">
-                <ScrollableTitle 
-                    text={treatment.name} 
-                    className="md:text-base text-2xl font-medium leading-tight text-gray-900 transition-colors"
-                    isHovered={isHovered} // NEW PROP
-                />
-            </div>
+            <h2 className="md:text-base text-2xl font-medium leading-tight my-2 text-gray-900 transition-colors">
+              <ScrollableTitle text={treatment.name} isHovered={isHovered} /> {/* PASSED prop */}
+            </h2>
 
             {treatment.category && (
               <div className="flex flex-wrap gap-1 pt-1">
@@ -1892,7 +1854,7 @@ const TreatmentCard = ({ treatment }: { treatment: ExtendedTreatmentType }) => {
 // LAYOUT COMPONENTS
 // =============================================================================
 
-const ViewToggle = ({ view, setView }: { view: "search-healthcare" | "doctors" | "treatments", setView: (view: "hospitals" | "doctors" | "treatments") => void }) => (
+const ViewToggle = ({ view, setView }: { view: "hospitals" | "doctors" | "treatments", setView: (view: "hospitals" | "doctors" | "treatments") => void }) => (
   <div className="flex md:mt-0 mt-4 w-full md:w-auto bg-white  rounded-xs shadow-xs mx-auto lg:mx-0 max-w-md ">
     <button
       onClick={() => setView("hospitals")}
@@ -1919,8 +1881,13 @@ const ViewToggle = ({ view, setView }: { view: "search-healthcare" | "doctors" |
 )
 
 const Sorting = ({ sortBy, setSortBy }: { sortBy: "all" | "popular" | "az" | "za", setSortBy: (sortBy: "all" | "popular" | "az" | "za") => void }) => (
+  // Assuming you use Heroicons or a similar library
+
+  // ... inside your component
   <div className="flex items-center gap-3 w-full md:w-auto">
     <label className="text-sm text-gray-700 hidden sm:block font-normal">Sort by:</label>
+
+    {/* 👇 Start of the custom wrapper for the select and icon */}
     <div className="relative  md:w-auto w-full">
       <select
         value={sortBy}
@@ -1936,11 +1903,15 @@ const Sorting = ({ sortBy, setSortBy }: { sortBy: "all" | "popular" | "az" | "za
         <option value="az">A to Z</option>
         <option value="za">Z to A</option>
       </select>
+
+      {/* 👇 The custom down arrow icon */}
+      {/* Note: It's absolutely positioned to the right and centered vertically */}
       <ChevronDownIcon
         className="absolute right-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-470 pointer-events-none"
         aria-hidden="true"
       />
     </div>
+    {/* 👆 End of the custom wrapper */}
   </div>
 )
 
@@ -2062,9 +2033,7 @@ const RenderContent = ({
   filteredBranches,
   filteredDoctors,
   filteredTreatments,
-  clearFilters,
-  visibleCount, // Prop for Infinite Scroll
-  loadMoreRef   // Prop for Intersection Observer
+  clearFilters
 }: {
   view: string,
   loading: boolean,
@@ -2072,10 +2041,37 @@ const RenderContent = ({
   filteredBranches: any[],
   filteredDoctors: any[],
   filteredTreatments: any[],
-  clearFilters: () => void,
-  visibleCount: number,
-  loadMoreRef: (node: HTMLDivElement) => void
+  clearFilters: () => void
 }) => {
+  const [visibleCount, setVisibleCount] = useState(12);
+  const loadMoreRef = useRef<HTMLDivElement>(null);
+
+  const items = view === "hospitals" ? filteredBranches : view === "doctors" ? filteredDoctors : filteredTreatments;
+
+  // Reset visible count when view or items change substantially
+  useEffect(() => {
+    setVisibleCount(12);
+  }, [view, items.length]);
+
+  // Infinite Scroll Logic
+  useEffect(() => {
+    const observer = new IntersectionObserver((entries) => {
+      const first = entries[0];
+      if (first.isIntersecting) {
+        setVisibleCount((prev) => prev + 12);
+      }
+    }, { rootMargin: '100px' });
+
+    const currentLoadMore = loadMoreRef.current;
+    if (currentLoadMore) {
+      observer.observe(currentLoadMore);
+    }
+
+    return () => {
+      if (currentLoadMore) observer.unobserve(currentLoadMore);
+    };
+  }, [items]);
+
   if (loading) {
     return (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -2104,9 +2100,7 @@ const RenderContent = ({
     )
   }
 
-  const allItems = view === "hospitals" ? filteredBranches : view === "doctors" ? filteredDoctors : filteredTreatments
-  // Slice items based on visibleCount state for infinite scrolling
-  const visibleItems = allItems.slice(0, visibleCount)
+  const visibleItems = items.slice(0, visibleCount);
 
   return (
     <>
@@ -2123,12 +2117,12 @@ const RenderContent = ({
           </div>
         ))}
       </div>
-
-      {/* Load More Trigger Div */}
-      {visibleCount < allItems.length && (
-         <div ref={loadMoreRef} className="flex justify-center p-4 w-full">
-            <Loader2 className="w-6 h-6 animate-spin text-gray-400" />
-         </div>
+      
+      {/* Sentinel element for infinite scroll */}
+      {visibleCount < items.length && (
+        <div ref={loadMoreRef} className="flex justify-center p-4">
+          <Loader2 className="w-6 h-6 animate-spin text-gray-400" />
+        </div>
       )}
     </>
   )
@@ -2158,44 +2152,15 @@ function HospitalsPageContent() {
 
   const setSortBy = (s: FilterState["sortBy"]) => updateFilter("sortBy", s)
 
-  // --- INFINITE SCROLL LOGIC ---
-  const [visibleCount, setVisibleCount] = useState(12)
-  const observerRef = useRef<IntersectionObserver | null>(null)
-
-  // Reset pagination when filters change
-  useEffect(() => {
-    setVisibleCount(12)
-  }, [filters, filteredBranches, filteredDoctors, filteredTreatments])
-
-  // The intersection observer callback
-  const loadMoreRef = useCallback((node: HTMLDivElement) => {
-    if (loading) return
-    if (observerRef.current) observerRef.current.disconnect()
-
-    observerRef.current = new IntersectionObserver(entries => {
-      if (entries[0].isIntersecting) {
-        // Load 12 more items when the user scrolls to the bottom
-        setVisibleCount(prev => prev + 12)
-      }
-    }, {
-      rootMargin: '100px', // Start loading before it hits the very bottom
-      threshold: 0.1
-    })
-
-    if (node) observerRef.current.observe(node)
-
-    // Cleanup function
-    return () => {
-        if (observerRef.current) observerRef.current.disconnect()
-    }
-  }, [loading])
-  // -----------------------------
-
   return (
     <div className="bg-gray-25 min-h-screen">
-      {/* Inject Global Keyframes for Marquee */}
-      <GlobalStyles />
-
+      <style jsx global>{`
+        /* Global CSS for the Marquee Animation */
+        @keyframes marquee {
+          0% { transform: translateX(0); }
+          100% { transform: translateX(-50%); }
+        }
+      `}</style>
       <Banner
 
         // Layout & Content
@@ -2232,19 +2197,17 @@ function HospitalsPageContent() {
 
       <section className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
         <div className="flex flex-col md:flex-row gap-4">
-          <FilterSidebar // Pass the function prop correctly
+          <FilterSidebar
             filters={filters}
             updateSubFilter={updateSubFilter}
             clearFilters={clearFilters}
             showFilters={showFilters}
             setShowFilters={setShowFilters}
             availableOptions={availableOptions}
-            // All filtered arrays are included in the HospitalsData type
+            getFilterValueDisplay={getFilterValueDisplay}
             filteredBranches={filteredBranches}
             filteredDoctors={filteredDoctors}
             filteredTreatments={filteredTreatments}
-            // CRITICAL FIX: Pass the function
-            getFilterValueDisplay={getFilterValueDisplay} 
           />
 
           <main className="flex-1  min-w-0 lg:pb-0 min-h-screen">
@@ -2252,7 +2215,7 @@ function HospitalsPageContent() {
               <div className="flex flex-col lg:flex-row lg:items-center  gap-4">
                 <ViewToggle view={filters.view} setView={setView} />
                 <FilterDropdown
-                  placeholder="Search by City Name"
+                  placeholder="Search by City/State Name"
                   filterKey="city"
                   filters={filters}
                   updateSubFilter={updateSubFilter}
@@ -2276,8 +2239,6 @@ function HospitalsPageContent() {
               filteredDoctors={filteredDoctors}
               filteredTreatments={filteredTreatments}
               clearFilters={clearFilters}
-              visibleCount={visibleCount} // Pass state for infinite scroll
-              loadMoreRef={loadMoreRef} // Pass ref callback for infinite scroll
             />
           </main>
         </div>
