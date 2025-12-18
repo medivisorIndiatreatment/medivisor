@@ -25,12 +25,12 @@ const HeroSection = () => {
     <>
       <section
         aria-label="Hero Section"
-        className="relative md:px-0 px-2 md:h-[calc(100vh-100px)] overflow-hidden md:py-10"
+        className="relative md:px-0 px-2 md:h-[calc(100vh-100px)] h-[55vh] overflow-hidden md:py-10"
         id="home"
       >
         {/* Background Layers */}
-        <div className="absolute inset-0 z-20 bg-contain md:bg-cover bg-center bg-shadow-1"></div>
-        <div className="absolute inset-0 z-10 bg-banner"></div>
+        <div className="absolute inset-0 z-20 bg-contain md:bg-cover  md:bg-center bg-shadow-1"></div>
+        <div className="absolute inset-0 z-10 bg-left md:bg-center bg-banner"></div>
 
         <div className="relative z-30 container mx-auto px-4 md:px-0 md:pt-10 grid grid-cols-1 md:grid-cols-12 items-end md:items-center gap-3 h-full">
           {/* Left Content */}
@@ -104,6 +104,9 @@ const HeroSection = () => {
               </button>
             </div>
           </div>
+        </div>
+        <div className=" absolute top-0 z-30 left-4 md:left-8 ">
+          <img src="/icon/Whale-logo.png" className="md:w-28 w-14 " />
         </div>
       </section>
 

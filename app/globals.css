@@ -98,9 +98,8 @@ body {
 .font_4{
   font-size: 22px;
   font-weight: 400;
-
-  margin-top: 10px;
-  
+  padding-bottom: 5px;
+   padding-top: 12px;
   color: #241d1f;
   font-family: 'Poppins', sans-serif !important;
 }
@@ -353,7 +352,10 @@ html {
     padding-bottom: 0.5rem;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
   }
-
+.bg-banner {
+    background-position: -171px center;
+  
+}
   .container {
     padding: 0px 10px;
   }
@@ -379,7 +381,16 @@ html {
     padding-top: 0;
     padding-bottom: 0;
   }
-
+.font_8{
+  font-size: 16px;
+  font-weight: 500;
+  margin-bottom: 5px;  
+  color: #241d1f;
+  font-family: 'Poppins', sans-serif !important;
+}
+.font_4{
+  line-height: normal;
+}
   .step-buttons-container {
     position: static;
     top: auto;

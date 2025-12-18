@@ -1541,7 +1541,7 @@ const HospitalCard = ({ branch }: { branch: BranchType & { hospitalName: string;
   return (
     <Link href={`/search/hospitals/${slug}`} className="block">
       <article
-        className="group bg-white rounded-xs shadow-lg md:mb-0 mb-5 md:shadow-xs transition-all duration-300 overflow-hidden cursor-pointer h-full flex flex-col hover:shadow-sm border border-gray-300 md:border-gray-100"
+        className="group bg-white rounded-xs shadow-sm md:mb-0 mb-5 md:shadow-xs transition-all duration-300 overflow-hidden cursor-pointer h-full flex flex-col hover:shadow-sm border border-gray-300 md:border-gray-100"
         onMouseEnter={() => setIsHovered(true)} // ADDED handler
         onMouseLeave={() => setIsHovered(false)} // ADDED handler
       >
@@ -1551,7 +1551,7 @@ const HospitalCard = ({ branch }: { branch: BranchType & { hospitalName: string;
               <img
                 src={hospitalLogoUrl}
                 alt={`${branch.hospitalName} logo`}
-                className="w-12 h-auto object-contain bg-white p-0 rounded-xs shadow-sm border border-gray-50"
+                className="w-16 md:w-12 h-auto object-cover p-0 rounded-xs shadow-sm border border-gray-50"
                 onError={(e) => { e.currentTarget.style.display = "none" }}
               />
             </div>
@@ -1562,7 +1562,7 @@ const HospitalCard = ({ branch }: { branch: BranchType & { hospitalName: string;
               <img
                 src={accreditationLogoUrl}
                 alt={branch.accreditation?.[0]?.title || 'Accreditation'}
-                className="w-7 h-auto object-contain bg-white p-0 rounded-full shadow-sm border border-gray-50"
+                className="md:w-7 w-8 h-auto object-contain bg-white p-0 rounded-full shadow-sm border border-gray-50"
                 onError={(e) => { e.currentTarget.style.display = "none" }}
               />
             </div>
@@ -1584,9 +1584,9 @@ const HospitalCard = ({ branch }: { branch: BranchType & { hospitalName: string;
         </div>
 
         <div className="p-3 flex-1 flex flex-col space-y-2">
-          <header className="space-y-1">
+          <header className="md:space-y-1">
             {/* Branch Name */}
-            <h2 className="w-full h-6 text-lg md:text-lg font-medium leading-snug text-gray-800 transition-colors">
+            <h2 className="w-full h-6 text-2xl md:mb-0 mb-2 md:text-lg font-medium leading-snug text-gray-800 transition-colors">
               <ScrollableTitle
                 text={branch.branchName}
                 isHovered={isHovered}
@@ -1594,19 +1594,19 @@ const HospitalCard = ({ branch }: { branch: BranchType & { hospitalName: string;
             </h2>
 
             {/* Specialty */}
-            <div className="flex items-center gap-x-1.5 text-sm font-medium text-gray-600">
+            <div className="flex items-center gap-x-1.5 text-lg md:text-sm font-normal md:font-medium text-gray-700">
               {primarySpecialty} Speciality
             </div>
 
             {/* Location */}
-            <div className="flex items-center gap-x-1.5 text-sm font-medium text-gray-600">
+            <div className="flex items-center gap-x-1.5 text-lg md:text-sm font-normal md:font-medium text-gray-700">
 
               <span className="truncate">
                 {primaryCity}
                 {primaryState ? `, ${primaryState}` : ""}
                 {primaryCountry ? `, ${primaryCountry}` : ""}
               </span>
-              <MapPin className="w-3.5 h-3.5 flex-shrink-0 text-[#E22026] mb-1" />
+              <MapPin className="md:w-3.5 h-4 md:h-3.5 w-4 flex-shrink-0 text-[#E22026] mb-1" />
 
             </div>
           </header>
@@ -1615,16 +1615,16 @@ const HospitalCard = ({ branch }: { branch: BranchType & { hospitalName: string;
           <footer className="border-t border-gray-100 pt-2 mt-auto">
             <div className="grid grid-cols-3 gap-3">
               <div className="text-center rounded-xs bg-gray-50 p-2 border border-gray-50 space-y-0">
-                <p className=" text-base md:text-sm font-medium text-gray-700">{branch.yearEstablished ?? '?'}</p>
-                <p className=" text-base md:text-sm text-gray-700">Estd.</p>
+                <p className=" text-lg md:text-sm font-medium text-gray-700">{branch.yearEstablished ?? '?'}</p>
+                <p className=" text-lg md:text-sm text-gray-700">Estd.</p>
               </div>
               <div className="text-center rounded-xs bg-gray-50 p-2 border border-gray-50 space-y-0">
-                <p className=" text-base md:text-sm font-medium text-gray-700">{branch.totalBeds ?? '?'}+</p>
-                <p className=" text-base md:text-sm text-gray-700">Beds</p>
+                <p className=" text-lg md:text-sm font-medium text-gray-700">{branch.totalBeds ?? '?'}+</p>
+                <p className=" text-lg md:text-sm text-gray-700">Beds</p>
               </div>
               <div className="text-center rounded-xs bg-gray-50 p-2 border border-gray-50 space-y-0">
-                <p className=" text-base md:text-sm font-medium text-gray-700">{branch.noOfDoctors ?? '?'}+</p>
-                <p className=" text-base md:text-sm text-gray-700">Doctors</p>
+                <p className=" text-lg md:text-sm font-medium text-gray-700">{branch.noOfDoctors ?? '?'}+</p>
+                <p className=" text-lg md:text-sm text-gray-700">Doctors</p>
               </div>
 
 
@@ -1689,15 +1689,15 @@ const DoctorCard = ({ doctor }: { doctor: ExtendedDoctorType }) => {
     const cityData = first?.cities?.[0];
     let locationString = first.branchName || first.hospitalName || "Unknown Location";
 
-    if (cityData?.cityName) {
-      locationString += `, ${cityData.cityName}`;
-    }
+    // if (cityData?.cityName) {
+    //   locationString += `, ${cityData.cityName}`;
+    // }
 
-    const remainingCount = locations.length - 1;
+    // const remainingCount = locations.length - 1;
 
-    if (remainingCount > 0) {
-      locationString += ` (+${remainingCount} more)`;
-    }
+    // if (remainingCount > 0) {
+    //   locationString += ` (+${remainingCount} more)`;
+    // }
 
     return locationString;
   }, [doctor.filteredLocations, doctor.locations]);
@@ -1731,25 +1731,25 @@ const DoctorCard = ({ doctor }: { doctor: ExtendedDoctorType }) => {
           <div className="absolute inset-0 bg-gradient-to-t from-black/5 via-transparent to-transparent" />
         </div>
 
-        <div className="p-3 flex-1 flex flex-col space-y-2">
-          <header className="space-y-2 flex-1 min-h-0">
-            <h2 className="md:text-lg text-2xl font-medium leading-tight text-gray-900 transition-colors">
+        <div className="p-3 flex-1 flex flex-col md:space-y-1">
+          <div className="md:space-y-2 flex-1 min-h-0">
+            <h2 className="md:text-lg text-2xl font-medium leading-[20px] text-gray-900 transition-colors">
               <ScrollableTitle text={doctor.doctorName} isHovered={isHovered} /> {/* PASSED prop */}
             </h2>
 
-          </header>
+          </div>
 
-          <div className="flex gap-x-2">
-            <p className=" text-base md:text-sm text-gray-900 font-normal flex items-center gap-2 line-clamp-1">
+          <div className="flex gap-x-2 mb-2 mb:mb-0">
+            <p className=" text-lg md:text-sm text-gray-900 font-normal flex items-center gap-2 line-clamp-1">
               {specializationDisplay}
             </p>
-            <p className=" text-base md:text-sm text-gray-900 font-normal flex items-center gap-2">
-              {doctor.experienceYears} Years Exp.
+            <p className=" text-lg md:text-sm text-gray-900 font-normal flex items-center gap-2">
+              {doctor.experienceYears}+ Years Exp.
             </p>
           </div>
 
           <footer className="border-t border-gray-100 pt-2">
-            <p className="text-base md:text-sm text-gray-900 font-normal flex items-center gap-2 line-clamp-1">
+            <p className="text-lg md:text-sm text-gray-900 font-normal flex items-center gap-2 line-clamp-1">
               <MapPin className="w-4 h-4 flex-shrink-0 text-gray-400" />
               {primaryLocationDisplay}
             </p>
@@ -1803,7 +1803,7 @@ const TreatmentCard = ({ treatment }: { treatment: ExtendedTreatmentType }) => {
   return (
     <Link href={`/treatment/${slug}`} className="block">
       <article
-        className="group bg-white rounded-xs md:mb-0 mb-5 shadow-lg md:shadow-xs transition-all duration-300 overflow-hidden cursor-pointer h-full flex flex-col hover:shadow-sm border border-gray-100"
+        className="group bg-white rounded-xs md:mb-0 mb-5 shadow-sm md:shadow-xs transition-all duration-300 overflow-hidden cursor-pointer h-full flex flex-col hover:shadow-sm border border-gray-100"
         onMouseEnter={() => setIsHovered(true)} // ADDED handler
         onMouseLeave={() => setIsHovered(false)} // ADDED handler
       >
@@ -1828,9 +1828,9 @@ const TreatmentCard = ({ treatment }: { treatment: ExtendedTreatmentType }) => {
           <div className="absolute inset-0 bg-gradient-to-t from-black/5 via-transparent to-transparent" />
         </div>
 
-        <div className="p-3 flex-1 flex flex-col space-y-1">
+        <div className="p-3 flex-1 flex flex-col md:space-y-1">
           <header className="space-y-2 flex-1 min-h-0">
-            <h2 className="md:text-base text-2xl font-medium leading-tight my-2 text-gray-900 transition-colors">
+            <h2 className="md:text-base text-2xl font-medium leading-[20px] text-gray-900 transition-colors">
               <ScrollableTitle text={treatment.name} isHovered={isHovered} /> {/* PASSED prop */}
             </h2>
 
@@ -1860,24 +1860,24 @@ const TreatmentCard = ({ treatment }: { treatment: ExtendedTreatmentType }) => {
 // =============================================================================
 
 const ViewToggle = ({ view, setView }: { view: "hospitals" | "doctors" | "treatments", setView: (view: "hospitals" | "doctors" | "treatments") => void }) => (
-  <div className="flex md:mt-0 mt-4 w-full md:w-auto bg-white  rounded-xs shadow-xs mx-auto lg:mx-0 max-w-md ">
+  <div className="flex md:mt-0 mt-4 w-full md:w-auto bg-white  rounded-xs shadow-xs mx-auto lg:mx-0 md:max-w-md ">
     <button
       onClick={() => setView("hospitals")}
-      className={`flex-1 px-4 py-2  rounded-xs text-lg md:text-sm font-medium transition-all duration-200 ${view === "hospitals" ? "bg-gray-100 text-gray-900 shadow-sm" : "text-gray-500 hover:text-gray-700 hover:bg-gray-25"
+      className={`flex-1 px-4 py-2  rounded-xs text-base md:text-sm font-medium transition-all duration-200 ${view === "hospitals" ? "bg-gray-100 text-gray-900 shadow-sm" : "text-gray-500 hover:text-gray-700 hover:bg-gray-25"
         }`}
     >
       Hospitals
     </button>
     <button
       onClick={() => setView("doctors")}
-      className={`flex-1 px-4 py-2  rounded-xs text-lg md:text-sm font-medium transition-all duration-200 ${view === "doctors" ? "bg-gray-100 text-gray-900 shadow-sm" : "text-gray-500 hover:text-gray-700 hover:bg-gray-25"
+      className={`flex-1 px-4 py-2  rounded-xs text-base md:text-sm font-medium transition-all duration-200 ${view === "doctors" ? "bg-gray-100 text-gray-900 shadow-sm" : "text-gray-500 hover:text-gray-700 hover:bg-gray-25"
         }`}
     >
       Doctors
     </button>
     <button
       onClick={() => setView("treatments")}
-      className={`flex-1 px-4 py-2  rounded-xs text-lg md:text-sm font-medium transition-all duration-200 ${view === "treatments" ? "bg-gray-100 text-gray-900 shadow-sm" : "text-gray-500 hover:text-gray-700 hover:bg-gray-25"
+      className={`flex-1 px-4 py-2  rounded-xs text-base md:text-sm font-medium transition-all duration-200 ${view === "treatments" ? "bg-gray-100 text-gray-900 shadow-sm" : "text-gray-500 hover:text-gray-700 hover:bg-gray-25"
         }`}
     >
       Treatments
@@ -1933,7 +1933,7 @@ const ResultsHeader = ({
   sortBy: "all" | "popular" | "az" | "za",
   setSortBy: (sortBy: "all" | "popular" | "az" | "za") => void
 }) => (
-  <div className="flex flex-col sm:flex-row sm:items-center  gap-4 bg-gray-50 border-b border-gray-50 py-4 md:p-4">
+  <div className="flex md:block hidden flex-col sm:flex-row sm:items-center  gap-4 bg-gray-50 border-b border-gray-50 py-4 md:p-4">
     <div className="flex items-center gap-4">
       <Sorting sortBy={sortBy} setSortBy={setSortBy} />
       <button
