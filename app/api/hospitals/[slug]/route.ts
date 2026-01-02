@@ -133,7 +133,15 @@ const DataMappers = {
     yearEstablished: getValue(item, "yearEstablished"),
     branchImage: item.branchImage || item.data?.branchImage || item["Branch Image"],
     doctors: ReferenceMapper.multiReference(item.doctor, "doctorName", "Doctor Name"),
-    
+
+    treatments: ReferenceMapper.multiReference(
+      item.treatment || item["treatment"],
+      "treatmentName",
+      "Treatment Name",
+      "title",
+      "name",
+    ),
+
     // ENHANCED: Combined specialties + treatments + departments
     specialization: [
       ...ReferenceMapper.multiReference(item.specialty, "specialty", "Specialty Name", "title", "name"),
@@ -495,7 +503,7 @@ const QueryBuilder = {
 // ENRICH DATA - UPDATED: PROPER DEPARTMENT HANDLING
 async function enrichHospitals(
   hospitals: any[],
-  filterIds: { city: string[]; doctor: string[]; specialty: string[]; accreditation: string[]; branch: string[]; treatment: string[]; department: string[] }
+  filterIds: { cityIds: string[]; doctorIds: string[]; specialtyIds: string[]; accreditationIds: string[]; branchIds: string[]; treatmentIds: string[]; departmentIds: string[] }
 ) {
   const hospitalIds = hospitals.map((h) => h._id!).filter(Boolean);
 
@@ -525,14 +533,13 @@ async function enrichHospitals(
         ReferenceMapper.extractIds(mapped.doctors).forEach((id) => doctorIds.add(id));
         ReferenceMapper.extractIds(mapped.city).forEach((id) => cityIds.add(id));
         ReferenceMapper.extractIds(mapped.accreditation).forEach((id) => accreditationIds.add(id));
+        ReferenceMapper.extractIds(mapped.treatments).forEach((id) => treatmentIds.add(id));
 
-        // Separate specialty IDs from treatment IDs and department IDs
+        // Separate specialty IDs and department IDs
         mapped.specialization.forEach((s: any) => {
-          if (s.isTreatment) {
-            treatmentIds.add(s._id);
-          } else if (s.isDepartment) {
+          if (s.isDepartment) {
             departmentIds.add(s._id);
-          } else {
+          } else if (!s.isTreatment) {
             specialtyIds.add(s._id);
           }
         });
@@ -555,13 +562,13 @@ async function enrichHospitals(
   return hospitals.map((hospital) => {
     const rawBranches = branchesByHospital[hospital._id!] || [];
     const filteredBranches = rawBranches.filter((b) => {
-      const matchBranch = !filterIds.branch.length || filterIds.branch.includes(b._id);
-      const matchCity = !filterIds.city.length || b.city.some((c: any) => filterIds.city.includes(c._id));
-      const matchDoctor = !filterIds.doctor.length || b.doctors.some((d: any) => filterIds.doctor.includes(d._id));
-      const matchSpecialty = !filterIds.specialty.length || b.specialization.some((s: any) => !s.isTreatment && !s.isDepartment && filterIds.specialty.includes(s._id));
-      const matchTreatment = !filterIds.treatment.length || b.specialization.some((s: any) => s.isTreatment && filterIds.treatment.includes(s._id));
-      const matchDepartment = !filterIds.department.length || b.specialization.some((s: any) => s.isDepartment && filterIds.department.includes(s._id));
-      const matchAccred = !filterIds.accreditation.length || b.accreditation.some((a: any) => filterIds.accreditation.includes(a._id));
+      const matchBranch = !filterIds.branchIds.length || filterIds.branchIds.includes(b._id);
+      const matchCity = !filterIds.cityIds.length || b.city.some((c: any) => filterIds.cityIds.includes(c._id));
+      const matchDoctor = !filterIds.doctorIds.length || b.doctors.some((d: any) => filterIds.doctorIds.includes(d._id));
+      const matchSpecialty = !filterIds.specialtyIds.length || b.specialization.some((s: any) => !s.isTreatment && !s.isDepartment && filterIds.specialtyIds.includes(s._id));
+      const matchTreatment = !filterIds.treatmentIds.length || b.specialization.some((s: any) => s.isTreatment && filterIds.treatmentIds.includes(s._id));
+      const matchDepartment = !filterIds.departmentIds.length || b.specialization.some((s: any) => s.isDepartment && filterIds.departmentIds.includes(s._id));
+      const matchAccred = !filterIds.accreditationIds.length || b.accreditation.some((a: any) => filterIds.accreditationIds.includes(a._id));
       return matchBranch && matchCity && matchDoctor && matchSpecialty && matchTreatment && matchDepartment && matchAccred;
     });
 
@@ -569,6 +576,7 @@ async function enrichHospitals(
       ...b,
       doctors: b.doctors.map((d: any) => doctors[d._id] || d),
       city: b.city.map((c: any) => cities[c._id] || c),
+      treatments: b.treatments.map((t: any) => treatments[t._id] || t),
       specialization: b.specialization.map((s: any) => allSpecializations[s._id] || s),
       accreditation: b.accreditation.map((a: any) => accreditations[a._id] || a),
     }));
@@ -581,12 +589,11 @@ async function enrichHospitals(
 
     enrichedBranches.forEach((b) => {
       b.doctors.forEach((d: any) => d._id && uniqueDoctors.set(d._id, d));
+      b.treatments.forEach((t: any) => t._id && uniqueTreatments.set(t._id, t));
       b.specialization.forEach((s: any) => {
-        if (s.isTreatment) {
-          uniqueTreatments.set(s._id, s);
-        } else if (s.isDepartment) {
+        if (s.isDepartment) {
           uniqueDepartments.set(s._id, departments[s._id] || s);
-        } else {
+        } else if (!s.isTreatment) {
           uniqueSpecialists.set(s._id, specialists[s._id] || s);
         }
       });
@@ -653,13 +660,13 @@ export async function GET(req: Request) {
     ]);
 
     const filterIds = {
-      branch: [...branchIdsFromText, ...(params.branchId ? [params.branchId] : [])],
-      city: [...cityIdsFromText, ...(params.cityId ? [params.cityId] : [])],
-      doctor: [...doctorIdsFromText, ...(params.doctorId ? [params.doctorId] : [])],
-      specialty: [...specialtyIdsFromText, ...(params.specialtyId ? [params.specialtyId] : [])],
-      accreditation: [...accreditationIdsFromText, ...(params.accreditationId ? [params.accreditationId] : [])],
-      treatment: [...treatmentIdsFromText, ...(params.treatmentId ? [params.treatmentId] : [])],
-      department: [...departmentIdsFromText, ...(params.departmentId ? [params.departmentId] : [])],
+      branchIds: [...branchIdsFromText, ...(params.branchId ? [params.branchId] : [])],
+      cityIds: [...cityIdsFromText, ...(params.cityId ? [params.cityId] : [])],
+      doctorIds: [...doctorIdsFromText, ...(params.doctorId ? [params.doctorId] : [])],
+      specialtyIds: [...specialtyIdsFromText, ...(params.specialtyId ? [params.specialtyId] : [])],
+      accreditationIds: [...accreditationIdsFromText, ...(params.accreditationId ? [params.accreditationId] : [])],
+      treatmentIds: [...treatmentIdsFromText, ...(params.treatmentId ? [params.treatmentId] : [])],
+      departmentIds: [...departmentIdsFromText, ...(params.departmentId ? [params.departmentId] : [])],
     };
 
     let finalHospitalIds: string[] = [];

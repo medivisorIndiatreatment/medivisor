@@ -1343,7 +1343,6 @@ async function getAllHospitals(
       const uniqueSpecialists = new Map()
       const uniqueTreatments = new Map()
 
-      uniqueDoctors.set(enrichedBranch._id, enrichedBranch)
       enrichedBranch.doctors.forEach((d: any) => d._id && uniqueDoctors.set(d._id, d))
       enrichedBranch.specialists.forEach((s: any) => s._id && uniqueSpecialists.set(s._id, s))
       enrichedBranch.treatments.forEach((t: any) => t._id && uniqueTreatments.set(t._id, t))
