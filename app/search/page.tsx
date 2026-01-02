@@ -224,6 +224,7 @@ const matchesSpecialization = (specialization: any, id: string, text: string) =>
 }
 
 const getMatchingBranches = (hospitals: HospitalType[], filters: FilterState, allExtendedTreatments: ExtendedTreatmentType[]) => {
+  if (!hospitals || !Array.isArray(hospitals)) return []
   const { city, state, specialization, branch, department, treatment } = filters
   const lowerCity = city.query.toLowerCase()
   const lowerState = state.query.toLowerCase()
@@ -281,6 +282,7 @@ const getMatchingBranches = (hospitals: HospitalType[], filters: FilterState, al
 }
 
 const getAllExtendedDoctors = (hospitals: HospitalType[]): ExtendedDoctorType[] => {
+  if (!hospitals || !Array.isArray(hospitals)) return []
   const extendedMap = new Map<string, ExtendedDoctorType>()
 
   hospitals.forEach((h) => {
@@ -340,6 +342,7 @@ const getAllExtendedDoctors = (hospitals: HospitalType[]): ExtendedDoctorType[] 
 }
 
 const getAllExtendedTreatments = (hospitals: HospitalType[]): ExtendedTreatmentType[] => {
+  if (!hospitals || !Array.isArray(hospitals)) return []
   const extended = new Map<string, ExtendedTreatmentType>()
   hospitals.forEach((h) => {
     const processTreatment = (item: TreatmentType, branch?: BranchType, departments: DepartmentType[] = []) => {
@@ -1724,13 +1727,30 @@ const ScrollableTitle = ({ text, className, isHovered }: { text: string; classNa
 // CARD COMPONENTS (UPDATED WITH HOVER STATE)
 // =============================================================================
 
+// Helper function to format location: "City, State, Country"
+// All data is fetched from Wix CMS and normalized (Delhi NCR cities show "Delhi NCR" as state)
+const formatLocation = (city: CityType | null | undefined): string => {
+  if (!city) return "Location not specified"
+  
+  const cityName = (city.cityName || "").trim()
+  const state = (city.state || "").trim()
+  const country = (city.country || "").trim()
+  
+  // Format: "City, State, Country"
+  const parts: string[] = []
+  if (cityName) parts.push(cityName)
+  if (state) parts.push(state)
+  if (country) parts.push(country)
+  
+  return parts.length > 0 ? parts.join(", ") : "Location not specified"
+}
+
 const HospitalCard = ({ branch }: { branch: BranchType & { hospitalName: string; hospitalLogo: string | null; hospitalId: string } }) => {
   const [isHovered, setIsHovered] = useState(false); // ADDED hover state
   const slug = generateSlug(`${branch.branchName}`)
   const imageUrl = getWixImageUrl(branch.branchImage)
-  const primaryCity = branch.city?.[0]?.cityName || ""
-  const primaryState = branch.city?.[0]?.state || ""
-  const primaryCountry = branch.city?.[0]?.country || ""
+  const primaryCity = branch.city?.[0] || null
+  const locationDisplay = formatLocation(primaryCity) // Format: "City, State, Country"
   const hospitalLogoUrl = getWixImageUrl(branch.hospitalLogo)
   const primarySpecialty = branch.specialization?.[0]?.name || branch.specialization?.[0]?.title || "General Care"
   const accreditationLogoUrl = getWixImageUrl(branch.accreditation?.[0]?.image)
@@ -1795,16 +1815,10 @@ const HospitalCard = ({ branch }: { branch: BranchType & { hospitalName: string;
               {primarySpecialty} Speciality
             </div>
 
-            {/* Location */}
+            {/* Location - Format: "City, State, Country" */}
             <div className="flex items-center gap-x-1.5 text-lg md:text-sm font-normal md:font-medium text-gray-700">
-
-              <span className="truncate">
-                {primaryCity}
-                {primaryState ? `, ${primaryState}` : ""}
-                {primaryCountry ? `, ${primaryCountry}` : ""}
-              </span>
               <MapPin className="md:w-3.5 h-4 md:h-3.5 w-4 flex-shrink-0 text-[#E22026] mb-1" />
-
+              <span className="truncate">{locationDisplay}</span>
             </div>
           </header>
 
@@ -1873,7 +1887,8 @@ const DoctorCard = ({ doctor }: { doctor: ExtendedDoctorType }) => {
   const slug = generateSlug(`${doctor.doctorName}`);
   const imageUrl = getWixImageUrl(doctor.profileImage);
 
-  // ⭐ UPDATED: Location logic to include state name and display count
+  // Location display: Format "City, State, Country"
+  // All data fetched from Wix CMS, Delhi NCR cities normalized
   const primaryLocationDisplay = useMemo(() => {
     const locations = doctor.filteredLocations || doctor.locations;
 
@@ -1881,22 +1896,11 @@ const DoctorCard = ({ doctor }: { doctor: ExtendedDoctorType }) => {
       return "Location not specified";
     }
 
-    const first = locations[0]; // Use the first location consistently
-
+    const first = locations[0];
     const cityData = first?.cities?.[0];
-    let locationString = first.branchName || first.hospitalName || "Unknown Location";
-
-    // if (cityData?.cityName) {
-    //   locationString += `, ${cityData.cityName}`;
-    // }
-
-    // const remainingCount = locations.length - 1;
-
-    // if (remainingCount > 0) {
-    //   locationString += ` (+${remainingCount} more)`;
-    // }
-
-    return locationString;
+    
+    // Format: "City, State, Country" (e.g., "Gurugram, Delhi NCR, India")
+    return formatLocation(cityData);
   }, [doctor.filteredLocations, doctor.locations]);
 
 
@@ -1971,25 +1975,10 @@ const TreatmentCard = ({ treatment }: { treatment: ExtendedTreatmentType }) => {
     }
 
     const firstLoc = availLocs[0]
-
-    let locationString = firstLoc.branchName
-      ? `${firstLoc.hospitalName}, ${firstLoc.branchName}`
-      : firstLoc.hospitalName
-
     const cityData = firstLoc.cities?.[0]
 
-    if (cityData?.cityName) {
-      locationString += `, ${cityData.cityName}`;
-      if (cityData.state) {
-        locationString += `, ${cityData.state}`; // Add the state name
-      }
-    }
-
-    const remainingCount = availLocs.length - 1;
-
-    if (remainingCount > 0) {
-      locationString += ` (+${remainingCount} more)`;
-    }
+    // Format: "City, State, Country" (e.g., "Gurugram, Delhi NCR, India")
+    const locationString = formatLocation(cityData)
 
     return {
       name: locationString,

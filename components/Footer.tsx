@@ -31,11 +31,11 @@ export default function Footer() {
           <div>
             <h4 className="font-medium text-white mb-2 md:mb-4 text-2xl md:text-3xl">Services</h4>
             <ul className="md:space-y-5 space-y-2 text-[16px] md:text-sm leading-[20px]">
-              <li><Link href="#Services" className="hover:text-[#74BF44]">Medical Consultation</Link></li>
-              <li><Link href="#Services" className="hover:text-[#74BF44]">Hospital Selection</Link></li>
-              <li><Link href="#Services" className="hover:text-[#74BF44]">Visa Assistance</Link></li>
-              <li><Link href="#Services" className="hover:text-[#74BF44]">Travel Arrangements</Link></li>
-              <li><Link href="#Services" className="hover:text-[#74BF44]">Accommodation</Link></li>
+              <li><Link href="#Services" className="hover:text-[#E22026]">Medical Consultation</Link></li>
+              <li><Link href="#Services" className="hover:text-[#E22026]">Hospital Selection</Link></li>
+              <li><Link href="#Services" className="hover:text-[#E22026]">Visa Assistance</Link></li>
+              <li><Link href="#Services" className="hover:text-[#E22026]">Travel Arrangements</Link></li>
+              <li><Link href="#Services" className="hover:text-[#E22026]">Accommodation</Link></li>
             </ul>
           </div>
 
@@ -43,11 +43,11 @@ export default function Footer() {
           <div>
             <h4 className="font-medium text-white mb-2 md:mb-4 text-2xl md:text-3xl">Treatments</h4>
             <ul className="md:space-y-5 space-y-2 text-[16px] md:text-sm leading-[20px]">
-              <li><a href="https://wa.me/918340780250" className="hover:text-[#74BF44]">Cardiac Surgery</a></li>
-              <li><a href="https://wa.me/918340780250" className="hover:text-[#74BF44]">Orthopedics</a></li>
-              <li><a href="https://wa.me/918340780250" className="hover:text-[#74BF44]">Oncology</a></li>
-              <li><a href="https://wa.me/918340780250" className="hover:text-[#74BF44]">Neurosurgery</a></li>
-              <li><a href="https://wa.me/918340780250" className="hover:text-[#74BF44]">Transplants</a></li>
+              <li><a href="https://wa.me/918340780250" className="hover:text-[#E22026]">Cardiac Surgery</a></li>
+              <li><a href="https://wa.me/918340780250" className="hover:text-[#E22026]">Orthopedics</a></li>
+              <li><a href="https://wa.me/918340780250" className="hover:text-[#E22026]">Oncology</a></li>
+              <li><a href="https://wa.me/918340780250" className="hover:text-[#E22026]">Neurosurgery</a></li>
+              <li><a href="https://wa.me/918340780250" className="hover:text-[#E22026]">Transplants</a></li>
             </ul>
           </div>
 
@@ -62,7 +62,7 @@ export default function Footer() {
                     href="https://maps.google.com/?q=Medivisor"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="hover:text-[#74BF44] text-[19px]"
+                    className="hover:text-[#E22026] text-[19px]"
                   >
                     Medivisor House 359, Sector 1, Vaishali, Ghaziabad, (Delhi/NCR) India
                   </a>
@@ -70,11 +70,11 @@ export default function Footer() {
               </li>
               <li className="flex items-start gap-2">
                 <Phone className="text-white mt-1 md:w-4 w-5 h-5 md:h-4 flex-shrink-0" />
-                <span><a href="tel:+918340780250" className="hover:text-[#74BF44] text-[19px] md:text-base">+91 8340 780 250</a></span>
+                <span><a href="tel:+918340780250" className="hover:text-[#E22026] text-[19px] md:text-base">+91 8340 780 250</a></span>
               </li>
               <li className="flex items-start gap-2">
                 <Mail className="text-white mt-1 md:w-4 w-5 h-5 md:h-4 flex-shrink-0" />
-                <span><a href="mailto:info@medivisorhealth.com" className="hover:text-[#74BF44] text-[19px] md:text-base">info@medivisorhealth.com</a></span>
+                <span><a href="mailto:info@medivisorhealth.com" className="hover:text-[#E22026] text-[19px] md:text-base">info@medivisorhealth.com</a></span>
               </li>
             </ul>
           </div>
@@ -83,7 +83,7 @@ export default function Footer() {
         {/* Footer Bottom */}
         <div className="mt-10 pt-8 border-t border-slate-800 flex flex-col md:flex-row justify-between items-center">
           <p className="text-base text-center text-[#fff]">
-            © 2025 Medivisor India Treatment. All rights reserved.
+            © 2026 Medivisor India Treatment. All rights reserved.
           </p>
 
           {/* Social Icons */}
@@ -91,21 +91,21 @@ export default function Footer() {
             <a
               href="https://www.facebook.com/medivisorindiatreatment"
               title="Facebook"
-              className="text-white hover:text-[#74BF44] transition-colors"
+              className="text-white hover:text-[#E22026] transition-colors"
             >
               <FaFacebookF size={24} />
             </a>
             <a
               href="https://www.youtube.com/@MedivisorIndiatreatment"
               title="YouTube"
-              className="text-white hover:text-[#74BF44] transition-colors"
+              className="text-white hover:text-[#E22026] transition-colors"
             >
               <FaYoutube size={24} />
             </a>
             <a
               href="https://www.instagram.com/medivisorindiatreatment"
               title="Instagram"
-              className="text-white hover:text-[#74BF44] transition-colors"
+              className="text-white hover:text-[#E22026] transition-colors"
             >
               <FaInstagram size={24} />
             </a>
