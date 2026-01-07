@@ -123,7 +123,7 @@ const MarqueeHeading = ({
   }, [children])
 
   // Calculate duration based on text length to keep speed consistent
-  const duration = Math.max(scrollWidth / 30, 5) 
+  const duration = Math.max(scrollWidth / 30, 5)
 
   return (
     <div
@@ -605,6 +605,99 @@ const extractUniqueTreatments = (branch: any): any[] => {
   return Object.values(uniqueTreatments)
 }
 
+// NEW: Function to fetch hospital data by slug with caching
+const fetchHospitalBySlug = async (slug: string) => {
+  console.time('fetchHospitalBySlug total')
+
+  // Check cache first
+  const cacheKey = `hospital_${slug}`
+  const cached = localStorage.getItem(cacheKey)
+  if (cached) {
+    try {
+      const { data, timestamp } = JSON.parse(cached)
+      if (Date.now() - timestamp < 5 * 60 * 1000) { // 5 minutes TTL
+        console.log('Returning cached hospital data')
+        console.timeEnd('fetchHospitalBySlug total')
+        return data
+      }
+    } catch (e) {
+      console.warn('Cache parse error:', e)
+    }
+  }
+
+  try {
+    console.time('First API call')
+    // First, try the branch API endpoint
+    const res = await fetch(`/api/hospitals?q=${encodeURIComponent(slug)}&includeStandalone=true&pageSize=1`)
+
+    if (!res.ok) {
+      throw new Error(`API responded with ${res.status}`)
+    }
+
+    const data = await res.json()
+    console.timeEnd('First API call')
+    console.log('First API data size:', JSON.stringify(data).length)
+
+    // If we found hospitals, cache and return the first one
+    if (data.items && data.items.length > 0) {
+      localStorage.setItem(cacheKey, JSON.stringify({ data: data.items[0], timestamp: Date.now() }))
+      console.timeEnd('fetchHospitalBySlug total')
+      return data.items[0]
+    }
+
+    console.time('Broad API call')
+    // If no hospitals found, try a broader search
+    const broadRes = await fetch(`/api/hospitals?includeStandalone=true&pageSize=50`)
+    if (broadRes.ok) {
+      const broadData = await broadRes.json()
+      console.timeEnd('Broad API call')
+      console.log('Broad API data size:', broadData.items?.length || 0, 'items')
+      if (broadData.items && broadData.items.length > 0) {
+        // Find hospital by matching slug
+        const matchingHospital = broadData.items.find((hospital: any) => {
+          if (!hospital?.hospitalName) return false
+          const hospitalSlug = generateSlug(hospital.hospitalName)
+          return hospitalSlug === slug
+        })
+
+        if (matchingHospital) {
+          localStorage.setItem(cacheKey, JSON.stringify({ data: matchingHospital, timestamp: Date.now() }))
+          console.timeEnd('fetchHospitalBySlug total')
+          return matchingHospital
+        }
+
+        // If still not found, look for branches with matching names
+        for (const hospital of broadData.items) {
+          if (hospital.branches && Array.isArray(hospital.branches)) {
+            const matchingBranch = hospital.branches.find((branch: any) => {
+              if (!branch?.branchName) return false
+              const branchSlug = generateSlug(branch.branchName)
+              return branchSlug === slug
+            })
+
+            if (matchingBranch) {
+              const result = {
+                ...hospital,
+                branches: [matchingBranch] // Return only the matching branch
+              }
+              localStorage.setItem(cacheKey, JSON.stringify({ data: result, timestamp: Date.now() }))
+              console.timeEnd('fetchHospitalBySlug total')
+              return result
+            }
+          }
+        }
+      }
+    }
+
+    console.timeEnd('fetchHospitalBySlug total')
+    return null
+  } catch (error) {
+    console.error('Error fetching hospital by slug:', error)
+    console.timeEnd('fetchHospitalBySlug total')
+    return null
+  }
+}
+
 export default function BranchDetail({ params }: { params: Promise<{ slug: string }> }) {
   const [branch, setBranch] = useState<any>(null)
   const [hospital, setHospital] = useState<any>(null)
@@ -620,37 +713,64 @@ export default function BranchDetail({ params }: { params: Promise<{ slug: strin
       try {
         const resolvedParams = await params
         const branchSlug = resolvedParams.slug
-        const res = await fetch(`/api/hospitals/${branchSlug}`)
-        if (!res.ok) {
-          if (res.status === 404) {
-            setError("Branch not found. The URL might be incorrect or the branch does not exist.")
-          } else {
-            throw new Error("Failed to fetch hospital data")
-          }
+        
+        // NEW: Fetch hospital data using the slug
+        const hospitalData = await fetchHospitalBySlug(branchSlug)
+        
+        if (!hospitalData) {
+          setError("Hospital not found. The URL might be incorrect or the hospital does not exist.")
+          setLoading(false)
           return
         }
-        const hospitalData = await res.json()
 
-        // Find the branch within this hospital
+        // Set the hospital data
+        setHospital(hospitalData)
+        setAllHospitals([hospitalData])
+
+        // Find the matching branch
         let foundBranch = null
+        
+        // If the hospital has branches, find the one that matches the slug
         if (hospitalData.branches?.length > 0) {
           foundBranch = hospitalData.branches.find((b: any) => {
             if (!b?.branchName) return false
             const expectedBranchSlug = generateSlug(b.branchName)
-            return expectedBranchSlug === branchSlug || b.branchName.toLowerCase().includes(branchSlug.replace(/-/g, ' '))
+            return expectedBranchSlug === branchSlug || 
+                   b.branchName.toLowerCase().includes(branchSlug.replace(/-/g, ' '))
           })
         }
 
+        // If no branch found but there's exactly one branch, use it (common for standalone hospitals)
         if (!foundBranch && hospitalData.branches?.length === 1) {
-          // If only one branch, use it (for standalone hospitals)
           foundBranch = hospitalData.branches[0]
         }
 
-        setHospital(hospitalData)
-        setBranch(foundBranch)
-        setAllHospitals([hospitalData]) // For similar hospitals logic
+        // If still no branch found but hospital is standalone, create a branch from hospital data
+        if (!foundBranch && hospitalData.isStandalone) {
+          foundBranch = {
+            ...hospitalData,
+            branchName: hospitalData.hospitalName,
+            address: hospitalData.address || '',
+            city: hospitalData.branches?.[0]?.city || [],
+            specialization: hospitalData.branches?.[0]?.specialization || [],
+            description: hospitalData.description,
+            totalBeds: hospitalData.branches?.[0]?.totalBeds || '',
+            noOfDoctors: hospitalData.branches?.[0]?.noOfDoctors || '',
+            yearEstablished: hospitalData.yearEstablished,
+            branchImage: hospitalData.hospitalImage,
+            doctors: hospitalData.doctors || [],
+            specialists: hospitalData.specialists || [],
+            treatments: hospitalData.treatments || [],
+            accreditation: hospitalData.accreditation || [],
+            _id: hospitalData.originalBranchId || hospitalData._id
+          }
+        }
 
-        if (!foundBranch) setError("Branch not found within the hospital.")
+        setBranch(foundBranch)
+
+        if (!foundBranch) {
+          setError("Branch not found within the hospital.")
+        }
       } catch (e) {
         setError(e instanceof Error ? e.message : "An unknown error occurred while fetching branch details")
       } finally {
@@ -683,7 +803,6 @@ export default function BranchDetail({ params }: { params: Promise<{ slug: strin
               .flatMap((h: any) => (h.branches || []).map((b: any) => ({ ...b, hospitalName: h.hospitalName, yearEstablished: h.yearEstablished, logo: h.logo, accreditation: b.accreditation || h.accreditation })))
               .filter((b: any) => b.city?.some((c: any) => c?.cityName === currentCity) && b._id !== branch._id)
               .sort((a: any, b: any) => (a.branchName || '').localeCompare(b.branchName || ''))
-            setSimilarBranches(similar.slice(0, 10)) // Limit to 10 for performance
             setSimilarBranches(similar.slice(0, 10)) // Limit to 10 for performance
           }
         })

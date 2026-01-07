@@ -31,7 +31,7 @@ function extractRichText(richContent: any): string {
               .map((child: any) => child.textData?.text || child.text || "")
               .join("");
           }
-          return node.textData?.text || node.text || "";
+          return node.textData?.text || node.text || "";Q
         })
         .filter(Boolean)
         .join("\n")
@@ -683,12 +683,30 @@ export async function GET(req: Request, { params }: { params: { slug: string } }
       }
 
       // For hospital slug, find its branches
-      const branchesForHospital = branchResult.items.filter(b =>
+      let branchesForHospital = branchResult.items.filter(b =>
         ReferenceMapper.extractHospitalIds(b).includes(foundHospital._id)
       );
 
       if (branchesForHospital.length === 0) {
-        return NextResponse.json({ error: "No branches found for this hospital" }, { status: 404 });
+        // Create virtual branch for standalone hospitals (non-group)
+        const virtualBranch = {
+          _id: foundHospital._id + '_virtual',
+          branchName: foundHospital.hospitalName,
+          address: '',
+          city: [],
+          specialty: foundHospital.specialty || [],
+          accreditation: [],
+          description: foundHospital.description,
+          totalBeds: '',
+          noOfDoctors: '',
+          yearEstablished: foundHospital.yearEstablished,
+          branchImage: foundHospital.hospitalImage,
+          doctors: [],
+          treatments: [],
+          specialization: foundHospital.specialty || [],
+          popular: false,
+        };
+        branchesForHospital = [virtualBranch];
       }
 
       // Return hospital with all its branches
@@ -882,7 +900,7 @@ async function enrichStandaloneBranch(branch: any) {
   };
 
   // Create hospital from branch
-  const hospital = DataMappers.hospital(branch, true);
+  const hospital = DataMappers.hospital(branch);
 
   // Collect unique items
   const uniqueDoctors = new Map();
