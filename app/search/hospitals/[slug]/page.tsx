@@ -513,9 +513,27 @@ const CarouselSection = ({ title, items, type, searchPlaceholder, onSearchSelect
   )
 }
 
-const SimilarHospitalsSection = ({ branches, allBranches, stateName }: { branches: any[]; allBranches: any[]; stateName: string }) => {
+const SimilarHospitalsSection = ({ branches, allBranches, cityName }: { branches: any[]; allBranches: any[]; cityName: string }) => {
   const router = useRouter()
   const [searchTerm, setSearchTerm] = useState("")
+  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: false, align: 'start', dragFree: false, containScroll: 'keepSnaps' })
+  const [prevBtnDisabled, setPrevBtnDisabled] = useState(true)
+  const [nextBtnDisabled, setNextBtnDisabled] = useState(true)
+
+  const scrollPrev = useCallback(() => emblaApi && emblaApi.scrollPrev(), [emblaApi])
+  const scrollNext = useCallback(() => emblaApi && emblaApi.scrollNext(), [emblaApi])
+
+  const onSelect = useCallback((emblaApi: any) => {
+    setPrevBtnDisabled(!emblaApi.canScrollPrev())
+    setNextBtnDisabled(!emblaApi.canScrollNext())
+  }, [])
+
+  useEffect(() => {
+    if (!emblaApi) return
+    onSelect(emblaApi)
+    emblaApi.on('reInit', onSelect)
+    emblaApi.on('select', onSelect)
+  }, [emblaApi, onSelect])
 
   const searchOptions = useMemo(() => allBranches.map(branch => ({
     id: branch._id,
@@ -535,7 +553,7 @@ const SimilarHospitalsSection = ({ branches, allBranches, stateName }: { branche
       <div className="px-2 md:px-4 py-4">
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-0">
           <h2 className="text-2xl md:text-xl font-medium mt-2 text-gray-900 tracking-tight flex items-center">
-            Similar Hospitals in {stateName}
+            Similar Hospitals in {cityName}
           </h2>
           <div className="relative w-full md:w-80">
             <SearchDropdown value={searchTerm} onChange={setSearchTerm} placeholder="Search hospital by name and city" options={searchOptions} onOptionSelect={handleSelect} onClear={() => setSearchTerm("")} type="branch" />
@@ -544,7 +562,7 @@ const SimilarHospitalsSection = ({ branches, allBranches, stateName }: { branche
       </div>
       {branches.length > 0 ? (
         <div className="relative px-2 md:px-4 pb-8">
-          <div className={EMBLA_CLASSES.viewport}>
+          <div className={EMBLA_CLASSES.viewport} ref={emblaRef}>
             <div className={EMBLA_CLASSES.container}>
               {branches.map(branch => (
                 <div key={branch._id} className={classNames(EMBLA_CLASSES.slide, EMBLA_SLIDE_SIZES.xs, EMBLA_SLIDE_SIZES.sm, EMBLA_SLIDE_SIZES.lg)}>
@@ -553,10 +571,20 @@ const SimilarHospitalsSection = ({ branches, allBranches, stateName }: { branche
               ))}
             </div>
           </div>
+          {branches.length > 3 && (
+            <div className="absolute top-1/2 left-0 right-0 transform -translate-y-1/2 flex justify-between pointer-events-none px-2 md:px-0">
+              <button onClick={scrollPrev} disabled={prevBtnDisabled} className={classNames("p-3 rounded-full bg-white shadow-lg transition-opacity duration-200 pointer-events-auto disabled:opacity-40 disabled:cursor-not-allowed ml-[-1rem]")} aria-label="Previous hospital">
+                <ChevronLeft className="w-5 h-5 text-gray-700" />
+              </button>
+              <button onClick={scrollNext} disabled={nextBtnDisabled} className={classNames("p-3 rounded-full bg-white shadow-lg transition-opacity duration-200 pointer-events-auto disabled:opacity-40 disabled:cursor-not-allowed mr-[-1rem]")} aria-label="Next hospital">
+                <ChevronRight className="w-5 h-5 text-gray-700" />
+              </button>
+            </div>
+          )}
         </div>
       ) : (
         <div className="p-8 pt-0">
-          <p className="text-gray-500 text-sm italic">No similar hospitals found in {stateName}. Use the search above to find all hospital branches.</p>
+          <p className="text-gray-500 text-sm italic">No similar hospitals found in {cityName}. Use the search above to find all hospital branches.</p>
         </div>
       )}
     </section>
@@ -628,18 +656,18 @@ export default function BranchDetail({ params }: { params: Promise<{ slug: strin
 
   const allTreatments = useMemo(() => extractUniqueTreatments(branch), [branch])
   const sortedFacilities = useMemo(() => Array.isArray(branch?.facilities) ? [...branch.facilities].sort((a, b) => (a.name || '').localeCompare(b.name || '')) : [], [branch?.facilities])
-  const currentState = branch?.city?.[0]?.state || null
+  const currentCity = branch?.city?.[0]?.cityName || null
 
   const similarBranches = useMemo(() => {
-    if (!allHospitals || !branch || !currentState) return []
+    if (!allHospitals || !branch || !currentCity) return []
     return allHospitals
       .filter(h => h.branches)
       .flatMap(h => h.branches
-        .filter((b: any) => b.city?.some((c: any) => c?.state === currentState) && b._id !== branch._id && b.branchName)
+        .filter((b: any) => b.city?.some((c: any) => c?.cityName === currentCity) && b._id !== branch._id && b.branchName)
         .map((b: any) => ({ ...b, hospitalName: h.hospitalName, yearEstablished: h.yearEstablished, logo: h.logo, accreditation: b.accreditation || h.accreditation }))
       )
       .sort((a, b) => (a.branchName || '').localeCompare(b.branchName || ''))
-  }, [allHospitals, branch, currentState])
+  }, [allHospitals, branch, currentCity])
 
   const allHospitalBranches = useMemo(() => allHospitals
     .filter(h => h.branches)
@@ -708,7 +736,7 @@ export default function BranchDetail({ params }: { params: Promise<{ slug: strin
               {sortedFacilities.length > 0 && <FacilitiesSection facilities={sortedFacilities} />}
               {allTreatments.length > 0 && <CarouselSection title="Available Treatments" items={allTreatments} type="treatment" searchPlaceholder="Search treatments by name or specialist..." onSearchSelect={handleTreatmentSelect} renderItem={(item) => <TreatmentCard item={item} />} />}
               {branch.doctors?.length > 0 && <CarouselSection title="Our Specialist Doctors" items={branch.doctors} type="doctor" searchPlaceholder="Search doctors by name or Speciality..." onSearchSelect={handleDoctorSelect} renderItem={(doctor) => <DoctorCard doctor={doctor} />} />}
-              <SimilarHospitalsSection branches={similarBranches} allBranches={allHospitalBranches} stateName={currentState || 'Nearby Locations'} />
+              <SimilarHospitalsSection branches={similarBranches} allBranches={allHospitalBranches} cityName={currentCity || 'Nearby Locations'} />
             </div>
             <aside className="lg:col-span-3 space-y-8"><ContactForm /></aside>
           </div>
@@ -736,7 +764,7 @@ const HeroSection = ({ heroImage, branch, hospital, hospitalLogo, accreditationI
                 <img
                   src={acc.image}
                   alt={`${acc.title || ''} accreditation badge`}
-                  className="w-10 h-10 md:w-12 md:h-12 object-contain rounded-full bg-white/90 backdrop-blur-sm p-1 shadow-lg transition-transform duration-300 group-hover:scale-110"
+                  className="w-10 h-10 md:w-12 md:h-12 object-contain rounded-full bg-white/90 backdrop-blur-sm p-0 shadow-lg transition-transform duration-300 group-hover:scale-110"
                   onError={(e) => { e.currentTarget.style.display = "none" }}
                 />
                 {acc.title && (

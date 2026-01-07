@@ -183,7 +183,7 @@ const AccreditationPill = ({ acc, logoOnly = false }: { acc: AccreditationType, 
     // Logo-only design for Hero Section (Top Right)
     return (
       <div
-        className="w-10 h-10 m-2 bg-white p-1 rounded-full shadow-lg flex items-center justify-center border border-gray-100 transition-transform hover:scale-110 tooltip"
+        className="w-10 h-10 m-0 bg-white p-0 rounded-full shadow-lg flex items-center justify-center border border-gray-100 transition-transform hover:scale-110 tooltip"
         title={acc.title}
         aria-label={`Accreditation: ${acc.title}`}
       >
@@ -191,9 +191,9 @@ const AccreditationPill = ({ acc, logoOnly = false }: { acc: AccreditationType, 
           <Image
             src={logoUrl}
             alt={`${acc.title} Logo`}
-            width={28}
-            height={28}
-            className="w-7 h-7 object-contain rounded-full"
+            width={32}
+            height={32}
+            className="w-10 h-10 object-contain rounded-full"
           />
         ) : (
           <Award className="w-5 h-5 text-yellow-500 fill-yellow-500/30" />
@@ -261,15 +261,17 @@ const HeroSection = ({ hospital, accreditations }: { hospital: HospitalWithBranc
 
       {/* Hospital Info Box (Bottom) */}
       <div className="absolute bottom-10 left-0 right-0 p-6 md:p-10 container mx-auto z-20">
-        <div className="flex flex-col sm:flex-row items-start sm:items-end gap-4 flex-grow">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 flex-grow">
+          
           {hospitalLogo ? (
-            <div className="w-24 h-auto bg-white p-2 rounded-lg shadow-xl flex items-center justify-center flex-shrink-0 border-4 border-white">
+            <div className="w-24 h-auto bg-white p-0 rounded-lg shadow-xl flex items-center justify-center flex-shrink-0 border-4 border-white">
+              
               <Image
                 src={hospitalLogo}
                 alt={`${hospital.hospitalName} Logo`}
                 width={160}
-                height={70}
-                className="object-contain w-full h-auto max-h-[70px]"
+                height={100}
+                className="object-contain w-full h-auto max-h-[100px]"
               />
             </div>
           ) : (
@@ -277,24 +279,26 @@ const HeroSection = ({ hospital, accreditations }: { hospital: HospitalWithBranc
               <Hospital className="w-12 h-12 text-gray-700" />
             </div>
           )}
-          <div className="pt-1">
-            {/* MODIFIED: Changed font size/weight to better match original code/modern aesthetic */}
-            <h1 className={`text-3xl md:text-5xl font-semibold text-white leading-tight drop-shadow-2xl  `}>
-              {hospital.hospitalName}
-            </h1>
-            <div className="flex flex-wrap items-center gap-x-6 gap-y-2 mt-1">
-              {/* {hospital.city && (
-                <div className={`flex items-center gap-2 text-xl font-medium text-gray-200 drop-shadow-lg`}>
-                  <MapPin className="w-5 h-5 text-red-400" />
-                  <span>{hospital.city}</span>
-                </div>
-              )} */}
+          <div className="">
               {hospital.yearEstablished && (
                 <div className={`flex items-center gap-2 text-lg text-gray-300`}>
                   <CalendarDays className="w-5 h-5 text-gray-400" />
                   <span>Estd. {hospital.yearEstablished}</span>
                 </div>
               )}
+            {/* MODIFIED: Changed font size/weight to better match original code/modern aesthetic */}
+            <h1 className={`text-3xl md:text-3xl font-medium text-white leading-tight drop-shadow-2xl  `}>
+              {hospital.hospitalName}
+            </h1>
+            
+            <div className="flex flex-wrap items-center gap-x-6 gap-y-2 ">
+              {/* {hospital.city && (
+                <div className={`flex items-center gap-2 text-xl font-medium text-gray-200 drop-shadow-lg`}>
+                  <MapPin className="w-5 h-5 text-red-400" />
+                  <span>{hospital.city}</span>
+                </div>
+              )} */}
+            
             </div>
           </div>
         </div>
@@ -316,6 +320,179 @@ const StatBox = ({ value, label, showPlus = true }: { value: string | number, la
   </div>
 )
 
+// Professional Infinite Hover Scroll Component
+const InfiniteHoverScroll = ({ 
+  children, 
+  className = "",
+  speed = 40 // pixels per second
+}: { 
+  children: React.ReactNode, 
+  className?: string,
+  speed?: number 
+}) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
+  const [isOverflowing, setIsOverflowing] = useState(false);
+  const [isHovering, setIsHovering] = useState(false);
+  const animationRef = useRef<number | null>(null);
+  const [scrollPosition, setScrollPosition] = useState(0);
+  const [contentWidth, setContentWidth] = useState(0);
+  const [containerWidth, setContainerWidth] = useState(0);
+
+  // Check if content overflows on load and resize
+  useEffect(() => {
+    const checkOverflow = () => {
+      if (containerRef.current && contentRef.current) {
+        const container = containerRef.current;
+        const content = contentRef.current;
+        
+        const containerW = container.clientWidth;
+        const contentW = content.scrollWidth;
+        
+        setContainerWidth(containerW);
+        setContentWidth(contentW);
+        setIsOverflowing(contentW > containerW);
+      }
+    };
+
+    checkOverflow();
+    const resizeObserver = new ResizeObserver(checkOverflow);
+    if (containerRef.current) {
+      resizeObserver.observe(containerRef.current);
+    }
+    
+    return () => {
+      resizeObserver.disconnect();
+      if (animationRef.current) {
+        cancelAnimationFrame(animationRef.current);
+        animationRef.current = null;
+      }
+    };
+  }, [children]);
+
+  // Animation loop for infinite smooth scrolling
+  useEffect(() => {
+    if (!isOverflowing || !isHovering) {
+      if (animationRef.current) {
+        cancelAnimationFrame(animationRef.current);
+        animationRef.current = null;
+      }
+      setScrollPosition(0);
+      return;
+    }
+
+    let lastTime: number;
+    
+    const animate = (currentTime: number) => {
+      if (!lastTime) lastTime = currentTime;
+      
+      const deltaTime = currentTime - lastTime;
+      lastTime = currentTime;
+      
+      // Calculate scroll amount based on speed (pixels per second)
+      const scrollAmount = (speed * deltaTime) / 1000;
+      
+      setScrollPosition(prev => {
+        let newPos = prev + scrollAmount;
+        
+        // When we scroll past the content width, reset to start position
+        // This creates a seamless infinite loop
+        if (newPos >= contentWidth) {
+          newPos = 0;
+        }
+        
+        return newPos;
+      });
+      
+      animationRef.current = requestAnimationFrame(animate);
+    };
+    
+    animationRef.current = requestAnimationFrame(animate);
+    
+    return () => {
+      if (animationRef.current) {
+        cancelAnimationFrame(animationRef.current);
+        animationRef.current = null;
+      }
+    };
+  }, [isOverflowing, isHovering, contentWidth, speed]);
+
+  // Handle hover state for the heading only
+  useEffect(() => {
+    const handleHover = () => {
+      if (containerRef.current) {
+        const handleMouseEnter = () => setIsHovering(true);
+        const handleMouseLeave = () => setIsHovering(false);
+        
+        const container = containerRef.current;
+        container.addEventListener('mouseenter', handleMouseEnter);
+        container.addEventListener('mouseleave', handleMouseLeave);
+        
+        return () => {
+          container.removeEventListener('mouseenter', handleMouseEnter);
+          container.removeEventListener('mouseleave', handleMouseLeave);
+        };
+      }
+    };
+    
+    handleHover();
+  }, []);
+
+  // Reset when not hovering
+  useEffect(() => {
+    if (!isHovering) {
+      setScrollPosition(0);
+    }
+  }, [isHovering]);
+
+  return (
+    <div 
+      ref={containerRef}
+      className={`relative overflow-hidden ${className} transition-all duration-300 ${
+        isOverflowing && isHovering ? 'cursor-pointer' : ''
+      }`}
+      title={isOverflowing ? "Hover to scroll" : undefined}
+    >
+      {/* Original content */}
+      <div 
+        ref={contentRef}
+        className={`inline-flex whitespace-nowrap transition-transform duration-300 ease-out ${
+          isOverflowing && isHovering ? 'will-change-transform' : ''
+        }`}
+        style={{
+          transform: isOverflowing && isHovering 
+            ? `translateX(-${scrollPosition}px)` 
+            : 'translateX(0)',
+          transition: isHovering ? 'none' : 'transform 300ms ease-out'
+        }}
+      >
+        {children}
+      </div>
+      
+      {/* Duplicate content for seamless infinite scroll */}
+      {isOverflowing && isHovering && (
+        <div 
+          className="inline-flex whitespace-nowrap absolute left-full ml-8"
+          style={{
+            transform: `translateX(-${scrollPosition}px)`
+          }}
+          aria-hidden="true"
+        >
+          {children}
+        </div>
+      )}
+      
+      {/* Professional subtle fade effect on edges */}
+      {isOverflowing && isHovering && (
+        <>
+          {/* <div className="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-white via-white/90 to-transparent pointer-events-none z-10" />
+          <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-white via-white/90 to-transparent pointer-events-none z-10" /> */}
+        </>
+      )}
+    </div>
+  );
+};
+
 // Branch Card Component
 const BranchCard = ({ branch, hospitalSlug }: { branch: any, hospitalSlug: string }) => {
   const branchImage = getImageUrl(branch.branchImage || branch.logo)
@@ -330,19 +507,7 @@ const BranchCard = ({ branch, hospitalSlug }: { branch: any, hospitalSlug: strin
   // The 'noOfDoctors' field is a string (e.g., "170"), which is what we display directly.
   const doctorsCount = branch.noOfDoctors || branch.doctors?.length || 'N/A' 
   
-  // const specialties = useMemo(() => {
-  //   const specSet = new Set<string>()
-  //   branch.doctors?.forEach((d: any) => {
-  //     d.specialization?.forEach((s: any) => {
-  //       const specName = typeof s === 'object' ? s?.name : s
-  //       if (specName) specSet.add(specName)
-  //     })
-  //   })
-  //   return Array.from(specSet)
-  // }, [branch.doctors])
-
   const firstCityName = branch.city?.[0]?.name || branch.city?.[0]?.cityName || 'N/A'
-  // const specialtyCount = specialties.length
   const bedsCount = branch.totalBeds || 'N/A'
   const estdYear = branch.yearEstablished || 'N/A'
 
@@ -350,19 +515,19 @@ const BranchCard = ({ branch, hospitalSlug }: { branch: any, hospitalSlug: strin
     <Link
       href={linkHref}
       aria-label={`View details for ${branchNameDisplay} in ${firstCityName}`}
-      className={`block h-full border border-gray-100 rounded-xs shadow-xs bg-white hover:shadow-sm transition-all duration-300 relative flex flex-col overflow-hidden group transform hover:-translate-y-0.5`}
+      className={`group block h-full border border-gray-100 rounded-xs shadow-xs bg-white hover:shadow-sm transition-all duration-300 relative flex flex-col overflow-hidden transform hover:-translate-y-0.5`}
     >
       <div className="relative w-full h-48 bg-gray-100">
         <ImageWithFallback
           src={branchImage}
           alt={`${branchNameDisplay} facility`}
           fallbackIcon={Building2}
-        className="w-full h-full object-cover object-center transition-transform duration-500"
+          className="w-full h-full object-cover object-center transition-transform duration-500"
           fallbackClassName="bg-gray-100"
         />
 
         {accImage && (
-          <div className="absolute top-3 right-3 z-10 p-1 bg-white rounded-full shadow-lg">
+          <div className="absolute top-3 right-3 z-10 p-0 bg-white rounded-full shadow-lg">
             <img
               src={accImage}
               alt="Accreditation badge"
@@ -374,10 +539,18 @@ const BranchCard = ({ branch, hospitalSlug }: { branch: any, hospitalSlug: strin
 
       <div className={`p-4 flex-1 flex flex-col justify-between font-light`}>
         <div className="mb-3">
-          <h3 className="text-lg font-medium text-gray-900 leading-snug group-hover:text-gray-700 transition-colors">{branchNameDisplay}</h3>
+          {/* MODIFIED: Added InfiniteHoverScroll for infinite scrolling on heading hover */}
+          <div className="mb-2">
+            <InfiniteHoverScroll 
+              className="text-lg font-medium text-gray-900 leading-snug group-hover:text-gray-700 transition-colors"
+              speed={45}
+            >
+              {branchNameDisplay}
+            </InfiniteHoverScroll>
+          </div>
           <p className="text-sm text-gray-600 mt-1 flex items-center gap-1.5">
             <MapPin className="w-4 h-4 text-red-500 flex-shrink-0" />
-            {firstCityName}
+            <span className="truncate">{firstCityName}</span>
           </p>
         </div>
 
@@ -420,19 +593,33 @@ const DoctorCard = ({ doctor }: { doctor: any }) => {
 
   return (
     <Link href={`/doctors/${doctorSlug}`}
-      className={`block h-full border border-gray-100 rounded-xs shadow-xs bg-white hover:shadow-sm transition-all duration-300 relative flex flex-col overflow-hidden group transform hover:-translate-y-0.5`}
+      className={`group block h-full border border-gray-100 rounded-xs shadow-xs bg-white hover:shadow-sm transition-all duration-300 relative flex flex-col overflow-hidden transform hover:-translate-y-0.5`}
     >
       <div className="relative h-60 overflow-hidden bg-gray-50">
         <ImageWithFallback src={doctorImage} alt={`Dr. ${doctor.doctorName}`} fallbackIcon={User} className="object-cover w-full h-full group-hover:scale-[1.05] transition-transform duration-500" fallbackClassName="bg-gray-50" />
       </div>
       <div className={`flex flex-col flex-1 p-4 font-light`}>
-        <h5 className="text-lg font-medium text-gray-800 leading-snug group-hover:text-gray-700 transition-colors">
-          {doctor.doctorName}
-        </h5>
-      <div className="flex gap-x-1 items-center">
-          <p className="text-sm font-medium text-gray-800 line-clamp-1">{specializationNames},</p>
-        <p className="text-sm text-gray-800  line-clamp-1">{expText}</p>
-      </div>
+        {/* MODIFIED: Added InfiniteHoverScroll for infinite scrolling on heading hover */}
+        <div className="mb-2">
+          <InfiniteHoverScroll 
+            className="text-lg font-medium text-gray-800 leading-snug group-hover:text-gray-700 transition-colors"
+            speed={40}
+          >
+            {doctor.doctorName}
+          </InfiniteHoverScroll>
+        </div>
+        {/* MODIFIED: Added InfiniteHoverScroll for specialization text */}
+        <div className="mb-1">
+          <InfiniteHoverScroll 
+            className="text-sm font-medium text-gray-800" 
+            speed={35}
+          >
+            <span>{specializationNames}</span>
+          </InfiniteHoverScroll>
+        </div>
+        <p className="text-sm text-gray-600 mt-1">
+          {expText}
+        </p>
       </div>
     </Link>
   )
@@ -445,16 +632,22 @@ const TreatmentCard = ({ treatment }: { treatment: any }) => {
 
   return (
     <Link href={`/treatments/${treatmentSlug}`}
-      className={`block h-full border border-gray-100 rounded-xs shadow-xs bg-white hover:shadow-sm transition-all duration-300 relative flex flex-col overflow-hidden group transform hover:-translate-y-0.5`}
+      className={`group block h-full border border-gray-100 rounded-xs shadow-xs bg-white hover:shadow-sm transition-all duration-300 relative flex flex-col overflow-hidden transform hover:-translate-y-0.5`}
     >
       <div className="relative h-40 overflow-hidden bg-gray-50">
         <ImageWithFallback src={treatmentImage} alt={treatment.name} fallbackIcon={Scissors} className="object-cover w-full h-full group-hover:scale-[1.05] transition-transform duration-500" fallbackClassName="bg-gray-50" />
       </div>
       <div className={`flex flex-col flex-1 p-4 font-light`}>
         {/* MODIFIED: Changed font to serif for the treatment title to align with the main content style */}
-        <h5 className={`text-xl font-bold text-gray-900 mb-1 line-clamp-2 group-hover:text-gray-700 transition-colors  font-serif`}>
-          {treatment.name}
-        </h5>
+        {/* MODIFIED: Added InfiniteHoverScroll for infinite scrolling on heading hover */}
+        <div className="mb-3">
+          <InfiniteHoverScroll 
+            className={`text-xl font-bold text-gray-900 mb-1 group-hover:text-gray-700 transition-colors font-serif`}
+            speed={38}
+          >
+            {treatment.name}
+          </InfiniteHoverScroll>
+        </div>
         <div className="flex items-center gap-3 text-sm text-gray-600 mt-2">
           {treatment.cost && (
             <div className="flex items-center gap-1 text-base font-bold text-gray-700 bg-gray-100/70 px-2.5 py-0.5 rounded-full border border-gray-200">
@@ -483,7 +676,7 @@ const SimilarHospitalCard = ({ hospital }: { hospital: HospitalWithBranchPreview
 
   return (
     <Link href={`/search/${hospitalSlug}`}
-      className={`block h-full border border-gray-100 rounded-xs shadow-xs bg-white hover:shadow-sm transition-all duration-300 relative flex flex-col overflow-hidden group transform hover:-translate-y-0.5`}
+      className={`group block h-full border border-gray-100 rounded-xs shadow-xs bg-white hover:shadow-sm transition-all duration-300 relative flex flex-col overflow-hidden transform hover:-translate-y-0.5`}
     >
       <div className="relative h-40 overflow-hidden bg-gray-100">
         <ImageWithFallback src={hospitalImage} alt={hospital.hospitalName} fallbackIcon={Hospital} className="object-cover w-full h-full group-hover:scale-[1.05] transition-transform duration-500" />
@@ -497,24 +690,22 @@ const SimilarHospitalCard = ({ hospital }: { hospital: HospitalWithBranchPreview
           </div>
         )}
       </div>
-      <div className={`flex flex-col flex-1 p-4 font-light`}>
-        <h5 className="text-lg font-medium text-gray-900 mb-2 line-clamp-2 group-hover:text-gray-700 transition-colors">
-          {hospital.hospitalName}
-        </h5>
-        <div className="flex flex-wrap items-center text-sm text-gray-800 gap-x-4 gap-y-1">
-          {hospitalCity && (
-            <span className="flex items-center gap-1.5 font-medium">
-              <MapPin className="w-4 h-4 text-red-500" />
-              <span className="truncate">{hospitalCity}</span>
-            </span>
-          )}
-          {branchCount > 0 && (
-            <span className="flex items-center gap-1.5 font-medium">
-              <Building2 className="w-4 h-4 text-gray-800" />
-              <span>{branchCount} {branchCount === 1 ? 'Branch' : 'Branches'}</span>
-            </span>
-          )}
+      <div className={`flex flex-col flex-1 p-2 font-light`}>
+        {/* MODIFIED: Added InfiniteHoverScroll for infinite scrolling on heading hover */}
+        <div className="mb-2">
+          <InfiniteHoverScroll 
+            className="text-lg font-medium text-gray-900 mb-0 group-hover:text-gray-700 transition-colors"
+            speed={42}
+          >
+            {hospital.hospitalName}
+          </InfiniteHoverScroll>
         </div>
+        {hospitalCity && (
+          <p className="text-sm text-gray-600 flex items-center gap-1.5">
+            <MapPin className="w-4 h-4 text-red-500 flex-shrink-0" />
+            <span className="truncate">{hospitalCity}</span>
+          </p>
+        )}
       </div>
     </Link>
   )
@@ -738,10 +929,8 @@ const HospitalDetailSkeleton = () => (
     <section className="py-10 md:py-12">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="lg:grid lg:grid-cols-12 lg:gap-8">
-
           {/* Main Content Skeleton */}
           <main className="lg:col-span-9 space-y-10 md:space-y-8">
-
             {/* Description Skeleton (Keep elevated container) */}
             <div className="bg-white rounded-xl border border-gray-100 p-4 md:p-8 shadow-md animate-pulse">
               <div className="h-7 w-64 bg-gray-200 rounded-lg mb-6" />
@@ -790,7 +979,8 @@ const ErrorState = ({ error }: { error: string | null }) => (
   <div className={`min-h-screen flex flex-col items-center justify-center bg-gray-50 p-6 relative`}>
     <div className="absolute top-6 left-6">
       <Link href="/search" className={`flex items-center gap-2 text-gray-800 hover:text-gray-900 transition-colors duration-200 bg-white/90 backdrop-blur-sm px-4 py-3 rounded-full border border-gray-200 shadow-lg font-semibold`} >
-        <ChevronLeft className="w-5 h-5" /> Back to Search
+        <ChevronLeft className="w-5 h-5" />
+        Back to Search
       </Link>
     </div>
     <div className="text-center space-y-6 max-w-lg p-12 bg-white rounded-xl border border-gray-200 shadow-2xl">
@@ -817,7 +1007,8 @@ const BranchesSection = ({ hospital, selectedCity, allCityOptions, visibleBranch
       <div className="flex flex-wrap justify-between items-center gap-x-4">
         <h2 className={`text-2xl font-medium text-gray-900 flex items-center gap-3`}>
           <Building2 className="w-6 h-6 text-gray-600" />
-          Our Branches ({filteredBranches.length})
+           Branches
+            {/* ({filteredBranches.length}) */}
         </h2>
 
         {/* City Filter */}
@@ -842,7 +1033,9 @@ const BranchesSection = ({ hospital, selectedCity, allCityOptions, visibleBranch
 
       <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 md:pt-0 pt-4">
         {visibleBranches.map(branch => (
-          <BranchCard key={branch._id} branch={branch} hospitalSlug={hospitalSlug} />
+          <div key={branch._id} className="h-full">
+            <BranchCard branch={branch} hospitalSlug={hospitalSlug} />
+          </div>
         ))}
       </div>
 
@@ -1016,10 +1209,8 @@ export default function HospitalDetail({ params }: { params: Promise<{ slug: str
       <section className="pt-8 pb-10 md:pb-16">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="lg:grid lg:grid-cols-12 lg:gap-8">
-
             {/* Main Content Area */}
             <main className="lg:col-span-9 space-y-10 md:space-y-8">
-
               {/* Description Section */}
               {rawDescription && (
                 <section className="bg-white rounded-xl border border-gray-100 p-4 md:p-8 shadow-md">
@@ -1046,7 +1237,6 @@ export default function HospitalDetail({ params }: { params: Promise<{ slug: str
                   hospitalSlug={hospitalSlugFromParams}
                 />
               )}
-
 
               {/* Doctors Section */}
               {uniqueDoctors.length > 0 && (
@@ -1083,7 +1273,6 @@ export default function HospitalDetail({ params }: { params: Promise<{ slug: str
                   />
                 </section>
               )}
-
             </main>
 
             {/* Sidebar (MODIFIED: Added sticky classes for the contact form container) */}

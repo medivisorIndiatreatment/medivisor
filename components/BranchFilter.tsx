@@ -62,11 +62,11 @@ const generateSlug = (name: string | null | undefined): string => {
 
 const extractProperName = (item: any): string => {
   if (!item) return 'Unknown'
-  
+
   if (typeof item === 'string') {
     return item
   }
-  
+
   // Adjusted logic to prioritize names based on potential structure
   if (typeof item === 'object') {
     // Check for nested name properties first, common in API objects
@@ -77,18 +77,18 @@ const extractProperName = (item: any): string => {
     if (item.specializationName) return item.specializationName
     if (item.treatmentName) return item.treatmentName // For cases like `item.treatmentName`
   }
-  
+
   return 'Unknown'
 }
 
 // --- SearchDropdown Component ---
-const SearchDropdown = ({ 
-  value, 
-  onChange, 
-  placeholder, 
-  options, 
-  onOptionSelect, 
-  onClear 
+const SearchDropdown = ({
+  value,
+  onChange,
+  placeholder,
+  options,
+  onOptionSelect,
+  onClear
 }: {
   value: string
   onChange: (value: string) => void
@@ -99,13 +99,13 @@ const SearchDropdown = ({
 }) => {
   const [isOpen, setIsOpen] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
-  
+
   const filteredOptions = useMemo(() => {
     if (!value) return options.slice(0, 6)
-    
+
     const lower = value.toLowerCase().trim()
     if (!lower) return options.slice(0, 6) // Handle case where trimming makes it empty
-    
+
     // **NEW CHANGE: Update search logic to match the start of any word in the name**
     return options
       .filter(option => {
@@ -154,10 +154,10 @@ const SearchDropdown = ({
           onFocus={() => setIsOpen(true)}
           placeholder="Search by Hospital, Doctor, treatment"
           className="w-full pl-7 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-900 placeholder-gray-500 text-sm"
-          autoComplete="off" 
+          autoComplete="off"
         />
         {value && (
-          <button 
+          <button
             type="button"
             onClick={onClear}
             className="absolute right-3 bg-white top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
@@ -236,11 +236,11 @@ const BranchFilter = ({ allHospitals, initialSearch = "" }: BranchFilterProps) =
         })
         // From hospital.branches.specialists (assuming specialists also have a specialization name)
         hospital.branches?.forEach((branch: BranchData) => {
-            branch.specialists?.forEach((specialist: SpecialistData) => {
-                const id = specialist?._id || generateSlug(specialist.name)
-                const name = extractProperName(specialist)
-                if (id && name !== 'Unknown') specs.set(id, name)
-            })
+          branch.specialists?.forEach((specialist: SpecialistData) => {
+            const id = specialist?._id || generateSlug(specialist.name)
+            const name = extractProperName(specialist)
+            if (id && name !== 'Unknown') specs.set(id, name)
+          })
         })
       })
       specs.forEach((name, id) => {
@@ -264,14 +264,14 @@ const BranchFilter = ({ allHospitals, initialSearch = "" }: BranchFilterProps) =
             const id = treatment?._id || generateSlug(name)
             if (name !== 'Unknown') treatments.set(id, name)
           })
-          
+
           // Treatments nested under hospital.branches.specialists
           branch.specialists?.forEach((specialist: SpecialistData) => {
-              specialist.treatments?.forEach((treatment: TreatmentData) => {
-                  const name = extractProperName(treatment)
-                  const id = treatment?._id || generateSlug(name)
-                  if (name !== 'Unknown') treatments.set(id, name)
-              })
+            specialist.treatments?.forEach((treatment: TreatmentData) => {
+              const name = extractProperName(treatment)
+              const id = treatment?._id || generateSlug(name)
+              if (name !== 'Unknown') treatments.set(id, name)
+            })
           })
         })
       })
@@ -280,7 +280,7 @@ const BranchFilter = ({ allHospitals, initialSearch = "" }: BranchFilterProps) =
       })
 
       // **City search filter logic remains REMOVED**
-      
+
       // Add branches
       allHospitals.forEach(hospital => {
         hospital.branches?.forEach((branch: BranchData) => {
@@ -343,10 +343,10 @@ const BranchFilter = ({ allHospitals, initialSearch = "" }: BranchFilterProps) =
         url = `/search/hospitals/${generateSlug(branchName)}`
         break
     }
-    
+
     // 1. Navigate to the new URL
     router.push(url)
-    
+
     // 2. Clear the input field for a fresh search when user returns/stays
     setQuery("")
 
@@ -359,12 +359,12 @@ const BranchFilter = ({ allHospitals, initialSearch = "" }: BranchFilterProps) =
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     const trimmedQuery = query.trim()
-    
+
     if (!trimmedQuery) return
 
     // Enhanced logic: Find a match using slugs for better tolerance to casing and spacing
     const querySlug = generateSlug(trimmedQuery)
-    const matchingOption = availableOptions.find(option => 
+    const matchingOption = availableOptions.find(option =>
       generateSlug(option.name) === querySlug
     )
 
