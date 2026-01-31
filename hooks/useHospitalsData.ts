@@ -25,6 +25,20 @@ export const useHospitalsData = () => {
      gcTime: 10 * 60 * 1000, // 10 minutes
    })
 
+   // Fetch all treatments directly from TreatmentMaster collection
+   const { data: allTreatmentsData } = useQuery({
+     queryKey: ['treatments', 'all'],
+     queryFn: async () => {
+       const res = await fetch('/api/treatments?pageSize=500')
+       if (!res.ok) throw new Error('Failed to fetch treatments')
+       return res.json() as Promise<{ items: ExtendedTreatmentType[], total: number }>
+     },
+     staleTime: 5 * 60 * 1000, // 5 minutes
+     gcTime: 10 * 60 * 1000, // 10 minutes
+   })
+
+   const allTreatmentsFromApi = allTreatmentsData?.items || []
+
    const allHospitals = hospitalsData?.items || []
 
   const [filters, setFilters] = useState<FilterState>(() => {
@@ -88,6 +102,14 @@ export const useHospitalsData = () => {
   const allExtendedDoctors = useMemo(() => getAllExtendedDoctors(allHospitals), [allHospitals])
   const allExtendedTreatments = useMemo(() => getAllExtendedTreatments(allHospitals), [allHospitals])
 
+  // When in treatments view, use all treatments from API, otherwise use hospital-derived treatments
+  const treatmentsForView = useMemo(() => {
+    if (filters.view === 'treatments') {
+      return allTreatmentsFromApi
+    }
+    return allExtendedTreatments
+  }, [filters.view, allTreatmentsFromApi, allExtendedTreatments])
+
   const visibleHospitals = useMemo(() => allHospitals.filter(h => h.showHospital !== false), [allHospitals])
 
   const { filteredBranches, filteredDoctors, filteredTreatments } = useMemo(() => {
@@ -100,7 +122,7 @@ export const useHospitalsData = () => {
       view: 'hospitals',
     }
 
-    let branches = getMatchingBranches(visibleHospitals, genericBranchFilters, allExtendedTreatments)
+    let branches = getMatchingBranches(visibleHospitals, genericBranchFilters, treatmentsForView)
 
     let matchingBranchIds: string[] | null = null
     if (currentFilters.branch.id || currentFilters.branch.query) {
@@ -166,7 +188,7 @@ export const useHospitalsData = () => {
     let matchingSpecialtyNamesForDoctors = new Set<string>()
     if (currentFilters.treatment.id || currentFilters.treatment.query) {
       const lowerTreatQuery = currentFilters.treatment.query.toLowerCase()
-      const matchingTreatments = allExtendedTreatments.filter(t =>
+      const matchingTreatments = treatmentsForView.filter(t =>
         (currentFilters.treatment.id && t._id === currentFilters.treatment.id) ||
         (lowerTreatQuery && (t.name ?? '').toLowerCase().includes(lowerTreatQuery))
       )
@@ -226,7 +248,7 @@ export const useHospitalsData = () => {
       }
     })
 
-    let treatments = allExtendedTreatments
+    let treatments = treatmentsForView
 
     if (currentFilters.city.id || currentFilters.city.query) {
       const lowerCityQuery = currentFilters.city.query.toLowerCase()
@@ -363,7 +385,7 @@ export const useHospitalsData = () => {
     }
 
     return { filteredBranches: branches, filteredDoctors: filteredDoctorsFinal, filteredTreatments: filteredTreatmentsFinal }
-  }, [visibleHospitals, allExtendedDoctors, allExtendedTreatments, filters])
+  }, [visibleHospitals, allExtendedDoctors, treatmentsForView, filters])
 
   const getUniqueOptions = useCallback((
     field: FilterKey,
@@ -559,7 +581,7 @@ export const useHospitalsData = () => {
     };
 
     // treatment
-    resolveToId('treatment', allExtendedTreatments, t => t._id, t => t.name);
+    resolveToId('treatment', treatmentsForView, t => t._id, t => t.name);
 
     // doctor
     resolveToId('doctor', allExtendedDoctors, d => d.baseId, d => d.doctorName);
@@ -601,7 +623,7 @@ export const useHospitalsData = () => {
         updateSubFilter('department', 'query', '');
       }
     }
-  }, [loading, visibleHospitals, filters, updateSubFilter, allExtendedTreatments, allExtendedDoctors])
+  }, [loading, visibleHospitals, filters, updateSubFilter, treatmentsForView, allExtendedDoctors])
 
   return {
     loading,

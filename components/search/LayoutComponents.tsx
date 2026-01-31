@@ -3,9 +3,7 @@
 import React, { useState, useRef, useEffect } from "react"
 import Link from "next/link"
 import { Filter, Loader2, Search, Home, ChevronDownIcon } from "lucide-react"
-import type { FilterState, FilterKey, OptionType } from '@/types/search'
-import FilterDropdown from './FilterDropdown'
-import ViewToggle from './ViewToggle'
+import type { FilterState } from '@/types/search'
 import HospitalCard from './HospitalCard'
 import DoctorCard from './DoctorCard'
 import TreatmentCard from './TreatmentCard'
@@ -45,16 +43,12 @@ export const Sorting = ({ sortBy, setSortBy }: SortingProps) => (
 )
 
 type ResultsHeaderProps = {
-  view: FilterState['view']
-  currentCount: number
   clearFilters: () => void
   sortBy: FilterState['sortBy']
   setSortBy: (sortBy: FilterState['sortBy']) => void
 }
 
 export const ResultsHeader = ({
-  view,
-  currentCount,
   clearFilters,
   sortBy,
   setSortBy

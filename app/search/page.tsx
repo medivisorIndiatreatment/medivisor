@@ -111,8 +111,6 @@ function HospitalsPageContent() {
                 />
               </div>
               <ResultsHeader
-                view={filters.view}
-                currentCount={currentCount}
                 clearFilters={clearFilters}
                 sortBy={filters.sortBy}
                 setSortBy={setSortBy}
