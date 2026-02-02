@@ -7,58 +7,62 @@ export default function Home() {
     return (
         <main className="min-h-screen bg-gray-50">
             {/* Header */}
-            <section className="relative w-full h-[88vh] overflow-hidden text-white">
-                {/* Background image */}
-                <img
-                    src="/PNG-Web-Banner.png"
-                    alt="Medivisor Community Health Partners"
-                    className="absolute inset-0 w-full h-full object-contain"
-                />
+         <section className="relative w-full h-[88vh] overflow-hidden text-white">
+    {/* Background image with better implementation */}
+    <div className="absolute inset-0 w-full h-full">
+        <img
+            src="/PNG-Web-Banner.png"
+            alt="Medivisor Community Health Partners"
+            className="w-full h-full object-cover object-center"
+            // For optimal display across devices
+            style={{
+                minWidth: '100%',
+                minHeight: '100%',
+                width: 'auto',
+                height: 'auto',
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)'
+            }}
+        />
+        {/* Optional overlay for better text readability */}
+        <div className="absolute inset-0 bg-gradient-to-r from-black/30 via-transparent to-black/20"></div>
+    </div>
 
-                {/* Logo */}
-                <div className="absolute top-0 left-6 md:left-20 z-40">
-                    <img src="/icon/Whale-logo.png" className="w-14 md:w-28" />
-                </div>
+    {/* Logo */}
+    <div className="absolute top-0 left-6 md:left-20 z-40">
+        <img 
+            src="/icon/Whale-logo.png" 
+            alt="Medivisor Logo"
+            className="w-14 md:w-28"
+        />
+    </div>
 
-                {/* RIGHT side text */}
-                <div className="relative z-30 flex h-full items-start mt-12 justify-end">
-                    <div className="w-[45%] px-6 md:pl- text-left">
+    {/* RIGHT side text */}
+    <div className="relative z-30 flex h-full items-center md:items-start md:mt-12 justify-end">
+        <div className="w-full md:w-[45%] px-6 md:px-12 text-left md:text-left">
+            <h1 className="text-3xl md:text-[60px] font-semibold leading-tight drop-shadow-lg">
+                Medivisor Expanded Patient Support Network (PNG)
+            </h1>
 
-
-                        <h1 className="text-3xl text-left md:text-[60px] font-semibold leading-tight">
-                            Medivisor Expanded Patient Support Network (PNG)
-                        </h1>
-
-                        <div className="flex justify-start mt-4">
-                           <a href="/epsp-form">
-                            <button className="hover:bg-[#E22026] text-lg cursor-pointer md:block hidden bg-[#74BF44] text-white font-medium px-12 py-2 rounded-md shadow-md transition-all">
-
-                                {/* Helping Patients. Guiding Families. Saving Lives. */}
-                                Join Us
-
-                            </button>
-                            </a>
-                        </div>
-
-                    </div>
-                </div>
-
-                {/* 🔻 Bottom-right INDIA white box */}
-                {/* <div className="absolute bottom-6 right-6 z-40">
-                    <div className="flex items-center gap-3 bg-white text-black px-2 py-2 rounded-sm shadow-xs">
-                        <img src="/icon/flag/png.png" className="w-14 h-10 object-cover" />
-                        <img src="/icon/flag/airplane.png" className="w-10 h-10 object-contain" />
-                        <img src="/icon/flag/india.png" className="w-14 h-10 object-cover" />
-                    </div>
-                </div> */}
-            </section>
+            <div className="flex justify-start mt-4 md:mt-6">
+                <a href="#join-us-form">
+                    <button className="bg-[#74BF44] hover:bg-[#E22026] text-lg cursor-pointer text-white font-medium px-8 md:px-12 py-3 md:py-2 rounded-md shadow-md transition-all duration-300 transform hover:scale-105">
+                        Join Us
+                    </button>
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
 
 
 
 
 
             {/* Main Content */}
-            <div className="mx-auto container ">
+            <div className="mx-auto container " id="join-us-form">
                 <div className="grid gap-6 py-12 lg:grid-cols-4">
                     {/* Left Column - Content Sections */}
                     <div className="lg:col-span-3 space-y-6">
