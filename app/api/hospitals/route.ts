@@ -10,7 +10,7 @@ import type { ApiParams, FilterIds, ApiResponse } from './types'
 // Cache for branches to avoid multiple expensive fetches
 let branchesCache: any[] | null = null
 let branchesCacheTime: number = 0
-const CACHE_DURATION = 5 * 60 * 1000 // 5 minutes
+const CACHE_DURATION = 10 * 60 * 1000 // 10 minutes
 
 async function getCachedBranches(): Promise<any[]> {
   const now = Date.now()
@@ -143,8 +143,8 @@ export async function GET(req: Request) {
       // Dynamic caching based on request type
       const hasFilters = Object.keys(filterIds).some(key => filterIds[key as keyof FilterIds].length > 0) || params.q || params.slug;
       const cacheControl = hasFilters
-        ? 'public, s-maxage=300, stale-while-revalidate=600'  // Shorter cache for filtered results
-        : 'public, s-maxage=600, stale-while-revalidate=1200'; // Longer cache for unfiltered results
+        ? 'public, s-maxage=600, stale-while-revalidate=1200'  // 10 min cache, 20 min stale
+        : 'public, s-maxage=600, stale-while-revalidate=1200'; // 10 min cache, 20 min stale
 
       return NextResponse.json(response, {
         headers: {

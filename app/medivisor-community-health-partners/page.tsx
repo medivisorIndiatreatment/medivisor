@@ -12,7 +12,7 @@ export default function Home() {
                 <img
                     src="/PNG-Web-Banner.png"
                     alt="Medivisor Community Health Partners"
-                    className="absolute inset-0 w-full h-full object-cover"
+                    className="absolute inset-0 w-full h-full object-contain"
                 />
 
                 {/* Logo */}
@@ -21,31 +21,34 @@ export default function Home() {
                 </div>
 
                 {/* RIGHT side text */}
-                <div className="relative z-30 flex h-full items-start mt-20 justify-end">
-                    <div className="w-[44%] px-6 md:pl-28 text-left">
-                      
+                <div className="relative z-30 flex h-full items-start mt-12 justify-end">
+                    <div className="w-[45%] px-6 md:pl- text-left">
 
-                        <h1 className="text-3xl md:text-[55px] font-medium leading-tight">
-                            Medivisor Expanded Patient Support Programme (PNG)
+
+                        <h1 className="text-3xl text-left md:text-[60px] font-semibold leading-tight">
+                            Medivisor Expanded Patient Support Network (PNG)
                         </h1>
 
-                        <p className="mt-3 text-sm md:text-base text-gray-200">
-                          
-Helping Patients. Guiding Families. Saving Lives.
+                        <div className="flex justify-start mt-4">
+                            <button className="hover:bg-[#E22026] cursor-pointer md:block hidden bg-[#74BF44] text-white font-medium px-5 py-2 rounded-md shadow-md transition-all">
 
-                        </p>
-                        
+                                {/* Helping Patients. Guiding Families. Saving Lives. */}
+                                Join Us
+
+                            </button>
+                        </div>
+
                     </div>
                 </div>
 
                 {/* 🔻 Bottom-right INDIA white box */}
-                <div className="absolute bottom-6 right-6 z-40">
+                {/* <div className="absolute bottom-6 right-6 z-40">
                     <div className="flex items-center gap-3 bg-white text-black px-2 py-2 rounded-sm shadow-xs">
                         <img src="/icon/flag/png.png" className="w-14 h-10 object-cover" />
                         <img src="/icon/flag/airplane.png" className="w-10 h-10 object-contain" />
                         <img src="/icon/flag/india.png" className="w-14 h-10 object-cover" />
                     </div>
-                </div>
+                </div> */}
             </section>
 
 

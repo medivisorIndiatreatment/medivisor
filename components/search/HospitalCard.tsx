@@ -172,7 +172,7 @@ const HospitalCard = ({ branch }: HospitalCardProps) => {
           </header>
 
 
-          <footer className="border-t border-gray-100 pt-2 mt-auto">
+          {/* <footer className="border-t border-gray-100 pt-2 mt-auto">
             <div className="grid grid-cols-3 gap-3">
               <div className="text-center rounded-xs bg-gray-50 p-2 border border-gray-50 space-y-0">
                 <p className=" text-lg md:text-sm font-medium text-gray-700">{branch.yearEstablished ?? '?'}</p>
@@ -189,7 +189,7 @@ const HospitalCard = ({ branch }: HospitalCardProps) => {
 
 
             </div>
-          </footer>
+          </footer> */}
         </div>
       </article>
     </Link>

@@ -10,6 +10,8 @@ interface UniversalOption {
   name: string;
   type: "branch" | "city" | "treatment" | "doctor" | "specialty";
   label: string;
+  hospitalName?: string;
+  city?: string;
 }
 
 interface SpecialistData {
@@ -182,7 +184,11 @@ const SearchDropdown = ({
               {getIcon(option.type)}
               <div className="flex-1">
                 <div className="font-medium text-gray-900">{option.name}</div>
-                <div className="text-xs text-gray-500 mt-1">{option.label}</div>
+                <div className="text-xs text-gray-500 mt-1">
+                  {option.label}
+                  {option.hospitalName && ` • ${option.hospitalName}`}
+                  {option.city && ` • ${option.city}`}
+                </div>
               </div>
             </button>
           ))}
@@ -248,21 +254,28 @@ const BranchFilter = ({ allHospitals, initialSearch = "" }: BranchFilterProps) =
       })
 
       // Add treatments
-      const treatments = new Map<string, string>()
+      const treatments = new Map<string, { name: string; hospitalName: string; city: string }>()
       allHospitals.forEach(hospital => {
+        const hospitalName = hospital.hospitalName || ''
+        
         // Treatments directly under hospital
         hospital.treatments?.forEach((treatment: TreatmentData) => {
           if (treatment.name) {
             const id = treatment._id || generateSlug(treatment.name)
-            treatments.set(id, treatment.name)
+            treatments.set(id, { name: treatment.name, hospitalName, city: '' })
           }
         })
-        // Treatments under hospital.branches (from the original structure)
+        
+        // Treatments under hospital.branches
         hospital.branches?.forEach((branch: BranchData) => {
+          const branchCity = extractProperName(branch.city)
+          
           branch.treatments?.forEach((treatment: any) => {
             const name = extractProperName(treatment)
             const id = treatment?._id || generateSlug(name)
-            if (name !== 'Unknown') treatments.set(id, name)
+            if (name !== 'Unknown') {
+              treatments.set(id, { name, hospitalName, city: branchCity })
+            }
           })
 
           // Treatments nested under hospital.branches.specialists
@@ -270,28 +283,41 @@ const BranchFilter = ({ allHospitals, initialSearch = "" }: BranchFilterProps) =
             specialist.treatments?.forEach((treatment: TreatmentData) => {
               const name = extractProperName(treatment)
               const id = treatment?._id || generateSlug(name)
-              if (name !== 'Unknown') treatments.set(id, name)
+              if (name !== 'Unknown') {
+                treatments.set(id, { name, hospitalName, city: branchCity })
+              }
             })
           })
         })
       })
-      treatments.forEach((name, id) => {
-        options.push({ id, name, type: 'treatment', label: 'Treatment' })
+      treatments.forEach(({ name, hospitalName, city }, id) => {
+        options.push({ 
+          id, 
+          name, 
+          type: 'treatment', 
+          label: 'Treatment',
+          hospitalName,
+          city
+        })
       })
 
       // **City search filter logic remains REMOVED**
 
       // Add branches
       allHospitals.forEach(hospital => {
+        const hospitalName = hospital.hospitalName || ''
         hospital.branches?.forEach((branch: BranchData) => {
           if (branch._id && branch.branchName) {
             const name = extractProperName(branch.branchName)
+            const city = extractProperName(branch.city)
             if (name !== 'Unknown' && !addedIds.has(`branch-${branch._id}`)) {
               options.push({
                 id: branch._id,
                 name: name,
                 type: 'branch',
-                label: 'Branch'
+                label: 'Branch',
+                hospitalName,
+                city
               })
               addedIds.add(`branch-${branch._id}`)
             }

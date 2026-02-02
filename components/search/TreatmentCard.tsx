@@ -162,12 +162,12 @@ const TreatmentCard = ({ treatment }: TreatmentCardProps) => {
             )}
           </header>
 
-          <footer className="border-t border-gray-200 pt-2 flex flex-col gap-2">
+          {/* <footer className="border-t border-gray-200 pt-2 flex flex-col gap-2">
             <p className="text-base md:text-sm text-gray-700 font-normal flex items-center gap-1">
               <DollarSign className="w-4 h-4 flex-shrink-0 text-gray-700" />
               Starting from <span className="font-medium text-gray-900">{primaryLocation.cost || 'Inquire'}</span>
             </p>
-          </footer>
+          </footer> */}
         </div>
       </article>
     </Link>

@@ -11,7 +11,7 @@ import type { ExtendedTreatmentType } from '@/types/search'
 // Cache for all treatments to avoid multiple expensive fetches
 let treatmentsCache: ExtendedTreatmentType[] | null = null
 let treatmentsCacheTime: number = 0
-const CACHE_DURATION = 5 * 60 * 1000 // 5 minutes
+const CACHE_DURATION = 10 * 60 * 1000 // 10 minutes
 
 // GET /api/treatments
 export async function GET(req: Request) {
@@ -237,7 +237,7 @@ export async function GET(req: Request) {
       filteredCount: total,
     }, {
       headers: {
-        'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=600',
+        'Cache-Control': 'public, s-maxage=600, stale-while-revalidate=1200',
       },
     })
   } catch (error: any) {

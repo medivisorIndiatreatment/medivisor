@@ -7,7 +7,7 @@
 export class MemoryCache<T> {
   private cache = new Map<string, { data: T; expiry: number }>();
 
-  set(key: string, data: T, ttlMs: number = 5 * 60 * 1000) {
+  set(key: string, data: T, ttlMs: number = 10 * 60 * 1000) {
     this.cache.set(key, { data, expiry: Date.now() + ttlMs });
   }
 
