@@ -11,6 +11,8 @@ const TreatmentCard = ({ item }: { item: any }) => {
   const treatmentImage = getTreatmentImage(item.treatmentImage || item.image)
   const itemName = item.name || item.title || 'N/A Treatment'
   const itemSlug = generateSlug(itemName)
+  const specialistName = item.specialistName
+  const cost = item.startingCost || item.cost
 
   return (
     <Link
@@ -34,6 +36,20 @@ const TreatmentCard = ({ item }: { item: any }) => {
             </h3>
           </MarqueeHeading>
         </div>
+        
+        {/* Specialist Name */}
+        {specialistName && (
+          <p className="text-sm text-gray-500 mt-1 truncate">
+            {specialistName}
+          </p>
+        )}
+        
+        {/* Cost */}
+        {cost && (
+          <p className="text-sm font-medium text-[#74BF44] mt-1">
+            From {cost}
+          </p>
+        )}
       </div>
     </Link>
   )

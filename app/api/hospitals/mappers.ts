@@ -2,6 +2,7 @@
 // Data mapping functions
 
 import { getValue, extractRichText, extractRichTextHTML } from './shared-utils'
+import { normalizeDelhiNCR } from './utils'
 import type { HospitalData, BranchData, DoctorData, CityData } from './types'
 
 /**
@@ -125,90 +126,130 @@ export const DataMappers = {
   cityWithFullRefs: (item: any, stateMap: Record<string, any>, countryMap: Record<string, any>): CityData => {
     const cityName = getValue(item, "cityName", "city name", "name", "City Name") || "Unknown City"
 
-    let stateRefs = ReferenceMapper.multiReference(
-      item.state || item.State || item.stateRef || item.state_master || item.stateMaster || item.StateMaster || item.StateMaster_state || item.state_master,
-      "state", "State Name", "name", "title", "State", "stateName", "StateName", "state_name", "displayName"
-    )
+    // Extract state reference from multiple possible field names
+    const stateField = item.state || item.State || item.stateRef || item.state_master || item.stateMaster || item.StateMaster || item.StateMaster_state || item.state_master
+    
+    let stateRefs: any[] = []
+    let stateId: string | null = null
+    let stateName = "Unknown State"
+    let countryName = "India"
+    let resolvedCountryId: string | null = null
 
-    if (stateRefs.length === 0) {
-      const directState = getValue(item, "state", "State", "stateName", "State Name")
-      if (directState) {
-        stateRefs = [{ name: directState, _id: `direct-${cityName.toLowerCase()}` }]
+    // Handle different state field formats
+    if (stateField) {
+      if (Array.isArray(stateField) && stateField.length > 0) {
+        // Array of state references
+        stateRefs = stateField.filter(Boolean)
+      } else if (typeof stateField === 'object') {
+        // Single state reference object
+        stateRefs = [stateField]
+      } else if (typeof stateField === 'string' && stateField.trim()) {
+        // Direct state ID or name string
+        stateId = stateField.trim()
       }
     }
 
-    let stateName = "Unknown State"
-    let countryName = "Unknown Country"
-    let stateId: string | null = null
-    let countryId: string | null = null
-
+    // If we have state references, process them
     if (stateRefs.length > 0) {
       const stateRef = stateRefs[0]
-      stateId = stateRef._id && !stateRef._id.startsWith('direct-') ? stateRef._id : null
+      const refId = stateRef._id || stateRef.ID || stateRef.data?._id
+      const refName = getValue(stateRef, "state", "State Name", "name", "title", "State", "stateName", "StateName", "state_name", "displayName")
 
-      if (stateId && stateMap[stateId]) {
-        const fullState = stateMap[stateId]
+      if (refId) {
+        stateId = refId
+      }
+
+      if (refName && refName !== "Unknown" && refName !== "ID Reference") {
+        stateName = refName
+      }
+    }
+
+    // Try to look up state in the map if we have an ID
+    if (stateId && stateMap[stateId]) {
+      const fullState = stateMap[stateId]
+      if (fullState) {
         if (fullState.name && fullState.name !== "Unknown State") {
           stateName = fullState.name
-
-          if (fullState.country && fullState.country.length > 0) {
-            const countryRef = fullState.country[0]
-            countryId = countryRef._id
-            const mappedCountry = countryId ? countryMap[countryId] : null
-            countryName = mappedCountry?.name || countryRef.name || "India"
-          } else {
-            countryName = "India"
-          }
         }
-      } else {
-        if (stateRef.name && stateRef.name !== "ID Reference" && stateRef.name !== "Unknown") {
-          stateName = stateRef.name
-          countryName = "India"
+        // Get country from state
+        if (fullState.country && Array.isArray(fullState.country) && fullState.country.length > 0) {
+          const countryRef = fullState.country[0]
+          resolvedCountryId = countryRef._id
+          const mappedCountry = resolvedCountryId ? countryMap[resolvedCountryId] : null
+          countryName = mappedCountry?.name || countryRef?.name || "India"
         }
       }
-    }
-
-    if (stateName === "Unknown State" && item.state && typeof item.state === 'object') {
-      const embeddedState = Array.isArray(item.state) ? item.state[0] : item.state
-      if (embeddedState) {
-        const embeddedName = getValue(embeddedState, "state", "State Name", "name", "title", "State", "stateName")
+    } else if (stateId && stateRefs.length > 0 && !stateRefs[0]?.name) {
+      // State ID not found in map, try to get name from the state field itself
+      if (typeof stateField === 'object' && stateField) {
+        const embeddedName = getValue(stateField, "state", "State Name", "name", "title", "State", "stateName")
         if (embeddedName && embeddedName !== "Unknown State") {
           stateName = embeddedName
-          countryName = "India"
         }
+      } else if (typeof stateField === 'string' && stateField.trim()) {
+        // It's a direct state name string
+        stateName = stateField.trim()
       }
     }
 
+    // Fallback: infer state from city name if still unknown
     const lowerCityName = cityName.toLowerCase()
-    if (stateName === "Unknown State") {
-      if (lowerCityName.includes("mumbai") || lowerCityName.includes("pune") || lowerCityName.includes("nashik") ||
-          lowerCityName.includes("nagpur") || lowerCityName.includes("aurangabad")) {
-        stateName = "Maharashtra"
-        countryName = "India"
-      } else if (lowerCityName.includes("chennai") || lowerCityName.includes("coimbatore") ||
-                 lowerCityName.includes("madurai")) {
-        stateName = "Tamil Nadu"
-        countryName = "India"
-      } else if (lowerCityName.includes("bangalore") || lowerCityName.includes("bengaluru") ||
-                 lowerCityName.includes("mysore")) {
-        stateName = "Karnataka"
-        countryName = "India"
-      } else if (lowerCityName.includes("hyderabad") || lowerCityName.includes("vizag") ||
-                 lowerCityName.includes("vijayawada")) {
-        stateName = "Telangana/Andhra Pradesh"
-        countryName = "India"
-      } else if (lowerCityName.includes("kolkata") || lowerCityName.includes("howrah") ||
-                 lowerCityName.includes("asansol")) {
-        stateName = "West Bengal"
-        countryName = "India"
-      } else if (lowerCityName.includes("ahmedabad") || lowerCityName.includes("surat") ||
-                 lowerCityName.includes("vadodara") || lowerCityName.includes("navsari") || lowerCityName.includes("rajkot") || lowerCityName.includes("jamnagar") || lowerCityName.includes("bharuch") || lowerCityName.includes("gandhinagar")) {
-        stateName = "Gujarat"
-        countryName = "India"
-      } else if (lowerCityName.includes("jaipur") || lowerCityName.includes("jodhpur") ||
-                 lowerCityName.includes("udaipur")) {
-        stateName = "Rajasthan"
-        countryName = "India"
+    if (stateName === "Unknown State" || !stateName) {
+      const cityStateMapping: Record<string, string> = {
+        // Maharashtra
+        'mumbai': 'Maharashtra', 'pune': 'Maharashtra', 'nashik': 'Maharashtra',
+        'nagpur': 'Maharashtra', 'aurangabad': 'Maharashtra', 'kolhapur': 'Maharashtra',
+        'navi mumbai': 'Maharashtra', 'thane': 'Maharashtra', 'solapur': 'Maharashtra',
+        // Tamil Nadu
+        'chennai': 'Tamil Nadu', 'coimbatore': 'Tamil Nadu', 'madurai': 'Tamil Nadu',
+        'trichy': 'Tamil Nadu', 'tiruchirappalli': 'Tamil Nadu', 'salem': 'Tamil Nadu',
+        'vellore': 'Tamil Nadu',
+        // Karnataka
+        'bangalore': 'Karnataka', 'bengaluru': 'Karnataka', 'mysore': 'Karnataka',
+        'mangalore': 'Karnataka', 'hubli': 'Karnataka', 'belgaum': 'Karnataka',
+        // Telangana/Andhra Pradesh
+        'hyderabad': 'Telangana/Andhra Pradesh', 'vizag': 'Telangana/Andhra Pradesh',
+        'vijayawada': 'Telangana/Andhra Pradesh', 'visakhapatnam': 'Telangana/Andhra Pradesh',
+        'secunderabad': 'Telangana/Andhra Pradesh', 'warangal': 'Telangana/Andhra Pradesh',
+        // West Bengal
+        'kolkata': 'West Bengal', 'howrah': 'West Bengal', 'asansol': 'West Bengal',
+        'durgapur': 'West Bengal', 'siliguri': 'West Bengal',
+        // Gujarat
+        'ahmedabad': 'Gujarat', 'surat': 'Gujarat', 'vadodara': 'Gujarat',
+        'navsari': 'Gujarat', 'rajkot': 'Gujarat', 'jamnagar': 'Gujarat',
+        'bharuch': 'Gujarat', 'gandhinagar': 'Gujarat', 'bhavnagar': 'Gujarat',
+        // Rajasthan
+        'jaipur': 'Rajasthan', 'jodhpur': 'Rajasthan', 'udaipur': 'Rajasthan',
+        'kota': 'Rajasthan', 'bikaner': 'Rajasthan', 'ajmer': 'Rajasthan',
+        // Delhi NCR
+        'delhi': 'Delhi NCR', 'new delhi': 'Delhi NCR', 'gurugram': 'Delhi NCR',
+        'gurgaon': 'Delhi NCR', 'noida': 'Delhi NCR', 'faridabad': 'Delhi NCR',
+        'ghaziabad': 'Delhi NCR', 'greater noida': 'Delhi NCR',
+        // Other major cities
+        'kochi': 'Kerala', 'thiruvananthapuram': 'Kerala', 'kozhikode': 'Kerala',
+        'lucknow': 'Uttar Pradesh', 'kanpur': 'Uttar Pradesh', 'varanasi': 'Uttar Pradesh',
+        'prayagraj': 'Uttar Pradesh', 'agra': 'Uttar Pradesh',
+        'chandigarh': 'Chandigarh', 'panchkula': 'Chandigarh',
+        'bhubaneswar': 'Odisha', 'cuttack': 'Odisha',
+        'indore': 'Madhya Pradesh', 'bhopal': 'Madhya Pradesh', 'gwalior': 'Madhya Pradesh',
+        'patna': 'Bihar', 'muzaffarpur': 'Bihar', 'gaya': 'Bihar',
+        'dehradun': 'Uttarakhand', 'haridwar': 'Uttarakhand', 'roorkee': 'Uttarakhand',
+        'shimla': 'Himachal Pradesh', 'manali': 'Himachal Pradesh',
+        'srinagar': 'Jammu and Kashmir', 'jammu': 'Jammu and Kashmir',
+        'guwahati': 'Assam', 'shillong': 'Meghalaya', 'dimapur': 'Nagaland',
+        'imphal': 'Manipur', 'aizawl': 'Mizoram', 'agartala': 'Tripura',
+        'panaji': 'Goa', 'margao': 'Goa', 'vasco da gama': 'Goa',
+        'amritsar': 'Punjab', 'ludhiana': 'Punjab', 'jalandhar': 'Punjab',
+        'ranchi': 'Jharkhand', 'jamshedpur': 'Jharkhand', 'dhanbad': 'Jharkhand',
+        'akola': 'Maharashtra', 'amaravati': 'Maharashtra',
+      }
+      
+      // Check for partial matches
+      for (const [city, state] of Object.entries(cityStateMapping)) {
+        if (lowerCityName.includes(city) || lowerCityName === city) {
+          stateName = state
+          break
+        }
       }
     }
 
@@ -217,11 +258,12 @@ export const DataMappers = {
       cityName: cityName,
       stateId: stateId || undefined,
       state: stateName,
-      countryId: countryId || undefined,
+      countryId: resolvedCountryId || undefined,
       country: countryName,
     }
 
-    return cityData // Note: normalizeDelhiNCR removed for now, can be added back if needed
+    // Apply Delhi NCR normalization
+    return normalizeDelhiNCR(cityData)
   },
 
   accreditation: (item: any) => ({

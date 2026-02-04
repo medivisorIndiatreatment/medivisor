@@ -71,15 +71,33 @@ const SimilarHospitalsSection = ({ currentHospitalId, currentBranchId, currentCi
         .filter((b: any) => b?.branchName)
         .sort((a: any, b: any) => (a.branchName || '').localeCompare(b.branchName || ''))
 
-      // Filter similar branches (same city, different hospital)
+      // Filter similar branches (same city or state, different hospital)
       const similarBranches = allHospitalBranches
         .filter((b: any) => {
-          const isInSameCity = b.city?.some((c: any) => 
-            c?.cityName?.toLowerCase().includes(currentCity.toLowerCase()) || 
-            currentCity.toLowerCase().includes(c?.cityName?.toLowerCase())
-          )
+          // Collect cities and states for this branch
+          const branchCities = new Set<string>()
+          const branchStates = new Set<string>()
+          b.city?.forEach((c: any) => {
+            if (c?.cityName) branchCities.add(c.cityName.toLowerCase())
+            if (c?.state) branchStates.add(c.state.toLowerCase())
+          })
+          
+          // Current hospital cities and states
+          const currentCities = new Set<string>()
+          const currentStates = new Set<string>()
+          allHospitalBranches
+            .filter((ab: any) => ab._id === currentBranchId)
+            .forEach((cb: any) => {
+              cb.city?.forEach((c: any) => {
+                if (c?.cityName) currentCities.add(c.cityName.toLowerCase())
+                if (c?.state) currentStates.add(c.state.toLowerCase())
+              })
+            })
+          
+          const isInSameCity = [...currentCities].some((city) => branchCities.has(city))
+          const isInSameState = [...currentStates].some((state) => branchStates.has(state))
           const isDifferentBranch = b._id !== currentBranchId
-          return isInSameCity && isDifferentBranch
+          return (isInSameCity || isInSameState) && isDifferentBranch
         })
         .slice(0, 10)
 

@@ -3,9 +3,9 @@
 
 import { NextResponse } from "next/server"
 import { COLLECTIONS } from './collections'
-import { searchIds, searchBranches, fetchAllBranches, deduplicatedRequest } from './fetchers'
+import { searchIds, fetchAllBranches, deduplicatedRequest } from './fetchers'
 import { getAllHospitals } from './handlers'
-import type { ApiParams, FilterIds, ApiResponse } from './types'
+import type { ApiParams, FilterIds } from './types'
 
 // =============================================================================
 // CONSTANTS & CONFIGURATION
@@ -33,7 +33,6 @@ interface CacheEntry<T> {
 
 // In-memory cache (resets per serverless instance)
 const branchesCache = new Map<string, CacheEntry<unknown>>()
-const hospitalDataCache = new Map<string, CacheEntry<unknown>>()
 
 /**
  * Get cached data with TTL support

@@ -159,3 +159,151 @@ export const isStandaloneBranch = (branch: any): boolean => {
   // then this is a standalone branch that should be treated as individual hospital
   return !hasHospitalGroupRef && !hasDirectHospitalRef;
 };
+
+/**
+ * Infers the Indian state from a city name.
+ * This is used as a fallback when city-state mapping from CMS is missing.
+ * @param cityName - The name of the city
+ * @returns The inferred state name
+ */
+export const inferStateFromCityName = (cityName: string | null | undefined): string => {
+  if (!cityName || typeof cityName !== 'string') return 'Unknown State';
+
+  const city = cityName.toLowerCase().trim();
+
+  // Delhi NCR handling (already normalized by normalizeDelhiNCR, but check anyway)
+  const delhiNCRCities = ['delhi', 'new delhi', 'gurugram', 'gurgaon', 'noida', 'faridabad', 'ghaziabad', 'greater noida'];
+  if (delhiNCRCities.some(c => city.includes(c))) {
+    return 'Delhi NCR';
+  }
+
+  // Maharashtra
+  const maharashtraCities = ['mumbai', 'pune', 'nashik', 'nagpur', 'aurangabad', 'kolhapur', 'navi mumbai', 'thane', 'solapur', 'akola', 'amaravati', 'amravati', 'latur', 'wardha', 'nanded', 'osmanabad', 'parbhani', 'jalna', 'beed', 'hingoli', 'washim', 'buldhana', 'yavatmal', 'satara', 'ratnagiri', 'sindhudurg', 'raigad', 'palghar'];
+  if (maharashtraCities.some(c => city === c || city.includes(c))) {
+    return 'Maharashtra';
+  }
+
+  // Gujarat
+  const gujaratCities = ['ahmedabad', 'surat', 'vadodara', 'rajkot', 'jamnagar', 'bhavnagar', 'junagadh', 'gandhinagar', 'bharuch', 'anand', 'navsari', 'valsad', 'porbandar', 'mehsana', 'palanpur', 'banaskantha', 'sabarkantha', 'aravalli', 'kheda', 'panchmahals', 'dahod', 'mahisagar', 'sabarkantha'];
+  if (gujaratCities.some(c => city === c || city.includes(c))) {
+    return 'Gujarat';
+  }
+
+  // Karnataka
+  const karnatakaCities = ['bangalore', 'bengaluru', 'mysore', 'mangalore', 'hubli', 'belgaum', 'dharwad', 'belagavi', 'bellary', 'tumkur', 'shimoga', 'udupi', 'chitradurga', 'madanapalle', 'kolar', 'raichur', 'bidar', 'gulbarga', 'hassan', 'mandya', 'dakshina kannada', 'uttara kannada'];
+  if (karnatakaCities.some(c => city === c || city.includes(c))) {
+    return 'Karnataka';
+  }
+
+  // Tamil Nadu
+  const tamilNaduCities = ['chennai', 'coimbatore', 'madurai', 'trichy', 'tiruchirappalli', 'salem', 'vellore', 'tirunelveli', 'thoothukudi', 'dindigul', 'thanjavur', 'nagercoil', 'kanchipuram', 'chengalpattu', 'krishnagiri', 'dharmapuri', 'namakkal', 'perambalur', 'ariyalur', 'cuddalore', 'villupuram', ' Kallakurichi'];
+  if (tamilNaduCities.some(c => city === c || city.includes(c))) {
+    return 'Tamil Nadu';
+  }
+
+  // Telangana / Andhra Pradesh
+  const telanganaCities = ['hyderabad', 'secunderabad', 'warangal', 'karimnagar', 'khammam', 'nizamabad', 'ramagundam', 'siddipet', 'jagtial', 'mahbubnagar', 'nalgonda', 'suryapet', 'miryalaguda', 'medak', 'sangareddy', 'yadadri'];
+  const andhraCities = ['vizag', 'visakhapatnam', 'vijayawada', 'guntur', 'nellore', 'kakinada', 'tirupati', 'kurnool', 'rajahmundry', 'kadapa', 'ananthapur', 'ongole', 'eluru', 'machilipatnam'];
+  if (telanganaCities.some(c => city === c || city.includes(c)) || city.includes('hyderabad')) {
+    return 'Telangana';
+  }
+  if (andhraCities.some(c => city === c || city.includes(c))) {
+    return 'Andhra Pradesh';
+  }
+
+  // West Bengal
+  const westBengalCities = ['kolkata', 'howrah', 'asansol', 'durgapur', 'siliguri', 'kharagpur', 'murshidabad', 'bardhaman', 'berhampore', 'malda', 'bishnupur'];
+  if (westBengalCities.some(c => city === c || city.includes(c))) {
+    return 'West Bengal';
+  }
+
+  // Rajasthan
+  const rajasthanCities = ['jaipur', 'jodhpur', 'udaipur', 'kota', 'bikaner', 'ajmer', 'beawar', 'bhilwara', 'alwar', 'sikar', 'Jhansi'];
+  if (rajasthanCities.some(c => city === c || city.includes(c))) {
+    return 'Rajasthan';
+  }
+
+  // Uttar Pradesh
+  const upCities = ['lucknow', 'kanpur', 'varanasi', 'prayagraj', 'agra', ' Meerut', 'aligarh', 'bareilly', 'gorakhpur', 'moradabad', 'saharanpur', 'gorakhpur', 'jhansi', 'lucanow'];
+  if (upCities.some(c => city === c || city.includes(c))) {
+    return 'Uttar Pradesh';
+  }
+
+  // Kerala
+  const keralaCities = ['kochi', 'thiruvananthapuram', 'kozhikode', 'kollam', 'palakkad', 'thrissur', 'kannur', 'alappuzha', 'kottayam', 'mavelikkara'];
+  if (keralaCities.some(c => city === c || city.includes(c))) {
+    return 'Kerala';
+  }
+
+  // Madhya Pradesh
+  const mpCities = ['indore', 'bhopal', 'gwalior', 'jabalpur', 'ujjain', 'dewasa', 'sagar', 'dhar'];
+  if (mpCities.some(c => city === c || city.includes(c))) {
+    return 'Madhya Pradesh';
+  }
+
+  // Punjab
+  const punjabCities = ['amritsar', 'ludhiana', 'jalandhar', 'patiala', 'bathinda', 'hoshiarpur', 'moga', 'firozpur', 'kapurthala'];
+  if (punjabCities.some(c => city === c || city.includes(c))) {
+    return 'Punjab';
+  }
+
+  // Chandigarh
+  if (city.includes('chandigarh')) {
+    return 'Chandigarh';
+  }
+
+  // Odisha
+  const odishaCities = ['bhubaneswar', 'cuttack', 'rourkela', 'berhampur', 'sambalpur', 'puri'];
+  if (odishaCities.some(c => city === c || city.includes(c))) {
+    return 'Odisha';
+  }
+
+  // Bihar
+  const biharCities = ['patna', 'muzaffarpur', 'gaya', 'bhagalpur', 'darbhanga', 'purnea', 'bihar Sharif', 'katihar', 'begusarai'];
+  if (biharCities.some(c => city === c || city.includes(c))) {
+    return 'Bihar';
+  }
+
+  // Jharkhand
+  const jharkhandCities = ['ranchi', 'jamshedpur', 'dhanbad', 'bokaro', 'hazaribagh'];
+  if (jharkhandCities.some(c => city === c || city.includes(c))) {
+    return 'Jharkhand';
+  }
+
+  // Uttarakhand
+  const uttarakhandCities = ['dehradun', 'haridwar', 'roorkee', ' Haldwani', 'rudrapur', 'kashipur'];
+  if (uttarakhandCities.some(c => city === c || city.includes(c))) {
+    return 'Uttarakhand';
+  }
+
+  // Himachal Pradesh
+  const hpCities = ['shimla', 'manali', 'dharamshala', 'kullu', 'mandi', 'solan'];
+  if (hpCities.some(c => city === c || city.includes(c))) {
+    return 'Himachal Pradesh';
+  }
+
+  // Goa
+  const goaCities = ['panaji', 'margao', 'vasco da gama', 'mormugao', 'ponda', 'mapusa'];
+  if (goaCities.some(c => city === c || city.includes(c))) {
+    return 'Goa';
+  }
+
+  // Northeast states
+  const neCities = {
+    'assam': ['guwahati', 'silchar', 'dibrugarh', 'jorhat', 'tezpur'],
+    'manipur': ['imphal'],
+    'meghalaya': ['shillong', 'tura'],
+    'nagaland': ['kohima', 'dimapur'],
+    'tripura': ['agartala'],
+    'mizoram': ['aizawl'],
+    'arunachal pradesh': ['itanagar']
+  };
+
+  for (const [state, citiesList] of Object.entries(neCities)) {
+    if (citiesList.some(c => city === c || city.includes(c))) {
+      return state.charAt(0).toUpperCase() + state.slice(1);
+    }
+  }
+
+  return 'Unknown State';
+};

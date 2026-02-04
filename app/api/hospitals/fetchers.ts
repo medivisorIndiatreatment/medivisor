@@ -291,52 +291,82 @@ export async function fetchCitiesWithStateAndCountry(ids: string[]) {
   if (cached) return cached
 
   try {
-    const allStates = await fetchAllStates()
-
+    // Fetch cities first
     const cityRes = await wixClient.items
       .query(COLLECTIONS.CITIES)
       .hasSome("_id", ids)
-      .include("state", "State", "stateRef", "stateMaster")
+      .include("state", "State", "stateRef", "stateMaster", "StateMaster_state")
       .limit(Math.min(ids.length, 500))
       .find()
 
+    // Collect state IDs from cities
     const stateIds = new Set<string>()
-
     cityRes.items.forEach((city: any) => {
-      const stateField = city.state || city.State || city.stateRef || city.stateMaster
+      const stateField = city.state || city.State || city.stateRef || city.stateMaster || city.StateMaster || city.StateMaster_state
       if (stateField) {
         if (Array.isArray(stateField)) {
           stateField.forEach((s: any) => {
-            const stateId = s?._id || s?.ID
-            if (stateId) stateIds.add(stateId)
+            const stateId = s?._id || s?.ID || (typeof s === 'string' ? s : null)
+            if (stateId) stateIds.add(String(stateId))
           })
         } else if (typeof stateField === 'object') {
           const stateId = stateField._id || stateField.ID
-          if (stateId) stateIds.add(stateId)
-        } else if (typeof stateField === 'string') {
-          stateIds.add(stateField)
+          if (stateId) stateIds.add(String(stateId))
+        } else if (typeof stateField === 'string' && stateField.trim()) {
+          stateIds.add(stateField.trim())
         }
       }
     })
 
-    let cityStateMap = {}
+    // Fetch all states in parallel with cities processing
+    let statesMap: Record<string, any> = {}
     if (stateIds.size > 0) {
-      cityStateMap = await fetchStatesWithCountry(Array.from(stateIds))
+      const statesRes = await wixClient.items
+        .query(COLLECTIONS.STATES)
+        .hasSome("_id", Array.from(stateIds))
+        .include("country", "CountryMaster_state")
+        .limit(Math.min(stateIds.size, 500))
+        .find()
+
+      // Build states map
+      const countryIds = new Set<string>()
+      statesRes.items.forEach((item: any) => {
+        const state = DataMappers.state(item)
+        statesMap[item._id!] = state
+
+        if (state.country && Array.isArray(state.country)) {
+          state.country.forEach((c: any) => {
+            if (c._id) countryIds.add(String(c._id))
+          })
+        }
+      })
+
+      // Fetch countries if needed
+      let countriesMap: Record<string, any> = {}
+      if (countryIds.size > 0) {
+        const countriesRes = await wixClient.items
+          .query(COLLECTIONS.COUNTRIES)
+          .hasSome("_id", Array.from(countryIds))
+          .limit(Math.min(countryIds.size, 500))
+          .find()
+
+        countriesRes.items.forEach((item: any) => {
+          countriesMap[item._id!] = DataMappers.country(item)
+        })
+      }
+
+      // Attach countries to states
+      Object.keys(statesMap).forEach(stateId => {
+        const state = statesMap[stateId]
+        if (state.country && Array.isArray(state.country)) {
+          state.country = state.country.map((c: any) => countriesMap[c._id] || c)
+        }
+      })
     }
 
-    const statesMap = { ...allStates, ...cityStateMap }
-
-    const countryIds = new Set<string>()
-    Object.values(statesMap).forEach((state: any) => {
-      if (state.country && Array.isArray(state.country)) {
-        state.country.forEach((c: any) => c._id && countryIds.add(c._id))
-      }
-    })
-
-    const countriesMap = await fetchCountries(Array.from(countryIds))
-
+    // Build final cities map with enriched state/country info
     const cities = cityRes.items.reduce((acc, item) => {
-      acc[item._id!] = DataMappers.cityWithFullRefs(item, statesMap, countriesMap)
+      acc[item._id!] = DataMappers.cityWithFullRefs(item, statesMap, {})
       return acc
     }, {} as Record<string, any>)
 

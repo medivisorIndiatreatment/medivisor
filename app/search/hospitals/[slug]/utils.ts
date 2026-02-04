@@ -272,11 +272,16 @@ export const fetchHospitalBySlug = async (slug: string) => {
       console.log('Fallback API data size:', broadData.hospitals?.length || 0, 'items')
       
       if (broadData.hospitals && broadData.hospitals.length > 0) {
-        // Find hospital by matching slug
+        const normalizedSlug = slug.toLowerCase().trim()
+        
+        // Find hospital by matching slug (case-insensitive)
         const matchingHospital = broadData.hospitals.find((hospital: any) => {
           if (!hospital?.hospitalName) return false
           const hospitalSlug = generateSlug(hospital.hospitalName)
-          return hospitalSlug === slug || slug.startsWith(hospitalSlug + '-')
+          return hospitalSlug === normalizedSlug || 
+                 slug.toLowerCase() === hospitalSlug ||
+                 normalizedSlug.startsWith(hospitalSlug + '-') ||
+                 slug.toLowerCase().startsWith(hospitalSlug + '-')
         })
 
         if (matchingHospital) {
@@ -290,7 +295,12 @@ export const fetchHospitalBySlug = async (slug: string) => {
             const matchingBranch = hospital.branches.find((branch: any) => {
               if (!branch?.branchName) return false
               const branchSlug = generateSlug(branch.branchName)
-              return branchSlug === slug || slug.startsWith(branchSlug + '-')
+              return branchSlug === normalizedSlug ||
+                     slug.toLowerCase() === branchSlug ||
+                     normalizedSlug.startsWith(branchSlug + '-') ||
+                     slug.toLowerCase().startsWith(branchSlug + '-') ||
+                     (hospital.hospitalName && (generateSlug(hospital.hospitalName) + '-' + branchSlug === normalizedSlug)) ||
+                     (hospital.hospitalName && (generateSlug(hospital.hospitalName) + '-' + branchSlug === slug.toLowerCase()))
             })
 
             if (matchingBranch) {

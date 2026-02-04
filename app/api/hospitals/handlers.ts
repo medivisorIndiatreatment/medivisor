@@ -17,7 +17,8 @@ import {
   shouldShowHospital, 
   shouldShowHospitalForHospital, 
   isStandaloneBranch, 
-  accreditationsCache 
+  accreditationsCache,
+  inferStateFromCityName
 } from './utils'
 import { generateSlug } from './shared-utils'
 import type { FilterIds, HospitalData } from './types'
@@ -269,8 +270,23 @@ export async function enrichHospitals(
     })
 
     const enrichedBranches = filteredBranches.map((b) => {
-      let enrichedCities = config.loadCities 
-        ? b.city.map((c: any) => cities[c._id] || c)
+      // Enrich cities with fallback logic to handle missing state/country
+      let enrichedCities = config.loadCities
+        ? b.city.map((c: any) => {
+            const enrichedCity = cities[c._id]
+            if (enrichedCity && enrichedCity.state && enrichedCity.state !== 'Unknown State') {
+              // City was properly enriched with state info
+              return enrichedCity
+            }
+            // Fallback: use city name to infer state, or use available data
+            const inferredState = inferStateFromCityName(c.name || c.cityName)
+            return {
+              _id: c._id,
+              cityName: c.name || c.cityName || 'Unknown City',
+              state: inferredState,
+              country: 'India',
+            }
+          })
         : b.city
 
       if (enrichedCities.length === 0 && config.loadCities) {
@@ -450,7 +466,19 @@ export async function getAllHospitals(
       const enrichedBranch = {
         ...mappedBranch,
         doctors: mappedBranch.doctors.map((d: any) => doctors[d._id] || d),
-        city: mappedBranch.city.map((c: any) => cities[c._id] || c),
+        city: mappedBranch.city.map((c: any) => {
+          const enrichedCity = cities[c._id]
+          if (enrichedCity && enrichedCity.state && enrichedCity.state !== 'Unknown State') {
+            return enrichedCity
+          }
+          const inferredState = inferStateFromCityName(c.name || c.cityName)
+          return {
+            _id: c._id,
+            cityName: c.name || c.cityName || 'Unknown City',
+            state: inferredState,
+            country: 'India',
+          }
+        }),
         accreditation: mappedBranch.accreditation.map((a: any) => accreditations[a._id] || a),
         specialists: mappedBranch.specialists.map((s: any) => enrichedSpecialists[s._id] || s),
         treatments: mappedBranch.treatments.map((t: any) => treatments[t._id] || t),

@@ -19,6 +19,106 @@ import type {
 } from './types'
 
 // =============================================================================
+// STATE INFERENCE HELPER
+// =============================================================================
+
+/**
+ * Infers the Indian state from a city name.
+ * This is used as a fallback when city-state mapping from CMS is missing.
+ */
+function inferStateFromCityName(cityName: string | null | undefined): string {
+  if (!cityName || typeof cityName !== 'string') return 'Unknown State';
+
+  const city = cityName.toLowerCase().trim();
+
+  // Delhi NCR handling
+  const delhiNCRCities = ['delhi', 'new delhi', 'gurugram', 'gurgaon', 'noida', 'faridabad', 'ghaziabad', 'greater noida'];
+  if (delhiNCRCities.some(c => city.includes(c))) return 'Delhi NCR';
+
+  // Maharashtra
+  const maharashtraCities = ['mumbai', 'pune', 'nashik', 'nagpur', 'aurangabad', 'kolhapur', 'navi mumbai', 'thane', 'solapur', 'akola', 'amaravati'];
+  if (maharashtraCities.some(c => city === c || city.includes(c))) return 'Maharashtra';
+
+  // Gujarat
+  const gujaratCities = ['ahmedabad', 'surat', 'vadodara', 'rajkot', 'jamnagar', 'bhavnagar', 'junagadh', 'gandhinagar', 'bharuch', 'anand', 'navsari', 'valsad'];
+  if (gujaratCities.some(c => city === c || city.includes(c))) return 'Gujarat';
+
+  // Karnataka
+  const karnatakaCities = ['bangalore', 'bengaluru', 'mysore', 'mangalore', 'hubli', 'belgaum', 'belagavi', 'dharwad'];
+  if (karnatakaCities.some(c => city === c || city.includes(c))) return 'Karnataka';
+
+  // Tamil Nadu
+  const tamilNaduCities = ['chennai', 'coimbatore', 'madurai', 'trichy', 'tiruchirappalli', 'salem', 'vellore', 'tirunelveli'];
+  if (tamilNaduCities.some(c => city === c || city.includes(c))) return 'Tamil Nadu';
+
+  // Telangana / Andhra Pradesh
+  const telanganaCities = ['hyderabad', 'secunderabad', 'warangal', 'karimnagar', 'khammam', 'nizamabad'];
+  const andhraCities = ['vizag', 'visakhapatnam', 'vijayawada', 'guntur', 'nellore', 'tirupati', 'kurnool'];
+  if (telanganaCities.some(c => city === c || city.includes(c))) return 'Telangana';
+  if (andhraCities.some(c => city === c || city.includes(c))) return 'Andhra Pradesh';
+
+  // West Bengal
+  const westBengalCities = ['kolkata', 'howrah', 'asansol', 'durgapur', 'siliguri'];
+  if (westBengalCities.some(c => city === c || city.includes(c))) return 'West Bengal';
+
+  // Rajasthan
+  const rajasthanCities = ['jaipur', 'jodhpur', 'udaipur', 'kota', 'bikaner', 'ajmer'];
+  if (rajasthanCities.some(c => city === c || city.includes(c))) return 'Rajasthan';
+
+  // Uttar Pradesh
+  const upCities = ['lucknow', 'kanpur', 'varanasi', 'prayagraj', 'agra', 'meerut', 'aligarh', 'bareilly'];
+  if (upCities.some(c => city === c || city.includes(c))) return 'Uttar Pradesh';
+
+  // Kerala
+  const keralaCities = ['kochi', 'thiruvananthapuram', 'kozhikode', 'kollam', 'palakkad', 'thrissur', 'kannur'];
+  if (keralaCities.some(c => city === c || city.includes(c))) return 'Kerala';
+
+  // Madhya Pradesh
+  const mpCities = ['indore', 'bhopal', 'gwalior', 'jabalpur', 'ujjain'];
+  if (mpCities.some(c => city === c || city.includes(c))) return 'Madhya Pradesh';
+
+  // Punjab
+  const punjabCities = ['amritsar', 'ludhiana', 'jalandhar', 'patiala', 'bathinda'];
+  if (punjabCities.some(c => city === c || city.includes(c))) return 'Punjab';
+
+  // Chandigarh
+  if (city.includes('chandigarh')) return 'Chandigarh';
+
+  // Odisha
+  const odishaCities = ['bhubaneswar', 'cuttack', 'rourkela', 'sambalpur'];
+  if (odishaCities.some(c => city === c || city.includes(c))) return 'Odisha';
+
+  // Bihar
+  const biharCities = ['patna', 'muzaffarpur', 'gaya', 'bhagalpur', 'darbhanga'];
+  if (biharCities.some(c => city === c || city.includes(c))) return 'Bihar';
+
+  // Jharkhand
+  const jharkhandCities = ['ranchi', 'jamshedpur', 'dhanbad', 'bokaro'];
+  if (jharkhandCities.some(c => city === c || city.includes(c))) return 'Jharkhand';
+
+  // Uttarakhand
+  const uttarakhandCities = ['dehradun', 'haridwar', 'roorkee', 'haldwani'];
+  if (uttarakhandCities.some(c => city === c || city.includes(c))) return 'Uttarakhand';
+
+  // Northeast states
+  const neCities: Record<string, string[]> = {
+    'Assam': ['guwahati', 'silchar', 'dibrugarh'],
+    'Manipur': ['imphal'],
+    'Meghalaya': ['shillong', 'tura'],
+    'Nagaland': ['kohima', 'dimapur'],
+    'Tripura': ['agartala'],
+    'Mizoram': ['aizawl'],
+    'Arunachal Pradesh': ['itanagar']
+  };
+
+  for (const [state, citiesList] of Object.entries(neCities)) {
+    if (citiesList.some(c => city === c || city.includes(c))) return state;
+  }
+
+  return 'Unknown State';
+}
+
+// =============================================================================
 // COLLECTION NAMES
 // =============================================================================
 
@@ -248,6 +348,23 @@ function mapDepartment(item: any): DepartmentData {
   return {
     _id: item._id || item.ID,
     name: getValue(item, 'department', 'Name', 'name') || 'Unknown Department',
+  }
+}
+
+function mapSpecialistWithTreatments(item: any): any {
+  const treatments = item.treatment || item.data?.treatment || []
+  const treatmentArray = Array.isArray(treatments) ? treatments : [treatments].filter(Boolean)
+  
+  return {
+    _id: item._id || item.ID,
+    name: getValue(item, 'specialty', 'Specialty Name', 'title', 'name') || 'Unknown Specialist',
+    treatments: treatmentArray.map((t: any) => ({
+      _id: t._id || t.ID || t,
+      name: getValue(t, 'treatmentName', 'Treatment Name', 'title', 'name') || 'Unknown Treatment',
+      description: extractRichText(t.Description || t.description),
+      cost: getValue(t, 'cost', 'Cost', 'averageCost'),
+      treatmentImage: t.treatmentImage || t['treatment image'] || null,
+    })),
   }
 }
 
@@ -536,7 +653,19 @@ async function enrichBranchesWithRelatedData(
   return mappedBranches.map((branch) => ({
     ...branch,
     doctors: branch.doctors.map((d: any) => (doctors as Record<string, DoctorData>)[d._id] || d),
-    city: branch.city.map((c: any) => (cities as Record<string, CityData>)[c._id] || c),
+    city: branch.city.map((c: any) => {
+      const enrichedCity = (cities as Record<string, CityData>)[c._id]
+      if (enrichedCity && enrichedCity.state && enrichedCity.state !== 'Unknown State') {
+        return enrichedCity
+      }
+      const inferredState = inferStateFromCityName(c.name || c.cityName)
+      return {
+        _id: c._id,
+        cityName: c.name || c.cityName || 'Unknown City',
+        state: inferredState,
+        country: 'India',
+      }
+    }),
     accreditation: branch.accreditation.map((a: any) => (accreditations as Record<string, AccreditationData>)[a._id] || a),
   }))
 }
@@ -646,19 +775,22 @@ export async function getAllCMSData(): Promise<CMSDataResponse> {
     const allDoctorIds = new Set<string>()
     const allAccreditationIds = new Set<string>()
     const allTreatmentIds = new Set<string>()
+    const allSpecialistIds = new Set<string>()
 
     rawBranches.forEach((branch: any) => {
       const mapped = mapBranch(branch)
       extractIds(mapped.doctors).forEach((id) => allDoctorIds.add(id))
       extractIds(mapped.accreditation).forEach((id) => allAccreditationIds.add(id))
       extractIds(mapped.treatments).forEach((id) => allTreatmentIds.add(id))
+      extractIds(mapped.specialists).forEach((id) => allSpecialistIds.add(id))
     })
 
     // Batch fetch related data
-    const [doctorsMap, accreditationsMap, treatmentsMap] = await Promise.all([
+    const [doctorsMap, accreditationsMap, treatmentsMap, specialistsMap] = await Promise.all([
       fetchByIds(COLLECTIONS.DOCTORS, Array.from(allDoctorIds), mapDoctor),
       fetchByIds(COLLECTIONS.ACCREDITATIONS, Array.from(allAccreditationIds), mapAccreditation),
       fetchByIds(COLLECTIONS.TREATMENTS, Array.from(allTreatmentIds), mapTreatment),
+      fetchByIds(COLLECTIONS.SPECIALTIES, Array.from(allSpecialistIds), mapSpecialistWithTreatments),
     ])
 
     // Build hospitals with enriched branches
@@ -674,7 +806,20 @@ export async function getAllCMSData(): Promise<CMSDataResponse> {
         return {
           ...mapped,
           doctors: mapped.doctors.map((d: any) => doctorsMap[d._id] || d),
-          city: mapped.city.map((c: any) => citiesMap.get(c._id) || c),
+          specialists: mapped.specialists.map((s: any) => specialistsMap[s._id] || s),
+          city: mapped.city.map((c: any) => {
+            const enrichedCity = citiesMap.get(c._id)
+            if (enrichedCity && enrichedCity.state && enrichedCity.state !== 'Unknown State') {
+              return enrichedCity
+            }
+            const inferredState = inferStateFromCityName(c.name || c.cityName)
+            return {
+              _id: c._id,
+              cityName: c.name || c.cityName || 'Unknown City',
+              state: inferredState,
+              country: 'India',
+            }
+          }),
           accreditation: mapped.accreditation.map((a: any) => accreditationsMap[a._id] || a),
           treatments: mapped.treatments.map((t: any) => treatmentsMap[t._id] || t),
         }
@@ -706,7 +851,20 @@ export async function getAllCMSData(): Promise<CMSDataResponse> {
       const enrichedBranch = {
         ...mapped,
         doctors: mapped.doctors.map((d: any) => doctorsMap[d._id] || d),
-        city: mapped.city.map((c: any) => citiesMap.get(c._id) || c),
+        specialists: mapped.specialists.map((s: any) => specialistsMap[s._id] || s),
+        city: mapped.city.map((c: any) => {
+          const enrichedCity = citiesMap.get(c._id)
+          if (enrichedCity && enrichedCity.state && enrichedCity.state !== 'Unknown State') {
+            return enrichedCity
+          }
+          const inferredState = inferStateFromCityName(c.name || c.cityName)
+          return {
+            _id: c._id,
+            cityName: c.name || c.cityName || 'Unknown City',
+            state: inferredState,
+            country: 'India',
+          }
+        }),
         accreditation: mapped.accreditation.map((a: any) => accreditationsMap[a._id] || a),
         treatments: mapped.treatments.map((t: any) => treatmentsMap[t._id] || t),
       }
@@ -797,6 +955,8 @@ export async function getAllCMSData(): Promise<CMSDataResponse> {
 
     // Also map treatments from specialists at each branch
     // This handles the chain: Branch → Specialist → Treatment
+    const allSpecialistTreatments = new Map<string, { treatment: any; branches: Map<string, any> }>()
+    
     hospitals.forEach((hospital) => {
       hospital.branches.forEach((branch) => {
         // Get specialist IDs from branch
@@ -807,12 +967,12 @@ export async function getAllCMSData(): Promise<CMSDataResponse> {
           const specTreatmentIds = specialistTreatmentMap.get(specId)
           if (specTreatmentIds) {
             specTreatmentIds.forEach((treatmentId) => {
-              if (!treatmentBranchMap.has(treatmentId)) {
-                treatmentBranchMap.set(treatmentId, new Map())
+              if (!allSpecialistTreatments.has(treatmentId)) {
+                allSpecialistTreatments.set(treatmentId, { treatment: null, branches: new Map() })
               }
-              const branchMap = treatmentBranchMap.get(treatmentId)!
-              if (!branchMap.has(branch._id)) {
-                branchMap.set(branch._id, {
+              const entry = allSpecialistTreatments.get(treatmentId)!
+              if (!entry.branches.has(branch._id)) {
+                entry.branches.set(branch._id, {
                   branchId: branch._id,
                   branchName: branch.branchName,
                   hospitalName: hospital.hospitalName,
@@ -825,9 +985,40 @@ export async function getAllCMSData(): Promise<CMSDataResponse> {
             })
           }
         })
+        
+        // Also map treatments directly from enriched specialists (with treatments array)
+        branch.specialists?.forEach((specialist: any) => {
+          if (specialist.treatments && Array.isArray(specialist.treatments)) {
+            specialist.treatments.forEach((treatment: any) => {
+              if (!treatment || !(treatment._id || treatment.name)) return
+              
+              const treatmentId = treatment._id || treatment.name
+              if (!allSpecialistTreatments.has(treatmentId)) {
+                allSpecialistTreatments.set(treatmentId, { treatment, branches: new Map() })
+              }
+              const entry = allSpecialistTreatments.get(treatmentId)!
+              // Update treatment data if not already set
+              if (!entry.treatment) {
+                entry.treatment = treatment
+              }
+              if (!entry.branches.has(branch._id)) {
+                entry.branches.set(branch._id, {
+                  branchId: branch._id,
+                  branchName: branch.branchName,
+                  hospitalName: hospital.hospitalName,
+                  hospitalId: hospital._id,
+                  cities: branch.city,
+                  departments: [],
+                  cost: treatment.cost || treatment.averageCost || null,
+                })
+              }
+            })
+          }
+        })
       })
     })
 
+    // Build extended treatments from rawTreatments
     const treatments: ExtendedTreatmentData[] = rawTreatments.map((item: any) => {
       const treatment = mapTreatment(item)
       const branchesMap = treatmentBranchMap.get(treatment._id)
@@ -835,6 +1026,27 @@ export async function getAllCMSData(): Promise<CMSDataResponse> {
         ...treatment,
         branchesAvailableAt: branchesMap ? Array.from(branchesMap.values()) : [],
         departments: [],
+      }
+    })
+
+    // Add treatments from specialists that are not in rawTreatments
+    const existingTreatmentIds = new Set(treatments.map(t => t._id))
+    allSpecialistTreatments.forEach((entry, treatmentId) => {
+      if (!existingTreatmentIds.has(treatmentId) && entry.treatment) {
+        const specTreatment = entry.treatment
+        const extendedTreatment: ExtendedTreatmentData = {
+          _id: specTreatment._id || treatmentId,
+          name: getValue(specTreatment, 'treatmentName', 'Treatment Name', 'title', 'name') || 'Unknown Treatment',
+          description: extractRichText(specTreatment.Description || specTreatment.description),
+          category: getValue(specTreatment, 'category', 'Category'),
+          duration: getValue(specTreatment, 'duration', 'Duration'),
+          cost: getValue(specTreatment, 'cost', 'Cost', 'averageCost'),
+          treatmentImage: specTreatment.treatmentImage || specTreatment.image || null,
+          popular: getValue(specTreatment, 'popular') === 'true',
+          branchesAvailableAt: Array.from(entry.branches.values()),
+          departments: [],
+        }
+        treatments.push(extendedTreatment)
       }
     })
 
@@ -853,31 +1065,81 @@ export async function getAllCMSData(): Promise<CMSDataResponse> {
 
 /**
  * Get hospital by slug with similar hospitals
+ * Supports matching by hospital name slug OR branch name slug
  */
 export async function getHospitalBySlug(slug: string): Promise<HospitalDetailResponse> {
   const { hospitals } = await getAllCMSData()
 
   const normalizedSlug = slug.toLowerCase().trim()
-  const hospital = hospitals.find((h) => {
+  
+  // First try to find by hospital slug
+  let hospital = hospitals.find((h) => {
     const hospitalSlug = generateSlug(h.hospitalName)
-    return hospitalSlug === normalizedSlug || h._id === slug
+    return hospitalSlug === normalizedSlug || 
+           h._id === slug || 
+           hospitalSlug + '-' === normalizedSlug || // Handle trailing dash
+           normalizedSlug.startsWith(hospitalSlug + '-') // Handle hospital-city slug
   })
+
+  // If not found, try to find by branch slug
+  if (!hospital) {
+    for (const h of hospitals) {
+      const matchingBranch = h.branches.find((b) => {
+        const branchSlug = generateSlug(b.branchName)
+        return branchSlug === normalizedSlug ||
+               branchSlug + '-' === normalizedSlug ||
+               normalizedSlug.startsWith(branchSlug + '-') ||
+               (h.hospitalName && (generateSlug(h.hospitalName) + '-' + branchSlug === normalizedSlug))
+      })
+      
+      if (matchingBranch) {
+        // Return the hospital but with only the matching branch
+        hospital = {
+          ...h,
+          branches: [matchingBranch]
+        }
+        break
+      }
+    }
+  }
 
   if (!hospital) {
     return { hospital: null, similarHospitals: [], error: 'Hospital not found' }
   }
 
-  // Find similar hospitals (same city or accreditations)
-  const hospitalCity = hospital.branches[0]?.city[0]?.cityName
-  const hospitalAccreditations = new Set(hospital.accreditations.map((a) => a.title))
+  // Find similar hospitals (same city, same state, or matching accreditations)
+  const hospitalCities = new Set<string>()
+  const hospitalStates = new Set<string>()
+  hospital.branches.forEach((branch) => {
+    branch.city?.forEach((c) => {
+      if (c.cityName) hospitalCities.add(c.cityName.toLowerCase())
+      if (c.state) hospitalStates.add(c.state.toLowerCase())
+    })
+  })
+  const hospitalAccreditations = new Set(hospital.accreditations.map((a) => a.title?.toLowerCase()).filter(Boolean))
 
   const similarHospitals = hospitals
     .filter((h) => {
       if (h._id === hospital._id) return false
-      const hCity = h.branches[0]?.city[0]?.cityName
-      const hasMatchingCity = hCity === hospitalCity
-      const hasMatchingAccreditation = h.accreditations.some((a) => hospitalAccreditations.has(a.title))
-      return hasMatchingCity || hasMatchingAccreditation
+      
+      // Collect cities and states for this hospital
+      const hCities = new Set<string>()
+      const hStates = new Set<string>()
+      h.branches.forEach((branch) => {
+        branch.city?.forEach((c) => {
+          if (c.cityName) hCities.add(c.cityName.toLowerCase())
+          if (c.state) hStates.add(c.state.toLowerCase())
+        })
+      })
+      
+      // Match if: same city OR same state OR matching accreditation
+      const hasMatchingCity = [...hospitalCities].some((city) => hCities.has(city))
+      const hasMatchingState = [...hospitalStates].some((state) => hStates.has(state))
+      const hasMatchingAccreditation = h.accreditations.some((a) => 
+        a.title && hospitalAccreditations.has(a.title.toLowerCase())
+      )
+      
+      return hasMatchingCity || hasMatchingState || hasMatchingAccreditation
     })
     .slice(0, 6)
 

@@ -15,7 +15,7 @@ import ErrorState from "./components/ErrorState"
 function InteractiveCarouselSection({ title, items, type, searchPlaceholder }: {
   title: string;
   items: any[];
-  type: "doctor" | "treatment";
+  type: 'doctor' | 'treatment';
   searchPlaceholder: string;
 }) {
   return (
@@ -231,7 +231,7 @@ export default async function BranchDetail({ params }: { params: Promise<{ slug:
               <OverviewSection branch={branch} firstSpecialityName={firstSpecialityName} />
               {branch.description && <AboutSection description={branch.description} hospitalName={hospital.hospitalName} hospitalSlug={hospitalSlug} />}
               {sortedFacilities.length > 0 && <FacilitiesSection facilities={sortedFacilities} />}
-              {allTreatments.length > 0 && <InteractiveCarouselSection title="Available Treatments" items={allTreatments} type="treatment" searchPlaceholder="Search treatments by name or specialist..." />}
+              {allTreatments.length > 0 && <InteractiveCarouselSection title="Available Treatments" items={allTreatments} type='treatment' searchPlaceholder="Search treatments by name or specialist..." />}
               {(isGroupHospital ? allDoctors.length > 0 : branch.doctors?.length > 0) && (
                 <InteractiveCarouselSection 
                   title="Our Specialist Doctors" 
