@@ -21,7 +21,7 @@ export default function WhyChooseUsSection() {
   const stats = [
     {
       icon: <UserRoundMedical className="text-gray-800 w-10 h-10" />,
-      value: "2,000+",
+      value: "2,500+",
       label: "Patients Cared For",
       description: "Global patient success stories with expert-led care.",
       hoverIcon: <Smile className="text-gray-800 w-10 h-10" />,

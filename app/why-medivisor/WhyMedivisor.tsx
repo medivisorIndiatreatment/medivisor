@@ -99,9 +99,9 @@ const choiceReasons: ChoiceReason[] = [
     id: "9",
     title: "1800+ Testimonials – Real Stories, Real Satisfaction",
     description:
-      "Over 1500 international patients, including 1200 from Pacific Island countries, have chosen Medivisor and shared their positive experiences.",
+      "Over 2500 international patients, including 1200 from Pacific Island countries, have chosen Medivisor and shared their positive experiences.",
     icon: Star,
-    highlights: ["1500+ Patients", "1200 Pacific Islands", "Proven Results"],
+    highlights: ["2500+ Patients", "1200 Pacific Islands", "Proven Results"],
   },
 ];
 

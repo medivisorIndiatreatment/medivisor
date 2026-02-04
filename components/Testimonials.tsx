@@ -121,7 +121,7 @@ export default function Testimonials() {
         <div className="md:text-center text-left mb-3 md:mb-6 mt-8 md:mt-0 max-w-3xl mx-auto">
           <h2 className="heading-base mb-2" itemProp="name">Patient Testimonials</h2>
           <p className="description" itemProp="description">
-            Discover the voices of 2,000+ international patients who found comfort, care, and a hassle-free treatment journey in India — all made possible with Medivisor by their side.
+            Discover the voices of 2,500+ international patients who found comfort, care, and a hassle-free treatment journey in India — all made possible with Medivisor by their side.
           </p>
         </div>
 

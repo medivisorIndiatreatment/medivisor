@@ -29,7 +29,7 @@ export default function About() {
 
           <p className="text-[#241d1f] text-lg leading-relaxed mb-4">
             With over 10 years of experience, we’ve supported more than
-             2,000 overseas patients and maintained an impressive
+             2,500 overseas patients and maintained an impressive
              95%+ success and satisfaction rate.
           </p>
 

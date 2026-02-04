@@ -88,7 +88,7 @@ const HeroSection = () => {
               </ul>
 
               <p className="my-4 text-sm md:text-base leading-relaxed font-medium">
-                <strong>Over 2,000 from Fiji, PNG, and Pacific Island Countries</strong>{" "}
+                <strong>Over 2,500 from Fiji, PNG, and Pacific Island Countries</strong>{" "}
                 have already benefited from our services.{" "}
                 <strong>You could be next.</strong>
               </p>

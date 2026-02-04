@@ -211,18 +211,18 @@ export default function Header() {
   return (
     <>
       <motion.header
-        className={`fixed top-0 left-0 w-full z-50 bg-white transition-all duration-300 ease-in-out ${isScrolled ? 'py-2 shadow-xs' : 'py-3 shadow-xs'
+        className={`fixed top-0 left-0 w-full z-50 bg-white transition-all duration-300 ease-in-out ${isScrolled ? 'py-2 shadow-xs' : 'py-1.5 shadow-xs'
           }`}
       >
         <nav className="flex justify-between container mx-auto items-center px-4 lg:px-0">
           {/* Logo */}
-          <Link href="/" className="flex-shrink-0 w-[200px] ">
+          <Link href="/" className="flex-shrink-0 w-[260px] ">
             <Image
-              src="/Medivisor-logo.svg"
+              src="/logo-10.png"
               alt="Medivisor India Treatment Logo"
-              width={220}
-              height={55}
-              className={`w-full object-contain transition-all duration-300 ${isScrolled ? 'h-14' : 'h-14'
+              width={260}
+              height={85}
+              className={`w-full object-contain transition-all duration-300 ${isScrolled ? 'h-16' : 'h-16'
                 }`}
               priority // Add this line
             />
@@ -251,8 +251,8 @@ export default function Header() {
                   <X size={28} />
                 </button>
               </div>
-
-              <BranchFilter allHospitals={allHospitals} />
+{/* 
+              <BranchFilter allHospitals={allHospitals} /> */}
 
               {/* Navigation Items */}
               <ul className="flex w-full flex-col md:flex-row gap-2 md:gap-8 px-6 md:px-0 pt-6 md:pt-0">

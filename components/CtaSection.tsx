@@ -54,7 +54,7 @@ const ModernHelpSection = () => {
             {/* Trust Indicators */}
             <div className="mt-8 pt-6 border-t border-white/30">
               <p className="text-red-100 text-lg sm:text-base md:text-lg">
-                Trusted by <span className="font-semibold">2,000+</span> patients worldwide 🌍
+                Trusted by <span className="font-semibold">2,500+</span> patients worldwide 🌍
               </p>
             </div>
           </div>

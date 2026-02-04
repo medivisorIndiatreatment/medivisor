@@ -253,7 +253,7 @@ export default function EnhancedTestimonialsPage() {
      <Banner
   topSpanText="Patient Testimonials"
   title="
-2,000+ International Patients Share Their Journey"
+2,500+ International Patients Share Their Journey"
   description="From choosing the right hospital to seamless post-treatment care, our patients’ experiences with Medivisor are filled with trust, comfort, and hope. Watch their stories and see how we make every journey unforgettable."
   buttonText="Read Their Stories"
   buttonLink="/patient-testimonials"

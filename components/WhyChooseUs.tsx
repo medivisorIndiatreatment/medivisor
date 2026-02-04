@@ -10,7 +10,7 @@ export default function WhyChooseUs() {
       color: 'bg-red-50 text-red-600'
     },
     {
-      title: '2,000+ Patients Helped',
+      title: '2,500+ Patients Helped',
       description: 'Trusted by thousands of international patients worldwide.',
       icon: <Users className="w-6 h-6" />,
       color: 'bg-blue-50 text-blue-600'
@@ -94,7 +94,7 @@ export default function WhyChooseUs() {
                   </div>
                   <div>
                     <p className="text-sm font-semibold text-gray-900">
-                      Trusted By 2,000+ Clients
+                      Trusted By 2,500+ Clients
                     </p>
                   </div>
                 </div>

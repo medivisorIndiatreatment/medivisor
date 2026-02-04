@@ -110,7 +110,7 @@ export default function DidYouKnowSection() {
     "The country leads in robotic surgeries, organ transplants, bone marrow transplants, and advanced cancer therapies—all at affordable prices.",
     "With an Indian eVisa available within 24–72 hours, patients can start treatment immediately, with virtually no waiting time.",
     <span>
-      Medivisor has proudly assisted over 2,000 patients from the Pacific
+      Medivisor has proudly assisted over 2,500 patients from the Pacific
       Islands, Africa, CIS countries, and beyond in accessing seamless,
       world-class medical care in India.
     </span>,

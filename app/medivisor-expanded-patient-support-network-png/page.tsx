@@ -1,58 +1,50 @@
 'use client';
 
 import MedivisorForm from "@/components/EspeForm";
-import { MapPin } from "lucide-react";
+import { Link, MapPin } from "lucide-react";
 
 export default function Home() {
     return (
-        <main className="md:min-h-screen bg-gray-50">
+        <main className="md:min-h-screen h-full bg-gray-50">
             {/* Header */}
-            <section className="relative w-full h-[25vh] md:h-[88vh] overflow-hidden text-white">
-                {/* Background image with better implementation */}
+            <section 
+                className="relative w-full h-[20vh] md:h-[88vh] overflow-hidden text-white"
+                onClick={() => document.getElementById('join-us-form')?.scrollIntoView({ behavior: 'smooth' })}
+            >
+                {/* Background image */}
                 <div className="absolute inset-0 w-full h-full">
                     <img
-                        src="/PNG-Web-Banner.png"
+                        src="/png-banner.jpg"
                         alt="Medivisor Community Health Partners"
-                        className="w-full h-full md:h-full object-cover md:object-cover md:object-center"
-                        // For optimal display across devices
-                        style={{
-                            minWidth: '100%',
-                            minHeight: '100%',
-                            width: 'auto',
-                            height: 'auto',
-                            position: 'absolute',
-                            top: '50%',
-                            left: '50%',
-                            transform: 'translate(-50%, -50%)'
-                        }}
+                        className="w-full h-full object-contain md:object-cover"
+                        loading="eager"
                     />
                     {/* Optional overlay for better text readability */}
                     <div className="absolute inset-0 bg-gradient-to-r from-black/30 via-transparent to-black/20"></div>
                 </div>
 
                 {/* Logo */}
+
+
                 <div className="absolute top-0 left-6 md:left-20 z-40">
+
                     <img
                         src="/icon/Whale-logo.png"
                         alt="Medivisor Logo"
-                        className="w-14 md:w-28"
+                        className="w-10 md:w-28"
                     />
+
                 </div>
+
 
                 {/* RIGHT side text */}
                 <div className="relative md:block hidden z-30 flex h-full items-center md:items-start md:mt-12 justify-end">
                     <div className="w-full md:w-[45%] px-6 md:px-12 text-left md:text-left">
-                        <h1 className="text-3xl md:text-[60px] font-semibold leading-tight drop-shadow-lg">
-                            Medivisor Expanded Patient Support Network (PNG)
-                        </h1>
-
-                        <div className="flex justify-start mt-4 md:mt-6">
-                            <a href="#join-us-form">
-                                <button className="bg-[#74BF44] hover:bg-[#E22026] text-lg cursor-pointer text-white font-medium px-8 md:px-12 py-3 md:py-2 rounded-md shadow-md transition-all duration-300 transform hover:scale-105">
-                                    Join Us
-                                </button>
-                            </a>
-                        </div>
+                        <a href="#join-us-form">
+                            <button className="bg-[#74BF44] hover:bg-[#E22026] text-lg cursor-pointer text-white font-medium px-8 md:px-12 py-3 md:py-2 rounded-md shadow-md transition-all duration-300 transform hover:scale-105">
+                                Join Us
+                            </button>
+                        </a>
                     </div>
                 </div>
             </section>
@@ -67,7 +59,7 @@ export default function Home() {
                     {/* Left Column - Content Sections */}
                     <div className="lg:col-span-3 space-y-6">
                         {/* Section 1: An Invitation to Serve */}
-                        <section className="rounded-xl bg-white p-8 shadow-xs border border-gray-100">
+                        <section className="rounded-xl bg-white p-4 md:p-8 shadow-xs border border-gray-100">
                             <div className="flex items-center mb-6">
                                 <div className="h-10 w-1 bg-[#E22026] rounded-full mr-4"></div>
                                 <h2 className="text-2xl font-bold text-gray-900">
@@ -102,7 +94,7 @@ export default function Home() {
                         </section>
 
                         {/* Section 2: Who We Are */}
-                        <section className="rounded-xl bg-white p-8 shadow-xs border border-gray-100">
+                        <section className="rounded-xl bg-white p-4 md:p-8 shadow-xs border border-gray-100">
                             <div className="flex items-center mb-6">
                                 <div className="h-10 w-1 bg-[#E22026] rounded-full mr-4"></div>
                                 <h2 className="text-2xl font-bold text-gray-900">
@@ -143,7 +135,7 @@ export default function Home() {
                         </section>
 
                         {/* Section 3: What Is This Programme About? */}
-                        <section className="rounded-xl bg-white p-8 shadow-xs border border-gray-100">
+                        <section className="rounded-xl bg-white p-4 md:p-8 shadow-xs border border-gray-100">
                             <div className="flex items-center mb-6">
                                 <div className="h-10 w-1 bg-[#E22026] rounded-full mr-4"></div>
                                 <h2 className="text-2xl font-bold text-gray-900">
@@ -197,7 +189,7 @@ export default function Home() {
                         </section>
 
                         {/* Section 4: What You Will Do */}
-                        <section className="rounded-xl bg-white p-8 shadow-xs border border-gray-100">
+                        <section className="rounded-xl bg-white p-4 md:p-8 shadow-xs border border-gray-100">
                             <div className="flex items-center mb-6">
                                 <div className="h-10 w-1 bg-[#E22026] rounded-full mr-4"></div>
                                 <h2 className="text-2xl font-bold text-gray-900">
@@ -230,7 +222,7 @@ export default function Home() {
                         </section>
 
                         {/* Section 5: How Medivisor Supports You */}
-                        <section className="rounded-xl bg-white p-8 shadow-xs border border-gray-100">
+                        <section className="rounded-xl bg-white p-4 md:p-8 shadow-xs border border-gray-100">
                             <div className="flex items-center mb-6">
                                 <div className="h-10 w-1 bg-[#E22026] rounded-full mr-4"></div>
                                 <h2 className="text-2xl font-bold text-gray-900">
@@ -265,7 +257,7 @@ export default function Home() {
                         </section>
 
                         {/* Section 6: Sustainability */}
-                        <section className="rounded-xl bg-white p-8 shadow-xs border border-gray-100">
+                        <section className="rounded-xl bg-white p-4 md:p-8 shadow-xs border border-gray-100">
                             <div className="flex items-center mb-6">
                                 <div className="h-10 w-1 bg-[#E22026] rounded-full mr-4"></div>
                                 <h2 className="text-2xl font-bold text-gray-900">
@@ -278,15 +270,15 @@ export default function Home() {
                                 </p>
                                 <div className="flex items-center space-x-4 my-4">
                                     <div className="flex items-center">
-                                        <div className="h-6 w-6 rounded-full bg-red-100 flex items-center justify-center mr-2">
-                                            <div className="h-3 w-3 rounded-full bg-red-500"></div>
-                                        </div>
+                                       
+                                            <div className="md:h-3 md:w-3 w-2 h-2 rounded-full bg-red-500 mr-2"></div>
+                                       
                                         <span className="text-gray-700">Not commission-driven</span>
                                     </div>
                                     <div className="flex items-center">
-                                        <div className="h-6 w-6 rounded-full bg-red-100 flex items-center justify-center mr-2">
-                                            <div className="h-3 w-3 rounded-full bg-red-500"></div>
-                                        </div>
+                                       
+                                            <div className="md:h-3 md:w-3 w-2 h-2 rounded-full bg-red-500 mr-2"></div>
+                                       
                                         <span className="text-gray-700">Not sales-based</span>
                                     </div>
                                 </div>
@@ -297,7 +289,7 @@ export default function Home() {
                         </section>
 
                         {/* Section 7: Who Can Join? */}
-                        <section className="rounded-xl bg-white p-8 shadow-xs border border-gray-100">
+                        <section className="rounded-xl bg-white p-4 md:p-8 shadow-xs border border-gray-100">
                             <div className="flex items-center mb-6">
                                 <div className="h-10 w-1 bg-[#E22026] rounded-full mr-4"></div>
                                 <h2 className="text-2xl font-bold text-gray-900">
@@ -329,7 +321,7 @@ export default function Home() {
                         </section>
 
                         {/* Section 8: What Health Ambassadors Will Receive */}
-                        <section className="rounded-xl bg-white p-8 shadow-xs border border-gray-100">
+                        <section className="rounded-xl bg-white p-4 md:p-8 shadow-xs border border-gray-100">
                             <div className="flex items-center mb-6">
                                 <div className="h-10 w-1 bg-[#E22026] rounded-full mr-4"></div>
                                 <h2 className="text-2xl font-bold text-gray-900">
@@ -406,7 +398,7 @@ export default function Home() {
                         </section>
 
                         {/* Section 9: A Shared Mission */}
-                        <section className="rounded-xl bg-white p-8 shadow-xs border border-gray-100">
+                        <section className="rounded-xl bg-white p-4 md:p-8 shadow-xs border border-gray-100">
                             <div className="flex items-center mb-6">
                                 <div className="h-10 w-1 bg-[#E22026] rounded-full mr-4"></div>
                                 <h2 className="text-2xl font-bold text-gray-900">

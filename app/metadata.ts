@@ -531,7 +531,7 @@ export const contactMetadata: Metadata = {
     description:
       "Connect with Medivisor India for seamless medical tourism assistance and global support for patients.",
     site: "@MedivisorIndiatreatment",
-    images: ["/Medivisor-logo.svg"],
+    images: ["/logo-10.png"],
   },
   robots: "index, follow",
   authors: [{ name: "Medivisor India" }],
